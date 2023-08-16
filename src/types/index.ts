@@ -137,7 +137,7 @@ export    type newSubtask= {
 
 
         export const SchemaLogin = z.object({
-            email: z.string().email({ message: 'Invalid email format' }),
+            username: z.string().min(1,{ message: 'need a username' }),
             password: z.string().min(8, { message: 'at least 8 characters long' })
             .regex(/[A-Za-z]/, { message: ' must contain at least one letter' })
             .regex(/[0-9]/, { message: ' must contain at least one digit' })
@@ -145,6 +145,7 @@ export    type newSubtask= {
           });
           
           export interface FormDataRegister {
+            username:string;
             email: string;
             password1: string;
             password2: string;

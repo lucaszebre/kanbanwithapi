@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     const router = useRouter();
 
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
     
@@ -29,13 +29,13 @@ const Login: React.FC = () => {
             <div className={styles.LoginWrapper}>
                 <div className={styles.LoginImageWrapper}>
                     <div className={styles.LoginImage}>
-                        <Image  src="/assets/images/logo-devlinks-large.svg" alt="devlink-logo" fill />
+                        
                     </div>
                 </div>
                 
                 <form onSubmit={handleSubmit(()=>{
                     const watched=watch()
-                    setEmail(watched.email)
+                    setUsername(watched.username)
                     setPassword(watched.password)
                     // signInWithEmail()
                 })} className={styles.LoginForm} action="">
@@ -47,12 +47,12 @@ const Login: React.FC = () => {
                     Add your details below to get back into the app
                     </p>
                     <label style={errors.email ? { color: '#EC5757' } : {}} className={styles.LoginLabel} htmlFor="">
-                        Email adress
+                        Username
                     </label>
                     <div  className={styles.LoginInputWrapper}>
                         <Image className={styles.LoginImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
-                        <input  style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('email')} className={styles.LoginInput} type="text" placeholder='e.g. lucasbeaugosse@email.com' />
-                        {errors && errors.email && <p className={styles.LoginError}>{errors.email.message?.toString()}</p>}
+                        <input  style={errors.username ? { border: '#EC5757 1px solid' } : {}}   {...register('username')} className={styles.LoginInput} type="text" placeholder='e.g. lucasbeaugosse@email.com' />
+                        {errors && errors.username && <p className={styles.LoginError}>{errors.username.message?.toString()}</p>}
                     </div>
                     
                     <label style={errors.password ? { color: '#EC5757' } : {}}  className={styles.LoginLabel} htmlFor="">
