@@ -1,24 +1,14 @@
-// import { doc, getDoc } from "firebase/firestore";
-// import { Board } from "@/types";
-// import { fetchColumnsFromFirestore } from "./fetchColumns";
-// import { db } from "@/config/firebase";
+import axios from 'axios';
 
-// export const fetchBoardFromFirestore = async (boardId: string) =>{
-//     const boardDocRef = doc(db, "boards", boardId);
-//     const boardSnapshot = await getDoc(boardDocRef);
-
-//     if (!boardSnapshot.exists()) {
-//         throw new Error("Board not found!");
-//     }
-
-//     const boardData = boardSnapshot.data() as Omit<Board, "id">;
-//     const columns = await fetchColumnsFromFirestore(boardId);
-
-//     const board: Board = {
-//         id: boardSnapshot.id,
-//         ...boardData,
-//         columns: columns,
-//     };
-
-//     return board;
-// };
+export const fetchBoards = async (userId:string) =>{
+    try{
+        const response = await axios.get(`https://kanbantask.onrender.com/user/${userId}`);
+        if(response){
+            return response
+        }else{
+            console.error('Error fetching boards')
+        }
+    }catch(error){
+        console.error(error)
+    }
+};

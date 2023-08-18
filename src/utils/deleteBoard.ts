@@ -1,25 +1,14 @@
-import { Data } from "../types";
+import axios from "axios";
 
-type Column = {
-    id: string;
-    name: string;
-    tasks: [];
-    };
-  
-    type Board = {
-      id: string;
-    name: string;
-    columns: Column[];
-    };
-  
-  type BoardData = {
-    boards: Board[];
-    };
-  
-  export    function deleteBoard(id: string, data: Data): Data {
-        const index = data.boards.findIndex((board) => board.id === id);
-        if (index !== -1) {
-        data.boards.splice(index, 1);
+export const deleteBoard = async (userId:string,boardId:string) =>{
+    try{
+        const response = await axios.delete(`https://kanbantask.onrender.com/user/${userId}/boards/${boardId}`);
+        if(response){
+            return response
+        }else{
+            console.error('Error deleting Board')
         }
-    return data;
+    }catch(error){
+
     }
+}

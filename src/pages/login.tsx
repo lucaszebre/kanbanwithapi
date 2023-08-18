@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SchemaLogin } from '@/types';
+import axios from 'axios';
 import Link from 'next/link';
 interface User {
     uid: string;
@@ -13,13 +14,34 @@ interface User {
 
 const Login: React.FC = () => {
 
-    const router = useRouter();
+    const Router = useRouter();
 
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-
+    const [sucess,setSucess] = useState(false)
+    const onSubmit = async () => {
+        try {
+        const response = await axios.post('https://kanbantask.onrender.com/auth/login', {
+            password: password,
+            username: username, // Make sure to use the correct field name
+        });
     
+        if (response.status === 200) {
+            setSucess(true);
+            console.log("Login sucessfully")
+            // You can redirect to another page or display a success message here
+            Router.push('/')
+        } else {
+            console.error('Login error')
+            // Handle other response statuses
+        }
+        } catch (error) {
+        console.error('Login error:', error);
+        // Handle registration error (display error message, etc.)
+        }
+    };
+
 
         
 
@@ -37,7 +59,7 @@ const Login: React.FC = () => {
                     const watched=watch()
                     setUsername(watched.username)
                     setPassword(watched.password)
-                    // signInWithEmail()
+                    onSubmit()
                 })} className={styles.LoginForm} action="">
                     <h1 className={styles.LoginH1}>
                         Login

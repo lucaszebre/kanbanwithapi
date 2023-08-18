@@ -32,32 +32,36 @@ const Register: React.FC = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [username, setUsername] = useState('')
-    const [sucess,setSucess]=useState<boolean>(false)
+    const [success,setSuccess]=useState<boolean>(false)
     const { register, handleSubmit,watch, formState: { errors } } = useForm<FormDataRegister>({ resolver: zodResolver(schemaRegister) });
     const watched = watch()
     const onSubmit = async () => {
         try {
-          const response = await axios.post('https://kanbantask.onrender.com/auth/register', {
-            email: email,
-            password: password,
-            username: username, // Make sure to use the correct field name
-          });
-    
-          if (response.status === 200) {
-            setSucess(true);
-            console.log("Registered sucessfully")
-            // You can redirect to another page or display a success message here
-            Router.push('login')
-          } else {
-            console.error('Register error')
-            // Handle other response statuses
-          }
-        } catch (error) {
-          console.error('Registration error:', error);
-          // Handle registration error (display error message, etc.)
-        }
-      };
-    
+            const response = await axios.post('https://kanbantask.onrender.com/auth/register', {
+                email: email,
+                password: password,
+                username: username,
+            });
+        
+            if (response.status === 200) {
+                setSuccess(true);
+                console.log("Registered successfully");
+        
+                // Perform logout
+                await axios.post('https://kanbantask.onrender.com/auth/logout');
+                
+                // Redirect to login page
+                Router.push('/login');
+            } else {
+                console.error('Register error');
+                // Handle other response statuses
+            }
+            } catch (error) {
+            console.error('Registration error:', error);
+            // Handle registration error (display error message, etc.)
+            }
+        };
+        
 
     
     return (

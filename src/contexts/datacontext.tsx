@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Column, Subtask ,Board} from '@/types/index';
+import axios from 'axios';
 type openedTaskType= {
     id: string;
     title: string;
@@ -54,13 +55,27 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
 
 
     useEffect(() => {
-        const fetchBoards = async () => {
-        
+        // const fetchBoards = async () => {
+        //     try {
+        //         // const response = await axios.get('https://kanbantask.onrender.com/boards/');
+            
+        //         if (response.status === 200) {
+        //             console.log("Boards fetched")
+        //             // You can redirect to another page or display a success message here
+        //         } else {
+        //             console.error('Login error')
+        //             // Handle other response statuses
+        //         }
+        //         setBoards(response.data)
+        //         } catch (error) {
+        //         console.error('Login error:', error);
+        //         // Handle registration error (display error message, etc.)
+        //         }
 
         // setBoards();
-        };
+        // };
 
-        fetchBoards();
+        // fetchBoards();
     }, []);
 
     useEffect(() => {
@@ -86,7 +101,13 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             }, []);
 
     useEffect(() => {
-                
+        // const onMount = async () => {
+        //     try{
+        //         const response = await axios.get('https://kanbantask.onrender.com/boards/');
+        //     }catch(error){
+
+        //     }
+        // }
             
             
     }, [currentBoardId,columns,isMoving]);

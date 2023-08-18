@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import styles from '../styles/Header.module.css';
 import { Opencontext } from '@/contexts/contextopen';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ModalAbout from './modalAbout';
 import { DataContext } from '@/contexts/datacontext';
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from 'next/router';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { useTheme } from '@/contexts/themecontext';
+import { Logout } from '@/utils/logout';
 
 export default function Header() {
     // state to toggle the display of the  different components to decide to click on 
@@ -21,11 +22,8 @@ export default function Header() {
 
     const { theme, setTheme } = useTheme();
 
-
-    const router = useRouter(); 
-        
-
-        
+    const Router = useRouter()
+  
 
     return (
         <>
@@ -60,11 +58,8 @@ export default function Header() {
                         + Add New Task
                     </button>
                     <button
-                        //     onClick={()=>{signOut(auth).then(() => {
-                        //     router.push('/login');
-                        // }).catch((error) => {
-                        //     console.error(error)
-                        // });}}
+                            onClick={()=>{Logout()
+                            Router.push('/login')}}
                         className={styles.LogoutButton}
                     >
                         Logout
