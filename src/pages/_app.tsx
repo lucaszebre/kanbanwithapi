@@ -10,14 +10,12 @@ import { ThemeProvidered } from '@/contexts/themecontext'
 import Layout from '@/components/Layout'
 import { ThemeProvider } from '@mui/material/styles';
 import { lightTheme, darkTheme } from '@/utils/theme';
-import { SessionProvider } from "next-auth/react"
 
 
-function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 
 
   return (
-    <SessionProvider session={session}>
     <ThemeProvidered>
     <ThemeProvider theme={ lightTheme}>
       <DataProvider>
@@ -34,7 +32,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       </DataProvider>
     </ThemeProvider>
     </ThemeProvidered>
-   </SessionProvider>
   )
 }
 

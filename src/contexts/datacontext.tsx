@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Column, Subtask ,Board} from '@/types/index';
 import axios from 'axios';
@@ -29,6 +30,9 @@ type DataContextType = {
     setColId:React.Dispatch<React.SetStateAction<string>>;
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
+    setUserId:React.Dispatch<React.SetStateAction<string>>;
+    userId:string
+
 };
 
 
@@ -37,6 +41,7 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
+    const [userId,setUserId] = useState('64dec65f5c205b769e3d2af2')
     const [boards, setBoards] = useState<Board[]>([]);
     const [columns,setColumns]= useState<Column[]>([])
     const [currentBoard,setCurrentBoard]= useState<Board>()
@@ -54,73 +59,25 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         } | null>(null);
 
 
-    useEffect(() => {
-        // const fetchBoards = async () => {
-        //     try {
-        //         // const response = await axios.get('https://kanbantask.onrender.com/boards/');
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.get(`https://kanbantask.onrender.com/user/${userId}`);
+                    if (response.data) {
+                    // Assuming the response data is an array of boards
+                    setBoards(response.data);
+                    console.log(response.data)
+                    } else {
+                    console.error('Error fetching boards');
+                    }
+                } catch (error) {
+                    console.error('Fetching boards',error);
+                }
+                };
             
-        //         if (response.status === 200) {
-        //             console.log("Boards fetched")
-        //             // You can redirect to another page or display a success message here
-        //         } else {
-        //             console.error('Login error')
-        //             // Handle other response statuses
-        //         }
-        //         setBoards(response.data)
-        //         } catch (error) {
-        //         console.error('Login error:', error);
-        //         // Handle registration error (display error message, etc.)
-        //         }
-
-        // setBoards();
-        // };
-
-        // fetchBoards();
-    }, []);
-
-    useEffect(() => {
-        const savedHeaderTitle = localStorage.getItem('headerTitle');
-        if (savedHeaderTitle) {
-            setHeaderTitle(savedHeaderTitle);
-        }
-        }, []);
-
-        
-    useEffect(() => {
-        const savedHeaderTitle = localStorage.getItem('headerTitle');
-        if (savedHeaderTitle) {
-            setHeaderTitle(savedHeaderTitle);
-        }
-        }, []);
-
-    useEffect(() => {
-            const savedCurrentBoardId = localStorage.getItem('currentBoardId');
-            if (savedCurrentBoardId) {
-                setCurrentBoardId(savedCurrentBoardId);
-            }
+                fetchData();
             }, []);
 
-    useEffect(() => {
-        // const onMount = async () => {
-        //     try{
-        //         const response = await axios.get('https://kanbantask.onrender.com/boards/');
-        //     }catch(error){
-
-        //     }
-        // }
-            
-            
-    }, [currentBoardId,columns,isMoving]);
-
-    useEffect(() => {
-                for(const board of boards){
-                    if(board.id===currentBoardId){
-                        setHeaderTitle(board.name)
-                        localStorage.setItem('headerTitle',board.name)
-                    }
-                }
-                
-    }, [isMoving]);
 
     return (
         <DataContext.Provider value={{
@@ -136,7 +93,8 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         isCompleted,setIsCompleted,
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
-        openedTask, setOpenedTask
+        openedTask, setOpenedTask,
+        setUserId,userId
         }}>{props.children}</DataContext.Provider>
     );
     };
