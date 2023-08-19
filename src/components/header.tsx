@@ -6,7 +6,6 @@ import { Opencontext } from '@/contexts/contextopen';
 import { useContext, useEffect, useState } from 'react';
 import ModalAbout from './modalAbout';
 import { DataContext } from '@/contexts/datacontext';
-import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from 'next/router';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { useTheme } from '@/contexts/themecontext';

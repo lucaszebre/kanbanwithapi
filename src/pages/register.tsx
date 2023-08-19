@@ -9,11 +9,10 @@ import { useRouter } from 'next/navigation';
 import z from 'zod';
 import { FormDataRegister } from '@/types';
 import axios from 'axios'; // Import axios for making API requests
+import supabase from '@/supabase';
 
 const schemaRegister = z.object({
     email: z.string().email({ message: 'Invalid email format' }),
-    username: z.string()
-    .min(1, { message: 'need a username' }),
     password1: z.string()
         .min(8, { message: 'Password must be at least 8 characters long' })
         .regex(/[A-Za-z]/, { message: 'Password must contain at least one letter' })
@@ -31,36 +30,48 @@ const Register: React.FC = () => {
     const Router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [username, setUsername] = useState('')
     const [success,setSuccess]=useState<boolean>(false)
     const { register, handleSubmit,watch, formState: { errors } } = useForm<FormDataRegister>({ resolver: zodResolver(schemaRegister) });
     const watched = watch()
     const onSubmit = async () => {
         try {
-            const response = await axios.post('https://kanbantask.onrender.com/auth/register', {
+            const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
-                username: username,
             });
         
-            if (response.status === 200) {
-                setSuccess(true);
-                console.log("Registered successfully");
-        
-                // Perform logout
-                await axios.post('https://kanbantask.onrender.com/auth/logout');
-                
-                // Redirect to login page
-                Router.push('/login');
-            } else {
-                console.error('Register error');
-                // Handle other response statuses
+            if (error) {
+                console.error('Registration error:', error.message);
+                // Handle registration error (e.g., display an error message to the user)
+                return; // Exit early in case of error
             }
+        
+            console.log('Registration successful:', data.user);
+        
+            // Initiate the user in your MongoDB or handle other related logic
+            try {
+                const response = await axios.post('http://localhost:4000/auth/init', {
+                userId: data.user?.id,
+                }, { withCredentials: true });
+        
+                if (response.status === 201) {
+                console.log('User initiated successfully');
+                } else {
+                console.error('User initiation failed');
+                }
+            } catch (initError) {
+                console.error('User initiation error:', initError);
+            }
+        
+            // Redirect to login page after a successful registration and initiation
+            Router.push('/login');
             } catch (error) {
             console.error('Registration error:', error);
             // Handle registration error (display error message, etc.)
             }
         };
+        
+        
         
 
     
@@ -75,7 +86,6 @@ const Register: React.FC = () => {
                 <form onSubmit={handleSubmit(()=>{
                     setEmail(watched.email);
                     setPassword(watched.password1);
-                    setUsername(watched.username);
                     onSubmit();
                 })} className={styles.RegisterForm} action="">
                 <h1 className={styles.RegisterH1}>
@@ -91,14 +101,6 @@ const Register: React.FC = () => {
                     <Image className={styles.RegisterImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
                     <input style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('email')}  className={styles.RegisterInput} type="text" placeholder='e.g. alex@email.com' />
                     {errors.email && <p className={styles.RegisterError}>{errors.email.message?.toString()}</p>}
-                </div>
-                <label  className={styles.RegisterLabel} htmlFor="">
-                    UserName
-                </label>
-                <div className={styles.RegisterInputWrapper}>
-                    <Image className={styles.RegisterImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
-                    <input style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('username')}  className={styles.RegisterInput} type="text" placeholder='e.g. alex@email.com' />
-                    {errors.username && <p className={styles.RegisterError}>{errors.username.message?.toString()}</p>}
                 </div>
                 <label className={styles.RegisterLabel} htmlFor="">
                     Create password

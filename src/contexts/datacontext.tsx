@@ -2,6 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Column, Subtask ,Board} from '@/types/index';
 import axios from 'axios';
+import supabase from '@/supabase';
+
+
 type openedTaskType= {
     id: string;
     title: string;
@@ -12,8 +15,8 @@ type openedTaskType= {
 type DataContextType = {
     boards: Board[];
     setBoards: React.Dispatch<React.SetStateAction<Board[] >>
-    currentBoardId: string;
-    setCurrentBoardId: (boardId: string) => void;
+    currentBoardindex: number;
+    setCurrentBoardindex: (boardId: number) => void;
     currentBoard:Board | undefined;
     setCurrentBoard: React.Dispatch<React.SetStateAction<Board |undefined>>;
     headerTitle: string;
@@ -30,10 +33,6 @@ type DataContextType = {
     setColId:React.Dispatch<React.SetStateAction<string>>;
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
-    setUserId:React.Dispatch<React.SetStateAction<string>>;
-    userId:string
-    token:string;
-    setToken:React.Dispatch<React.SetStateAction<string>>;
 
 };
 
@@ -43,12 +42,10 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
-    const [userId,setUserId] = useState('64dec65f5c205b769e3d2af2');
-    const [token,setToken] = useState('')
     const [boards, setBoards] = useState<Board[]>([]);
     const [columns,setColumns]= useState<Column[]>([])
     const [currentBoard,setCurrentBoard]= useState<Board>()
-    const [currentBoardId, setCurrentBoardId] = useState<string>('');
+    const [currentBoardindex, setCurrentBoardindex] = useState<number>(0);
     const [headerTitle, setHeaderTitle] = useState<string>('');
     const [isMoving,SetIsMoving] = useState(false)
     const [isCompleted,setIsCompleted] = useState(false)
@@ -61,30 +58,33 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         subTask: Subtask[];
         } | null>(null);
 
-
-        useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const headers = { Authorization: `Bearer ${token}` };
-            
-                    const response = await axios.get(
-                    `https://kanbantask.onrender.com/user/64dec65f5c205b769e3d2af2`,
-                    { headers }
+        const onMounted = async () => {
+            try {
+              // Check if the user is authenticated
+            const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                // User is authenticated, check if a row exists in the "User" table
+                const response = await axios.get(
+                    `http://localhost:4000/user/${user.id}`,
                     );
             
                     if (response.data) {
                     // Assuming the response data is an array of boards
-                    setBoards(response.data);
-                    console.log('data',response.data);
+                    setBoards(response.data[0].Boards);
+                    setColumns(response.data[0].Boards[0].columns)
+                    console.log('data',response.data[0].Boards);
                     } else {
                     console.error('Error fetching boards');
                     }
-                } catch (error) {
-                    console.error('Fetching boards', error);
                 }
-                };
-            
-                fetchData();
+                } catch (error) {
+                console.error(error);
+            }
+            };
+
+
+        useEffect(() => {
+                onMounted();
             }, []);
             
 
@@ -92,8 +92,8 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         <DataContext.Provider value={{
         boards,
         setBoards,
-        currentBoardId,
-        setCurrentBoardId,
+        currentBoardindex,
+        setCurrentBoardindex,
         headerTitle,
         setHeaderTitle,
         columns,setColumns,
@@ -103,8 +103,6 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
-        setUserId,userId,
-        token,setToken
         }}>{props.children}</DataContext.Provider>
     );
     };

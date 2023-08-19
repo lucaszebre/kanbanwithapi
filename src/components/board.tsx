@@ -12,14 +12,14 @@ import { useTheme } from '@/contexts/themecontext';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardId, boards, columns, setColumns, currentBoard,isMoving } = useContext(DataContext); // state to manage the global data 
+    const {currentBoardindex, boards, columns, setColumns, currentBoard,isMoving } = useContext(DataContext); // state to manage the global data 
     const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
         
-    }, [currentBoardId,isMoving, setColumns]);  // if the currentBoardId change we need to get the current columns of the board selected in the firestore
+    }, [currentBoardindex,isMoving, setColumns]);  // if the currentBoardId change we need to get the current columns of the board selected in the firestore
 
     useEffect(() => {
         // Check if the window object is available

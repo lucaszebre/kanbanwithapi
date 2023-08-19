@@ -108,7 +108,7 @@ export interface Board {
         title: string;
         description: string;
         columnId: string;
-        subTasks : Subtask[]
+        subtasks : Subtask[]
     }
     
     export interface Subtask {
@@ -137,7 +137,7 @@ export    type newSubtask= {
 
 
         export const SchemaLogin = z.object({
-            username: z.string().min(1,{ message: 'need a username' }),
+            email: z.string().min(1,{ message: 'need a username' }),
             password: z.string().min(8, { message: 'at least 8 characters long' })
             .regex(/[A-Za-z]/, { message: ' must contain at least one letter' })
             .regex(/[0-9]/, { message: ' must contain at least one digit' })
@@ -145,7 +145,6 @@ export    type newSubtask= {
           });
           
           export interface FormDataRegister {
-            username:string;
             email: string;
             password1: string;
             password2: string;

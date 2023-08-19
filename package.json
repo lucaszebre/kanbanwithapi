@@ -14,6 +14,8 @@
     "@emotion/styled": "^11.10.6",
     "@hookform/resolvers": "^3.0.0",
     "@mui/material": "^5.11.15",
+    "@supabase/gotrue-js": "^2.47.0",
+    "@supabase/supabase-js": "^2.32.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "axios": "^1.4.0",

@@ -9,35 +9,33 @@ import axios from 'axios';
 import Link from 'next/link';
 import { DataContext } from '@/contexts/datacontext';
 import { cookieStorageManager } from '@chakra-ui/react';
-
+import supabase from '@/supabase';
 const Login: React.FC = () => {
 
     const Router = useRouter();
-    const {setUserId,setToken} = useContext(DataContext)
+    const {setUserId} = useContext(DataContext)
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+
     const onSubmit = async () => {
         try {
-        const response = await axios.post('https://kanbantask.onrender.com/auth/login', {
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
             password: password,
-            username: username, // Make sure to use the correct field name
-        },{ withCredentials: true });
+        })
         
-    
-        if (response.status === 200) {
-            console.log("Login sucessfully")
-            // You can redirect to another page or display a success message here
-            setUserId(response.data.id)
-            setToken(response.data.token)
-            localStorage.setItem('userId',response.data.id)
-            localStorage.setItem('token',response.data.token)
-            console.log(response.data.id)
+        if(error){
+            console.error('Error login ',error.message)
+        }else{
+            
+            console.log(data)
             Router.push('/')
-        } else {
-            console.error('Login error')
-            // Handle other response statuses
         }
+    
+       
         } catch (error) {
         console.error('Login error:', error);
         // Handle registration error (display error message, etc.)
@@ -59,7 +57,7 @@ const Login: React.FC = () => {
                 
                 <form onSubmit={handleSubmit(()=>{
                     const watched=watch()
-                    setUsername(watched.username)
+                    setEmail(watched.email)
                     setPassword(watched.password)
                     onSubmit()
                 })} className={styles.LoginForm} action="">
@@ -71,12 +69,12 @@ const Login: React.FC = () => {
                     Add your details below to get back into the app
                     </p>
                     <label style={errors.email ? { color: '#EC5757' } : {}} className={styles.LoginLabel} htmlFor="">
-                        Username
+                        Email
                     </label>
                     <div  className={styles.LoginInputWrapper}>
                         <Image className={styles.LoginImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
-                        <input  style={errors.username ? { border: '#EC5757 1px solid' } : {}}   {...register('username')} className={styles.LoginInput} type="text" placeholder='e.g. lucasbeaugosse@email.com' />
-                        {errors && errors.username && <p className={styles.LoginError}>{errors.username.message?.toString()}</p>}
+                        <input  style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('email')} className={styles.LoginInput} type="text" placeholder='e.g. lucasbeaugosse@email.com' />
+                        {errors && errors.email && <p className={styles.LoginError}>{errors.email.message?.toString()}</p>}
                     </div>
                     
                     <label style={errors.password ? { color: '#EC5757' } : {}}  className={styles.LoginLabel} htmlFor="">
