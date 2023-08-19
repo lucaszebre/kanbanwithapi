@@ -13,7 +13,7 @@ import { cookieStorageManager } from '@chakra-ui/react';
 const Login: React.FC = () => {
 
     const Router = useRouter();
-    const {setUserId} = useContext(DataContext)
+    const {setUserId,setToken} = useContext(DataContext)
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -22,14 +22,16 @@ const Login: React.FC = () => {
         const response = await axios.post('https://kanbantask.onrender.com/auth/login', {
             password: password,
             username: username, // Make sure to use the correct field name
-        });
+        },{ withCredentials: true });
         
     
         if (response.status === 200) {
             console.log("Login sucessfully")
             // You can redirect to another page or display a success message here
             setUserId(response.data.id)
+            setToken(response.data.token)
             localStorage.setItem('userId',response.data.id)
+            localStorage.setItem('token',response.data.token)
             console.log(response.data.id)
             Router.push('/')
         } else {

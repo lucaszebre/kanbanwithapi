@@ -32,6 +32,8 @@ type DataContextType = {
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
     setUserId:React.Dispatch<React.SetStateAction<string>>;
     userId:string
+    token:string;
+    setToken:React.Dispatch<React.SetStateAction<string>>;
 
 };
 
@@ -41,7 +43,8 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
-    const [userId,setUserId] = useState('64dec65f5c205b769e3d2af2')
+    const [userId,setUserId] = useState('64dec65f5c205b769e3d2af2');
+    const [token,setToken] = useState('')
     const [boards, setBoards] = useState<Board[]>([]);
     const [columns,setColumns]= useState<Column[]>([])
     const [currentBoard,setCurrentBoard]= useState<Board>()
@@ -62,22 +65,28 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         useEffect(() => {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`https://kanbantask.onrender.com/user/${userId}`);
+                    const headers = { Authorization: `Bearer ${token}` };
+            
+                    const response = await axios.get(
+                    `https://kanbantask.onrender.com/user/64dec65f5c205b769e3d2af2`,
+                    { headers }
+                    );
+            
                     if (response.data) {
                     // Assuming the response data is an array of boards
                     setBoards(response.data);
-                    console.log(response.data)
+                    console.log('data',response.data);
                     } else {
                     console.error('Error fetching boards');
                     }
                 } catch (error) {
-                    console.error('Fetching boards',error);
+                    console.error('Fetching boards', error);
                 }
                 };
             
                 fetchData();
             }, []);
-
+            
 
     return (
         <DataContext.Provider value={{
@@ -94,7 +103,8 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
-        setUserId,userId
+        setUserId,userId,
+        token,setToken
         }}>{props.children}</DataContext.Provider>
     );
     };
