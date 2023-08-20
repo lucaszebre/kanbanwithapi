@@ -2,7 +2,7 @@ import { Column } from '@/types/index'
 const renderSelect = (columns:Column[]) => {
     return columns?.map((item, index) => {
         return (
-        <option key={index} value={item.id}>
+        <option key={index} value={item._id}>
             {item.name}
         </option>
         );

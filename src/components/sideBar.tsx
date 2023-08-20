@@ -1,12 +1,8 @@
 import { useContext, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
-import useAuthState from './useAuthState';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { Opencontext } from '@/contexts/contextopen';
 import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-// import { db } from '@/config/firebase';
 import { Switch as MuiSwitch } from '@mui/material';
 import BoardCart from './boardCart';
 import { DataContext } from '@/contexts/datacontext';
@@ -56,8 +52,8 @@ const Sidebar = () => {
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, board.id) }}
-            selected={currentBoardId === board.id}
+            onClick={() => { handleBoardClick(board.name, board._id) }}
+            selected={currentBoardId === board._id}
             />
           ))}
           

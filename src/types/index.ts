@@ -83,7 +83,7 @@ export type AddBoardType = {
 
 
 export interface Board {
-    id: string;
+    _id: string;
     name: string;
     userId: string;
     columns: Column[];
@@ -97,7 +97,7 @@ export interface Board {
     }
 
     export interface Column {
-        id: string;
+        _id: string;
         name: string;
         boardId: string;
         tasks: Task[];

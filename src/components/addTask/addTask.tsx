@@ -8,6 +8,8 @@ import { ColumnData } from '@/types';
 import renderSelect from '../../utils/renderselect';
 import SubTask from './SubTask'
 import { useTheme } from '@/contexts/themecontext';
+import supabase from '@/supabase';
+import axios from 'axios';
 
 const AddTask = () => {
     
@@ -17,21 +19,22 @@ const AddTask = () => {
     const [Select, setSelect] = useState<ColumnData[] | null>([]);  // state to render the select with the column names 
     const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
     const [SubTaskCurrent,setSubTaskCurrent] = useState<string[]>([]) // states to save up the name of all the subtasks i add
-    const { setBoards,SetIsMoving,isMoving,columns,currentBoardId } = useContext(DataContext); // state to manage the global data 
+    const { setBoards,SetIsMoving,isMoving,columns,currentBoardId,setCurrentBoardId,boards } = useContext(DataContext); // state to manage the global data 
     const [SubTasksError, setSubTasksError] = useState<boolean[]>([]);  // state to handle if one the subtask is empty 
     const [taskTitleError, setTaskTitleError] = useState(false);  // state to handle if the task title is empty 
     const { theme, setTheme } = useTheme();
 
     useEffect(()=>{   // when the current board id change we default allow the select id to the first column id 
         if(columns[0]){
-            setSelectId(columns[0].id)
+            setSelectId(columns[0]._id)
+            setCurrentBoardId(boards[0]._id)
         }
-    },[currentBoardId])
+    },[])
 
         useEffect(() => {  // everytime the data is changing we actualize the ArrayColumn 
             const ArrayColumn = columns.map((column) => {
                 return {
-                    id: column.id,
+                    id: column._id,
                     name: column.name,
                 }
             });
@@ -39,12 +42,46 @@ const AddTask = () => {
             setSubTaskCurrent([])
         }, [isMoving]);    
 
-    
+        function createSubTaskArray(SubTaskCurrent:string[]) {
+            const SubtaskArray = [];
+          
+            for (const columnName of SubTaskCurrent) {
+              const subtask = {
+                title: columnName,
+                isCompleted: false
+              };
+              SubtaskArray.push(subtask);
+            }
+          
+            return SubtaskArray;
+          }
 
         const HandleSubmit = async () => {  // function to handle the final data from the data 
         
             if (taskTitle && taskDescription && SelectId) {
-                await createTask(currentBoardId, SelectId, taskTitle,  SubTaskCurrent,taskDescription);
+                
+                try{
+                    const { data: { user } } = await supabase.auth.getUser()
+                            if (user) {
+                                console.log("user.id:", user.id);
+console.log("currentBoardId:", currentBoardId);
+console.log("SelectId:", SelectId);
+                            // User is authenticated, check if a row exists in the "User" table
+                            const response = await axios.post(`http://localhost:4000/user/${user.id}/boards/${currentBoardId}/columns/${SelectId}`,
+                                {
+                                    title:taskTitle,
+                                    description:taskDescription,
+                                    subtasks:createSubTaskArray(SubTaskCurrent)
+                                });
+                                if(response.data){
+                                    console.log('Task add')
+                                }else{
+                                    console.error("Problem to task the boards")
+                                }
+                            }
+                }catch(error){
+                    console.error('message',error)
+                }
                 setTaskTitle('');
                 setTaskDescription('');
                 setSelectId('');

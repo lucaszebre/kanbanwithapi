@@ -3,9 +3,10 @@ import styles from '../styles/AddBoard.module.css';  // styles modules css
 import { Opencontext } from '@/contexts/contextopen';  // get the context to toggle the board 
 import { DataContext } from '@/contexts/datacontext'; // get the context to manage the data
 import { useContext } from "react";
-import { AddBoardToFirestore } from '@/utils/addBoard'; // the function to add the board in the firestore 
 import { ColumnsRenderer } from './addTask/rendercolumn';  // get the render columns 
 import { useTheme } from '@/contexts/themecontext';
+import supabase from '@/supabase';
+import axios from 'axios';
 
 
 const AddBoard = () => {
@@ -31,6 +32,20 @@ const resetForm = () => {  // function to reset the form
     setAddBoard(false);
     };
 
+    function createColumnsArray(columnNames:string[]) {
+        const columnsArray = [];
+      
+        for (const columnName of columnNames) {
+          const column = {
+            name: columnName,
+            tasks: []
+          };
+          columnsArray.push(column);
+        }
+      
+        return columnsArray;
+      }
+
 const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
     e.preventDefault();
 
@@ -43,8 +58,25 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
         } else if (newColumnErrors.some(error => error)) {
         return;
     }
-
-    await AddBoardToFirestore(boardName, columnNames, setBoards, SetIsMoving, isMoving);
+    try{
+        const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                // User is authenticated, check if a row exists in the "User" table
+                const response = await axios.post(
+                    `http://localhost:4000/user/${user.id}`,
+                    {
+                        name:boardName,
+                        columns:createColumnsArray(columnNames)
+                    });
+                    if(response.data){
+                        console.log('Boards add')
+                    }else{
+                        console.error("Problem to add the boards")
+                    }
+                }
+    }catch(error){
+        console.error('message',error)
+    }
     resetForm();
     };
 

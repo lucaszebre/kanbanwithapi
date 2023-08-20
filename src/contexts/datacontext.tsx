@@ -15,8 +15,8 @@ type openedTaskType= {
 type DataContextType = {
     boards: Board[];
     setBoards: React.Dispatch<React.SetStateAction<Board[] >>
-    currentBoardindex: number;
-    setCurrentBoardindex: (boardId: number) => void;
+    currentBoardId: string;
+    setCurrentBoardId: (boardId: string) => void;
     currentBoard:Board | undefined;
     setCurrentBoard: React.Dispatch<React.SetStateAction<Board |undefined>>;
     headerTitle: string;
@@ -45,7 +45,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
     const [boards, setBoards] = useState<Board[]>([]);
     const [columns,setColumns]= useState<Column[]>([])
     const [currentBoard,setCurrentBoard]= useState<Board>()
-    const [currentBoardindex, setCurrentBoardindex] = useState<number>(0);
+    const [currentBoardId, setCurrentBoardId] = useState<string>("");
     const [headerTitle, setHeaderTitle] = useState<string>('');
     const [isMoving,SetIsMoving] = useState(false)
     const [isCompleted,setIsCompleted] = useState(false)
@@ -92,8 +92,8 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         <DataContext.Provider value={{
         boards,
         setBoards,
-        currentBoardindex,
-        setCurrentBoardindex,
+        currentBoardId,
+        setCurrentBoardId,
         headerTitle,
         setHeaderTitle,
         columns,setColumns,

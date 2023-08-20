@@ -14,7 +14,7 @@ import RenderSubTask from '@/utils/renderSubTaskModal';
 import { useTheme } from '@/contexts/themecontext';
 
 const ModalTask = (props:{
-    id: string;
+    _id: string;
     title: string;
     description: string;
     columnId: string;
@@ -38,7 +38,7 @@ const ModalTask = (props:{
 
     React.useEffect(()=>{  // when the current board id change we set defaultly the col id to the first column 
         if(columns[0]){
-            setColId(columns[0].id)
+            setColId(columns[0]._id)
         }
     },[currentBoardId])
 
@@ -50,7 +50,7 @@ const ModalTask = (props:{
     return (
         <>
         <EditTask columnId={props.columnId}   />
-        <DeleteThisTask columnId={props.columnId} TaskTitle={props.title}  TaskId={props.id} />
+        <DeleteThisTask columnId={props.columnId} TaskTitle={props.title}  TaskId={props._id} />
             <div
                 className={styles.ModalTaskWrapper}
                 style={{

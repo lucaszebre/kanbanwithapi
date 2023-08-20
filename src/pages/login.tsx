@@ -13,7 +13,6 @@ import supabase from '@/supabase';
 const Login: React.FC = () => {
 
     const Router = useRouter();
-    const {setUserId} = useContext(DataContext)
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -30,8 +29,6 @@ const Login: React.FC = () => {
         if(error){
             console.error('Error login ',error.message)
         }else{
-            
-            console.log(data)
             Router.push('/')
         }
     

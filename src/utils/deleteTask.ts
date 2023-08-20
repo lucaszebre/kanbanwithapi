@@ -1,10 +1,12 @@
+import supabase from "@/supabase";
 import axios from "axios";
-
-export const deleteTask = async (userId:string,boardId:string,columnId:string,taskId:string) =>{
+supabase
+export const deleteTask = async (boardId:string,columnId:string,taskId:string) =>{
     try{
-        const response = await axios.delete(`https://kanbantask.onrender.com/user/${userId}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`);
+        const { data: { user } } = await supabase.auth.getUser()
+        const response = await axios.delete(`https://kanbantask.onrender.com/user/${user?.id}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`);
         if(response){
-            return response
+            console.log(response.status)
         }else{
             console.error('Error deleting task')
         }
