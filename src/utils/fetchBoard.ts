@@ -1,8 +1,11 @@
+import supabase from '@/supabase';
 import axios from 'axios';
 
-export const fetchBoards = async (userId:string) =>{
+export const fetchBoards = async () =>{
     try{
-        const response = await axios.get(`https://kanbantask.onrender.com/user/${userId}`);
+        const { data: { user } } = await supabase.auth.getUser()
+
+        const response = await axios.get(`https://kanbantask.onrender.com/user/${user?.id}`);
         if(response){
             return response
         }else{

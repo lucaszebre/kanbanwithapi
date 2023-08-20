@@ -36,8 +36,8 @@ const {
                     <button
                         onClick={() => {
                             deleteTask(currentBoardId,props.columnId,props.TaskId);
+                            SetIsMoving(!isMoving);
                             setDeleteTaskBlock(false);
-                            SetIsMoving(!isMoving)
                         }}
                         className={styles.DeleteButton}
                     >

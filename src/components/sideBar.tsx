@@ -8,20 +8,23 @@ import BoardCart from './boardCart';
 import { DataContext } from '@/contexts/datacontext';
 import { Board } from '@/types';
 import { useTheme } from '@/contexts/themecontext';
+import { useQuery } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
+
 
 const Sidebar = () => {
+  
+  
   const { theme, setTheme } = useTheme();
 
   const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
   const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const {
     boards,
-    setBoards,
-    currentBoardId,
+    currentBoardIndex,
+    setCurrentBoardIndex,
     setCurrentBoardId,
-    headerTitle,
     setHeaderTitle,
-    isMoving
     } = useContext(DataContext);
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,12 +34,27 @@ const Sidebar = () => {
 
 
   // function to handle the click on a board cart 
-  const handleBoardClick = (boardName: string, boardId: string) => {
+  const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
     setHeaderTitle(boardName);
-    setCurrentBoardId(boardId);
+    setCurrentBoardIndex(boardIndex);
+    setCurrentBoardId(boardId)
+    localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
     };
-
+    
+    const {data,isLoading,isError} = useQuery({
+      queryKey:['Boards'],
+      queryFn:()=>fetchBoards(),
+    });
+    if(isLoading){
+      <p>Loading...</p>
+    }
+    if(isError){
+      <p>
+        Something went wrongs
+      </p>
+    }
+ console.log(data?.data)
   return (
     <div className={`${styles.SidebarContainer} ${
       theme === 'light' ? styles.light : styles.dark
@@ -52,8 +70,8 @@ const Sidebar = () => {
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, board._id) }}
-            selected={currentBoardId === board._id}
+            onClick={() => { handleBoardClick(board.name, index,board._id) }}
+            selected={currentBoardIndex === index}
             />
           ))}
           

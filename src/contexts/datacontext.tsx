@@ -6,7 +6,7 @@ import supabase from '@/supabase';
 
 
 type openedTaskType= {
-    id: string;
+    _id: string;
     title: string;
     description: string;
     columnId: string;
@@ -15,10 +15,10 @@ type openedTaskType= {
 type DataContextType = {
     boards: Board[];
     setBoards: React.Dispatch<React.SetStateAction<Board[] >>
+    currentBoardIndex: number;
     currentBoardId: string;
-    setCurrentBoardId: (boardId: string) => void;
-    currentBoard:Board | undefined;
-    setCurrentBoard: React.Dispatch<React.SetStateAction<Board |undefined>>;
+    setCurrentBoardIndex: (boardId: number) => void;
+    setCurrentBoardId: (boardId:string) => void;
     headerTitle: string;
     setHeaderTitle: (title: string) => void;
     columns: Column[];
@@ -44,21 +44,21 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 export const DataProvider = (props: { children: React.ReactNode }) => {
     const [boards, setBoards] = useState<Board[]>([]);
     const [columns,setColumns]= useState<Column[]>([])
-    const [currentBoard,setCurrentBoard]= useState<Board>()
-    const [currentBoardId, setCurrentBoardId] = useState<string>("");
+    const [currentBoardIndex, setCurrentBoardIndex] = useState<number>(0);
+    const [currentBoardId, setCurrentBoardId] = useState<string>('');
     const [headerTitle, setHeaderTitle] = useState<string>('');
     const [isMoving,SetIsMoving] = useState(false)
     const [isCompleted,setIsCompleted] = useState(false)
     const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
     const [ColId,setColId] = React.useState<string>('')
     const [openedTask, setOpenedTask] = useState<{
-        id: string;title: string;
+        _id: string;title: string;
         description: string;
         columnId: string;
         subTask: Subtask[];
         } | null>(null);
 
-        const onMounted = async () => {
+        const onMountedAndUpdate = async () => {
             try {
               // Check if the user is authenticated
             const { data: { user } } = await supabase.auth.getUser()
@@ -71,7 +71,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
                     if (response.data) {
                     // Assuming the response data is an array of boards
                     setBoards(response.data[0].Boards);
-                    setColumns(response.data[0].Boards[0].columns)
+                    setColumns(response.data[0].Boards[currentBoardIndex].columns)
                     console.log('data',response.data[0].Boards);
                     } else {
                     console.error('Error fetching boards');
@@ -84,20 +84,23 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
 
 
         useEffect(() => {
-                onMounted();
-            }, []);
+                onMountedAndUpdate();
+            }, [,currentBoardIndex,isMoving]);
+
+            
             
 
     return (
         <DataContext.Provider value={{
         boards,
         setBoards,
+        currentBoardIndex,
         currentBoardId,
+        setCurrentBoardIndex,
         setCurrentBoardId,
         headerTitle,
         setHeaderTitle,
         columns,setColumns,
-        currentBoard,setCurrentBoard,
         isMoving,SetIsMoving,
         isCompleted,setIsCompleted,
         SetCurrentTaskId,currentTaskId,

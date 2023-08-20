@@ -4,32 +4,27 @@ import  { useContext, useState, useEffect } from "react";
 import styles from "../styles/EditTask.module.css";
 import { Opencontext } from "@/contexts/contextopen";
 import { DataContext } from '@/contexts/datacontext';
-import { handleSave } from "@/utils/SaveEditTask";
+// import { handleSave } from "@/utils/SaveEditTask";
 import renderSelect from "@/utils/renderselect";
 import { RenderSubTask } from "@/utils/renderSubTask";
-import { newSubtask } from "@/types";
 import { useTheme } from '@/contexts/themecontext';
-
+import supabase from "@/supabase";
+import axios from "axios";
+import { Subtasked } from "@/types";
 // Main EditTask functional component
 
-const EditTask = (props:{columnId:string,}) => {
+const EditTask = (props:{columnId:string,taskId:string,index:string}) => {
 
         // State hooks for managing subtasks and input errors
 
-const [subTasksToAdd, setSubTasksToAdd] = useState<newSubtask[]>([]);
-const [subTasksToDelete, setSubTasksToDelete] = useState<string[]>([]);
-const [subTasksToRename, setSubTasksToRename] = useState<newSubtask[]>([]);
 const { EditTask, setEditTask, setSubTasks } = useContext(Opencontext);
 const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');
-const [subTasked, setSubTasked] = useState<newSubtask[]>([]);
+const [subTasked, setSubTasked] = useState<Subtasked[]>([]);
 const [columnId, setColumnId] = useState<string>('');
 const [save, setSave] = useState<boolean>(false);
-const { currentTaskId,currentBoardId, ColId, columns, openedTask, isMoving, SetIsMoving } = useContext(DataContext);
+const { currentTaskId,currentBoardIndex, boards, columns, openedTask, isMoving, SetIsMoving } = useContext(DataContext);
 const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
-const [InitialTitle,SetInitialTitle]=useState<string>('')
-const [InitialDescription,SetInitialDescription]=useState<string>('')
-const [InitialColId,SetInitialColId]= useState<string>('')
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
 const [inputError, setInputError] = useState<boolean>(false);
 const { theme, setTheme } = useTheme();
@@ -38,16 +33,6 @@ const { theme, setTheme } = useTheme();
 useEffect(() => {
     setSelectedColumnId(props.columnId);
 }, [props.columnId]);
-
-
-
-// Reset subtask-related state hooks when save state changes
-
-useEffect(()=>{
-    setSubTasksToAdd([])
-    setSubTasksToDelete([])
-    setSubTasksToRename([])
-},[save])
 
 // Set initial column errors based on subtasks
 
@@ -61,9 +46,6 @@ useEffect(() => {
 
 useEffect(() => {
         if (openedTask) {
-            SetInitialTitle(openedTask.title)
-            SetInitialDescription(openedTask.description)
-            SetInitialColId(openedTask.columnId)
             setTaskName(openedTask.title);
             setTaskDescription(openedTask.description);
             setSubTasked(openedTask.subTask);
@@ -76,11 +58,8 @@ useEffect(() => {
         const newSubtask = {
             title: "",
             isCompleted: false,
-            taskId: currentTaskId,
-            add:true,
         };
         setSubTasked([...subTasked, newSubtask]);
-        setSubTasksToAdd([...subTasksToAdd,newSubtask])
     };
 
 // function to delete a subtask
@@ -88,46 +67,36 @@ useEffect(() => {
         const updatedSubTasks = [...subTasked];
         updatedSubTasks.splice(index, 1);
         setSubTasked(updatedSubTasks);
-    
-        if (subTaskId) {
-            setSubTasksToDelete([...subTasksToDelete, subTaskId]);
-        }
-    
-        const updatedSubTaskToRename = subTasksToRename.filter(
-            (sub) => sub.id !== subTaskId
-        );
-        setSubTasksToRename(updatedSubTaskToRename);
     };
 
 
-    // function to handle the edit of a subtask 
 
-    const handleEditSubTask = (index: number, newTitle: string, subTaskId?: string, add?: boolean) => {
-            const updatedSubTasks = [...subTasked];
-            updatedSubTasks[index].title = newTitle;
-            
-            setSubTasked(updatedSubTasks);
-        
-            if (add) {
-                const existingSubTaskIndex = subTasksToAdd.findIndex((st) => st.id === updatedSubTasks[index].id);
-                if (existingSubTaskIndex !== -1) {
-                    const updatedSubTasksToAdd = [...subTasksToAdd];
-                    updatedSubTasksToAdd[existingSubTaskIndex] = updatedSubTasks[index];
-                    setSubTasksToAdd(updatedSubTasksToAdd);
-                }
-            } else {
-                const existingSubTaskIndex = subTasksToRename.findIndex((st) => st.id === updatedSubTasks[index].id);
-                if (existingSubTaskIndex === -1) {
-                    setSubTasksToRename([...subTasksToRename, updatedSubTasks[index]]);
-                } else {
-                    const updatedSubTasksToRename = [...subTasksToRename];
-                    updatedSubTasksToRename[existingSubTaskIndex] = updatedSubTasks[index];
-                    setSubTasksToRename(updatedSubTasksToRename);
-                }
+    const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
+        e.preventDefault();
+        try{
+            const { data: { user } } = await supabase.auth.getUser()
+                    if (user) {
+                        console.log(subTasked)
+                    // User is authenticated, check if a row exists in the "User" table
+                    const response = await axios.put(
+                        `http://localhost:4000/user/${user.id}/boards/${boards[currentBoardIndex]._id}/columns/${props.columnId}/tasks/${currentTaskId}`,
+                        {
+                            title:taskName,
+                            description:taskDescription,
+                            subtask:subTasked
+                        });
+                        if(response.data){
+                            console.log('Boards add')
+                        }else{
+                            console.error("Problem to add the boards")
+                        }
+                    }
+        }catch(error){
+            console.error('message',error)
         }
-    };
-
-
+        SetIsMoving(!isMoving)
+        };
+    
 
 
     
@@ -162,7 +131,7 @@ useEffect(() => {
                     }else if (newColumnErrors.some((error) => error)){
                         return ;
                     }else{
-                        await handleSave(taskName,InitialTitle,taskDescription,InitialDescription,subTasksToAdd,subTasksToRename,subTasksToDelete,currentBoardId,selectedColumnId,props.columnId,currentTaskId);
+                        handleSubmit(e);
                         setSave(!save);
                         setEditTask(false);
                     }
@@ -204,7 +173,7 @@ useEffect(() => {
                 SubTasks
                 </label>
                 
-                <RenderSubTask subTasks={subTasked} handleEditSubTask={handleEditSubTask} handleDeleteSubtask={handleDeleteSubtask}  columnErrors={columnErrors}/>
+                <RenderSubTask subTasks={columns[props.index].tasks} handleEditSubTask={handleEditSubTask} handleDeleteSubtask={handleDeleteSubtask}  columnErrors={columnErrors}/>
         
                 <button className={styles.EditTaskAddButton} type='button' onClick={handleAddSubtask}>Add Subtask</button>
                 <label className={`${styles.EditTaskLabel} ${

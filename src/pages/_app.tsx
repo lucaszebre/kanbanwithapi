@@ -10,12 +10,20 @@ import { ThemeProvidered } from '@/contexts/themecontext'
 import Layout from '@/components/Layout'
 import { ThemeProvider } from '@mui/material/styles';
 import { lightTheme, darkTheme } from '@/utils/theme';
-
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
 
 function App({ Component, pageProps }: AppProps) {
 
+  const queryClient = new QueryClient()
 
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvidered>
     <ThemeProvider theme={ lightTheme}>
       <DataProvider>
@@ -32,6 +40,7 @@ function App({ Component, pageProps }: AppProps) {
       </DataProvider>
     </ThemeProvider>
     </ThemeProvidered>
+    </QueryClientProvider>
   )
 }
 

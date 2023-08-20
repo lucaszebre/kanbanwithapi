@@ -104,7 +104,7 @@ export interface Board {
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }
     export interface Task {
-        id: string;
+        _id: string;
         title: string;
         description: string;
         columnId: string;
@@ -112,20 +112,18 @@ export interface Board {
     }
     
     export interface Subtask {
-        id?: string;
+        _id: string;
         title: string;
         isCompleted: boolean;
         taskId: string;
     }
 
-
-export    type newSubtask= {
-        id?: string;
-        title: string;
-        isCompleted: boolean;
-        taskId: any;
-        add?: boolean;
+    export interface Subtasked{
+        title:string;
+        isCompleted:boolean
     }
+
+
 
   export   interface ListTaskProps {
         tasks: Task[];

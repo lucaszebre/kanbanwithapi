@@ -26,7 +26,7 @@ const ModalTask = (props:{
     const [openModalAbout, setOpenModalAbout] = React.useState(false);// state to toggle th displat of the ModalAbout
 
     // state to manage the global Data 
-    const { currentBoardId,isCompleted,setIsCompleted,columns,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving } = useContext(DataContext);
+    const { setCurrentBoardId,currentBoardId,isCompleted,boards,columns,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving } = useContext(DataContext);
     // state to know wich column id we are currently 
     const [selectedColumnId, setSelectedColumnId] = React.useState(props.columnId);
 
@@ -39,8 +39,9 @@ const ModalTask = (props:{
     React.useEffect(()=>{  // when the current board id change we set defaultly the col id to the first column 
         if(columns[0]){
             setColId(columns[0]._id)
+            setCurrentBoardId(boards[0]._id)
         }
-    },[currentBoardId])
+    },[])
 
     React.useEffect(() => {  // when the column id change we change also the selectedColumnid 
         setSelectedColumnId(props.columnId);
@@ -50,7 +51,7 @@ const ModalTask = (props:{
     return (
         <>
         <EditTask columnId={props.columnId}   />
-        <DeleteThisTask columnId={props.columnId} TaskTitle={props.title}  TaskId={props._id} />
+        <DeleteThisTask columnId={ColId} TaskTitle={props.title}  TaskId={props._id} />
             <div
                 className={styles.ModalTaskWrapper}
                 style={{

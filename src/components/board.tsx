@@ -12,14 +12,14 @@ import { useTheme } from '@/contexts/themecontext';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardindex, boards, columns, setColumns, currentBoard,isMoving } = useContext(DataContext); // state to manage the global data 
+    const {currentBoardIndex, boards, columns, setColumns,isMoving } = useContext(DataContext); // state to manage the global data 
     const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
     const { theme, setTheme } = useTheme();
 
-    useEffect(() => {
-        
-    }, [currentBoardindex,isMoving, setColumns]);  // if the currentBoardId change we need to get the current columns of the board selected in the firestore
+    // useEffect(() => {
+    //     setColumns(boards[currentBoardIndex].columns)
+    // }, [currentBoardIndex,boards,setColumns]);  // if the currentBoardId change we need to get the current columns of the board selected in the firestore
 
     useEffect(() => {
         // Check if the window object is available
@@ -43,7 +43,7 @@ const Board = () => {
     }, [windowWidth, setIsSidebarOpen]);
     
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (columns.length > 0) {
+        if (columns && columns.length > 0) {
             return (
                 <>
                     {columns.map((doc, index) => (
@@ -52,8 +52,8 @@ const Board = () => {
                             title={doc.name}
                             NbList={index}
                             tasks={doc.tasks}
-                            data={currentBoard}
-                            columnId={doc.id}
+                            data={boards[currentBoardIndex]}
+                            columnId={doc._id}
                         />
                     ))}
                     <div

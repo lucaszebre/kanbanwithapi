@@ -16,12 +16,12 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId }) =>
             key={index}
             title={task.title}
             description={task.description}
-            id={task.id}
+            id={task._id}
             columnId={columnId}
             subtask={task.subtasks}
             onClick={() => {
                 setOpenedTask({
-                    id: task.id,
+                    _id: task._id,
                     title: task.title,
                     description: task.description,
                     columnId: columnId,

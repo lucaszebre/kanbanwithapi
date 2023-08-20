@@ -77,6 +77,7 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
     }catch(error){
         console.error('message',error)
     }
+    SetIsMoving(!isMoving)
     resetForm();
     };
 
