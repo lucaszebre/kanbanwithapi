@@ -1,4 +1,4 @@
-import  {useState, useEffect, useContext } from 'react';
+import  {useState, useEffect, useContext, Key } from 'react';
 import ListTask from './listTask';
 import Sidebar from './sideBar';
 import EmptyBoard from './emptyBoard';
@@ -9,17 +9,16 @@ import { DataContext } from '@/contexts/datacontext';
 import { Opencontext } from '@/contexts/contextopen';  // get the context to toggle the board 
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/contexts/themecontext';
-
+import { useQuery } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
+import { Task } from '@/types';
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardIndex, boards, columns, setColumns,isMoving } = useContext(DataContext); // state to manage the global data 
+    const {currentBoardIndex } = useContext(DataContext); // state to manage the global data 
     const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
-    const { theme, setTheme } = useTheme();
+    const { theme } = useTheme();
 
-    // useEffect(() => {
-    //     setColumns(boards[currentBoardIndex].columns)
-    // }, [currentBoardIndex,boards,setColumns]);  // if the currentBoardId change we need to get the current columns of the board selected in the firestore
 
     useEffect(() => {
         // Check if the window object is available
@@ -42,17 +41,31 @@ const Board = () => {
         }
     }, [windowWidth, setIsSidebarOpen]);
     
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+      });
+      if(isLoading){
+        return <p>Loading...</p>
+      }
+      if(isError){
+      return  <p>
+          Something went wrongs
+        </p>
+      }
+      console.log(data)
+    
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (columns && columns.length > 0) {
+        if (data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
             return (
                 <>
-                    {columns.map((doc, index) => (
+                    {data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
                         <ListTask
                             key={index}
                             title={doc.name}
                             NbList={index}
                             tasks={doc.tasks}
-                            data={boards[currentBoardIndex]}
+                            data={data.Boards[currentBoardIndex]}
                             columnId={doc._id}
                         />
                     ))}
@@ -65,7 +78,7 @@ const Board = () => {
                         
                         className={`${styles.AddColumn} ${
                             theme === 'light' ? styles.light : styles.dark
-                          }`}
+                            }`}
                     >
                         + New Columns
                     </div>
@@ -75,7 +88,7 @@ const Board = () => {
             return <EmptyBoard />;
         }
     }
-
+   
     return (
         <div className={styles.AppContainer}>
             <div className={styles.HeaderBoard}>

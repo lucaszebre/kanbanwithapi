@@ -11,9 +11,11 @@ import { useTheme } from '@/contexts/themecontext';
 import supabase from "@/supabase";
 import axios from "axios";
 import { Subtasked } from "@/types";
+import { fetchBoards } from "@/utils/fetchBoard";
 // Main EditTask functional component
+import { useQuery } from 'react-query';
 
-const EditTask = (props:{columnId:string,taskId:string,index:string}) => {
+const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
 
         // State hooks for managing subtasks and input errors
 
@@ -97,7 +99,18 @@ useEffect(() => {
         SetIsMoving(!isMoving)
         };
     
-
+        const {data,isLoading,isError} = useQuery({
+            queryKey:['Boards'],
+            queryFn:()=>fetchBoards(),
+          });
+          if(isLoading){
+            return <p>Loading...</p>
+          }
+          if(isError){
+            return <p>
+              Something went wrongs
+            </p>
+          }
 
     
  // Render the EditTask component

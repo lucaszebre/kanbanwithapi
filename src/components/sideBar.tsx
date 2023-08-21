@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { Key, useContext, useEffect } from 'react';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { Opencontext } from '@/contexts/contextopen';
 import styles from '@/styles/Sidebar.module.css';
@@ -10,7 +10,6 @@ import { Board } from '@/types';
 import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
-
 
 const Sidebar = () => {
   
@@ -41,20 +40,20 @@ const Sidebar = () => {
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
     };
-    
+
     const {data,isLoading,isError} = useQuery({
       queryKey:['Boards'],
       queryFn:()=>fetchBoards(),
     });
     if(isLoading){
-      <p>Loading...</p>
+      return <p>Loading...</p>
     }
     if(isError){
-      <p>
+      return <p>
         Something went wrongs
       </p>
     }
- console.log(data?.data)
+ console.log(data)
   return (
     <div className={`${styles.SidebarContainer} ${
       theme === 'light' ? styles.light : styles.dark
@@ -64,9 +63,9 @@ const Sidebar = () => {
           <h1 
           className={`${styles.SideBarTitle} ${
             theme === 'light' ? styles.light : styles.dark
-          }`}>ALL BOARDS({boards.length})</h1>
+          }`}>ALL BOARDS({data.Boards.length})</h1>
         
-          {boards.map((board,index) => (
+          {data.Boards.map((board: { name: string; _id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
             key={index} 

@@ -11,7 +11,7 @@ const AllBoard = () => {
 
     function GetBoards(){ // function to get All the board présent in firestore of the current user 
         for (const board of boards){
-            setAllBoard([...AllBoard, {id:board.id,name:board.name}])  
+            setAllBoard([...AllBoard, {id:board._id,name:board.name}])  
         }
     }
     

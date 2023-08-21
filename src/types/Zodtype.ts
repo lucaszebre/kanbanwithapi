@@ -35,3 +35,36 @@ export const UserSchema = z.object({
 
 
 
+type Subtask = {
+  title: string;
+  isCompleted: boolean;
+  _id: string;
+};
+
+type Task = {
+  title: string;
+  description: string;
+  status: string;
+  subtasks: Subtask[];
+  _id: string;
+};
+
+type Column = {
+  name: string;
+  tasks: Task[];
+  _id: string;
+};
+
+export type Board = {
+  name: string;
+  columns: Column[];
+  _id: string;
+};
+
+type User = {
+  _id: string;
+  userId: string;
+  Boards: Board[];
+  __v: number;
+};
+
