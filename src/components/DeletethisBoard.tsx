@@ -5,15 +5,13 @@ import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
 import supabase from '@/supabase';
 import axios from 'axios';
+import { useMutation,useQueryClient,useQuery } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
+
 
 const DeleteThisBoard = () => {
     const { DeleteBlock, setDeleteBlock } = useContext(Opencontext); // state to toggle the display of the components
-    const { boards,
-        setBoards,
-        currentBoardId,
-        setCurrentBoardId,
-        SetIsMoving,isMoving,
-        headerTitle } = useContext(DataContext);  // state to manage the global data 
+    const { currentBoardIndex,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
 
     const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
@@ -30,15 +28,36 @@ const DeleteThisBoard = () => {
                     } else {
                     console.error('Error fetching boards');
                     }
-            setBoards(prevBoards => prevBoards.filter(board => board._id !== boardId));
-            SetIsMoving(!isMoving)
-            setCurrentBoardId(boards[0]._id)
+            setCurrentBoardIndex(0)
             }
         } catch (error) {
             console.error('Error while deleting the board:', error);
         }
     };
 
+    const queryClient = useQueryClient()
+    const mutation = useMutation(
+        ( boardId: string) =>
+        deleteBoard(boardId),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['Boards']);
+        },
+        }
+    );
+
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+      });
+      if(isLoading){
+        return <p>Loading...</p>
+      }
+      if(isError){
+        return <p>
+          Something went wrongs
+        </p>
+      }
 
     return (
         <div className={styles.DeleteThisBoardWrapper} style={{ display: DeleteBlock ? 'flex' : 'none' }}
@@ -51,15 +70,14 @@ const DeleteThisBoard = () => {
                 }`}>
                 <h1 className={styles.DeleteThisBoardTitle}>Delete this board?</h1>
                 <p className={styles.DeleteThisBoardText}>
-                    Are you sure you want to delete the ‘<a >{headerTitle}</a>’ board? This action will remove all columns and tasks
+                    Are you sure you want to delete the ‘<a >{data.Boards[currentBoardIndex].name}</a>’ board? This action will remove all columns and tasks
                     and cannot be reversed.
                 </p>
                 <div className={styles.DeleteThisBoardButtons}>
                     <button
                         onClick={() => {
-                            deleteBoard(currentBoardId);
+                            mutation.mutate(data.Boards[currentBoardIndex]._id)
                             setDeleteBlock(false);
-                            SetIsMoving(!isMoving)
                         }}
                         className={styles.DeleteButton}
                     >

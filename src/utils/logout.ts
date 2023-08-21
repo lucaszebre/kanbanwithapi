@@ -4,14 +4,12 @@ import { useRouter } from 'next/router';
 
 export const Logout = async () =>{
     try{
-        const response = await axios.post(`https://kanbantask.onrender.com/auth/logout`);    
         let { error } = await supabase.auth.signOut()
-        
-        if(response){
-            console.log('Log out sucessfully')
-        }else{
-            console.error('Error Logout')
-        }
+       if(error){
+        console.error(error)
+       }else{
+        console.log("sucessfully logout")
+       }
     }catch(error){
         console.error(error)
     }

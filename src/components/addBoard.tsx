@@ -5,9 +5,8 @@ import { DataContext } from '@/contexts/datacontext'; // get the context to mana
 import { useContext } from "react";
 import { ColumnsRenderer } from './addTask/rendercolumn';  // get the render columns 
 import { useTheme } from '@/contexts/themecontext';
-import supabase from '@/supabase';
-import axios from 'axios';
-
+import { useMutation,useQueryClient } from 'react-query';
+import { addBoard } from '@/utils/addBoard';
 
 const AddBoard = () => {
     const { setBoards,SetIsMoving,isMoving } = useContext(DataContext); // import the state necessary to set the data and update it 
@@ -32,19 +31,18 @@ const resetForm = () => {  // function to reset the form
     setAddBoard(false);
     };
 
-    function createColumnsArray(columnNames:string[]) {
-        const columnsArray = [];
-      
-        for (const columnName of columnNames) {
-          const column = {
-            name: columnName,
-            tasks: []
-          };
-          columnsArray.push(column);
-        }
-      
-        return columnsArray;
-      }
+    
+
+        const queryClient = useQueryClient()
+        const mutation = useMutation(
+            (formData: { boardName: string; columns: string[] }) =>
+            addBoard(formData.boardName, formData.columns),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards']);
+            },
+            }
+        );
 
 const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
     e.preventDefault();
@@ -58,25 +56,7 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
         } else if (newColumnErrors.some(error => error)) {
         return;
     }
-    try{
-        const { data: { user } } = await supabase.auth.getUser()
-                if (user) {
-                // User is authenticated, check if a row exists in the "User" table
-                const response = await axios.post(
-                    `http://localhost:4000/user/${user.id}`,
-                    {
-                        name:boardName,
-                        columns:createColumnsArray(columnNames)
-                    });
-                    if(response.data){
-                        console.log('Boards add')
-                    }else{
-                        console.error("Problem to add the boards")
-                    }
-                }
-    }catch(error){
-        console.error('message',error)
-    }
+    mutation.mutate({boardName,columns:columnNames})
     SetIsMoving(!isMoving)
     resetForm();
     };
@@ -102,9 +82,7 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
         newColumns.splice(index, 1);
         setColumnNames(newColumns);
     };
-
-    
-
+        
         //*************************************************************** */
     
     return (
