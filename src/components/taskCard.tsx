@@ -7,10 +7,10 @@ import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
 
-const TaskCard = (props: {title: string;description: string;id: string;subtask: Subtask[];columnId:string,onClick:() => void}) => {
+const TaskCard = (props: {index:number,title: string;description: string;id: string;subtask: Subtask[];columnId:string,onClick:() => void,columnIndex:number}) => {
 
   const { SubTasks, setSubTasks } = useContext(Opencontext); // state to be able to toggle the subTaskk
-  const {currentTaskId,SetCurrentTaskId,setColId,openedTask} = useContext(DataContext) // state to able to manage the Global Data 
+  const {currentTaskId,SetCurrentTaskId,setColId,openedTask,setCurrentColumnIndex} = useContext(DataContext) // state to able to manage the Global Data 
   const { theme, setTheme } = useTheme();
 
   function Iscompleted(){  // function to get the amout of subtask completed 
@@ -34,6 +34,7 @@ const TaskCard = (props: {title: string;description: string;id: string;subtask: 
         description={openedTask.description}
         subTask={openedTask.subTask}
         Iscompleted={()=>Iscompleted()}
+        index={props.index}
         /> }
 
     <div 
@@ -46,6 +47,7 @@ const TaskCard = (props: {title: string;description: string;id: string;subtask: 
         props.onClick();
         SetCurrentTaskId(props.id)
         setColId(props.columnId)
+        setCurrentColumnIndex(props.columnIndex)
       }
     }
     >

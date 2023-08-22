@@ -6,9 +6,9 @@ import { DataContext } from '@/contexts/datacontext';
 import { useContext } from 'react';
 
 
-const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId }) => {
+const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId,columnIndex }) => {
 
-    const { setOpenedTask} = useContext(DataContext) // state to toggle the display of the  modalTask 
+    const { setOpenedTask,setCurrentColumnIndex} = useContext(DataContext) // state to toggle the display of the  modalTask 
 
     const RenderTask = (): React.ReactNode[] => {  // functioon to render the all the tasks 
         return tasks?.map((task,index) => (
@@ -19,6 +19,8 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId }) =>
             id={task._id}
             columnId={columnId}
             subtask={task.subtasks}
+            index={index}
+            columnIndex={columnIndex}
             onClick={() => {
                 setOpenedTask({
                     _id: task._id,
@@ -27,6 +29,7 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId }) =>
                     columnId: columnId,
                     subTask: task.subtasks,
                 });
+                setCurrentColumnIndex(columnIndex)
                 }}
         />
         ));

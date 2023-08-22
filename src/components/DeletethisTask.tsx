@@ -4,18 +4,23 @@ import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { deleteTask } from '@/utils/deleteTask'; // import the function to delete the task in the firestore 
 import { useTheme } from '@/contexts/themecontext';
+import { useMutation,useQueryClient,useQuery } from 'react-query';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
-
-const { theme, setTheme } = useTheme();
-
+const { theme } = useTheme();
 const { DeleteTaskBlock, setDeleteTaskBlock } = useContext(Opencontext); // state to toggle the display of the components 
-const {
-    currentBoardId,
-    SetIsMoving,
-    isMoving } = useContext(DataContext);  // state to manage the global data 
-
+const {currentBoardId} = useContext(DataContext);  // state to manage the global data 
+const queryClient = useQueryClient()
+    const mutation = useMutation(
+        (formData: {boardId:string,columnId:string,taskId:string}) =>
+        deleteTask(formData.boardId,formData.columnId,formData.taskId),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['Boards']);
+        },
+        }
+    );
     return (
         <div className={styles.DeleteThisTaskWrapper} style={{ display: DeleteTaskBlock ? 'flex' : 'none' }}
             onClick={(e) => {
@@ -35,8 +40,7 @@ const {
                 <div className={styles.DeleteThisTaskButtons}>
                     <button
                         onClick={() => {
-                            deleteTask(currentBoardId,props.columnId,props.TaskId);
-                            SetIsMoving(!isMoving);
+                            mutation.mutate({boardId:currentBoardId,columnId:props.columnId,taskId:props.TaskId})
                             setDeleteTaskBlock(false);
                         }}
                         className={styles.DeleteButton}

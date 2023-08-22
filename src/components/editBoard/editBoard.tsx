@@ -2,50 +2,54 @@ import styles from "../../styles/EditBoard.module.css";
 import { Opencontext } from "@/contexts/contextopen";
 import { useState,useContext,useEffect } from "react";
 import { DataContext } from '@/contexts/datacontext';
-import { nanoid } from "@reduxjs/toolkit";
 import BoardColumn from "../boardColumn";
-import { Column,ColumnData } from "@/types";
+import { Column } from "@/types/Zodtype";
 import { handleSaveChanges } from "./handleSave";
 import { useTheme } from '@/contexts/themecontext';
+import { useQuery,useMutation,useQueryClient } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
+import {  ColumnData } from "@/types";
 
 const EditBoard = () => {
 
 const { EditBoard, setEditBoard } = useContext(Opencontext); // state to toggle the display of components
-const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know the column to add in the database
-const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]);  // state to know the column to delete in the database
-const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]);// state to know the column to rename in the database
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database
 const [Header,setHeader]= useState<string>(''); // state to know the current boardname selected
 const [Save,SetSave]= useState<boolean>(false) // state to toggle the disabled thhe button save 
-const { currentBoardId,columns,headerTitle,setHeaderTitle,isMoving,SetIsMoving } = useContext(DataContext); // state to manage the global data
+const { currentBoardIndex,SetIsMoving,isMoving} = useContext(DataContext); // state to manage the global data
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to handle if one input is empty 
 const [inputError, setInputError] = useState<boolean>(false); // state to handle if the boardname is empty 
-const { theme, setTheme } = useTheme();
+const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know the column to add in the database
+const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]);  // state to know the column to delete in the database
+const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]);// state to know the column to rename in the database
+const { theme } = useTheme();
+
+
+
+const {data,isLoading,isError} = useQuery({
+    queryKey:['Boards'],
+    queryFn:()=>fetchBoards(),
+    });
+    
+useEffect(()=>{
+    setColumnstoAdd([])
+    setColumnsToRename([])
+    setColumnsToDelete([])
+},[Save])
 
     useEffect(() => {
-        setCopyBoardColumns(columns);
-        setHeader(headerTitle)
-    }, [EditBoard,isMoving]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
-
-    useEffect(()=>{
-        setColumnstoAdd([])
-        setColumnsToRename([])
-        setColumnsToDelete([])
-    },[Save])   // everytime to save the edit to reset the state of columns to add , rename , delete
-
-    useEffect(() => {
-        const initialColumnErrors = columns.map((column) => column.name.trim() === "");
-        setColumnErrors(initialColumnErrors);
-    }, [EditBoard]); // get the initial columns errror 
-
-
+        if(data && data.Boards[currentBoardIndex].columns){
+            setCopyBoardColumns(data.Boards[currentBoardIndex].columns);
+            setHeader(data.Boards[currentBoardIndex].name)
+            const initialColumnErrors = data.Boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
+            setColumnErrors(initialColumnErrors);}
+    }, [currentBoardIndex, data, isMoving]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
 
 
     const handleAddColumn = () => { // function to add column 
         const newColumn = {
-        id: nanoid(), 
+        _id:'',
         name: "",
-        boardId: currentBoardId,
         tasks: [],
         add:true
         };
@@ -61,7 +65,7 @@ const { theme, setTheme } = useTheme();
     
         // Filter out the deleted column from columnsToRename
         const updatedColumnsToRename = columnsToRename.filter(
-            (column) => column.id !== columnId
+            (column) => column._id !== columnId
         );
         setColumnsToRename(updatedColumnsToRename);
     
@@ -82,14 +86,14 @@ const { theme, setTheme } = useTheme();
         setColumnErrors(updatedColumnErrors);
     
         if (add) {
-            const existingColumnIndex = columnstoAdd.findIndex((c) => c.id === updatedColumns[index].id);
+            const existingColumnIndex = columnstoAdd.findIndex((c) => c._id === updatedColumns[index]._id);
             if (existingColumnIndex !== -1) {
                 const updatedColumnsToAdd = [...columnstoAdd];
                 updatedColumnsToAdd[existingColumnIndex] = updatedColumns[index];
                 setColumnstoAdd(updatedColumnsToAdd);
             }
         } else {
-            const existingColumnIndex = columnsToRename.findIndex((c) => c.id === updatedColumns[index].id);
+            const existingColumnIndex = columnsToRename.findIndex((c) => c._id === updatedColumns[index]._id);
             if (existingColumnIndex === -1) {
                 setColumnsToRename([...columnsToRename, updatedColumns[index]]);
             } else {
@@ -107,18 +111,48 @@ function renderColumns() {
             key={index}
             title={column.name}
             onChange={(updatedTitle: string) =>handleEditColumn(index,updatedTitle,column.add)}
-            Remove={ ()=> handleDeleteColumn(index,column.id) }
+            Remove={ ()=> handleDeleteColumn(index,column._id) }
             error={columnErrors[index] || false}
         />
     ));
 }
 
+        const queryClient = useQueryClient()
+        const mutation = useMutation(
+            (formData: { columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:Column[],currentBoardId:string,Header:string,headerTitle:string }) =>
+            handleSaveChanges(formData.columnsToDelete, formData.columnsToRename,formData.columnstoAdd,formData.currentBoardId,formData.Header,formData.headerTitle),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards']);
+            },
+            }
+        );
+        
+        const mutationed = useMutation(
+            () =>
+            fetchBoards(),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards']);
+            },
+            }
+        );
+
+    if(isLoading){
+        return <p>Loading...</p>
+    }
+    if(isError){
+        return <p>
+        Something went wrongs
+        </p>
+    }
     return (
     <div className={styles.EditBoardWrapper}
         onClick={(e) => {
             if (e.target === e.currentTarget) {
-            setEditBoard(false);  
-            SetIsMoving(!isMoving)
+            SetIsMoving(isMoving => !isMoving);
+            mutationed.mutate();
+            setEditBoard(false);
             }}}
         style={{
             display: EditBoard ? "flex" : "none", // toggle the display 
@@ -141,10 +175,10 @@ function renderColumns() {
                     }else if (newColumnErrors.some((error) => error)) {
                         return;
                     }else{
-                        await handleSaveChanges(columnsToDelete,columnsToRename,columnstoAdd,currentBoardId,Header,headerTitle);
+                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.Boards[currentBoardIndex]._id,Header,headerTitle:data.Boards[currentBoardIndex].name})
                         setEditBoard(false);
-                        SetIsMoving(!isMoving);
                         SetSave(!Save);
+                        SetIsMoving(isMoving=>!isMoving)
                     }
                     
                     

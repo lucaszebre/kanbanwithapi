@@ -24,6 +24,7 @@ const Sidebar = () => {
     setCurrentBoardIndex,
     setCurrentBoardId,
     setHeaderTitle,
+    SetIsMoving
     } = useContext(DataContext);
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +40,7 @@ const Sidebar = () => {
     setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
+    SetIsMoving(prev=>!prev)
     };
 
     const {data,isLoading,isError} = useQuery({
@@ -53,7 +55,6 @@ const Sidebar = () => {
         Something went wrongs
       </p>
     }
- console.log(data)
   return (
     <div className={`${styles.SidebarContainer} ${
       theme === 'light' ? styles.light : styles.dark

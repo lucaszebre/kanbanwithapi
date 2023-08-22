@@ -1,35 +1,49 @@
 // Import necessary hooks and components from React and your own libraries
-
 import  { useContext, useState, useEffect } from "react";
 import styles from "../styles/EditTask.module.css";
 import { Opencontext } from "@/contexts/contextopen";
 import { DataContext } from '@/contexts/datacontext';
-// import { handleSave } from "@/utils/SaveEditTask";
 import renderSelect from "@/utils/renderselect";
 import { RenderSubTask } from "@/utils/renderSubTask";
 import { useTheme } from '@/contexts/themecontext';
-import supabase from "@/supabase";
-import axios from "axios";
-import { Subtasked } from "@/types";
+import { Subtask } from "@/types/Zodtype";
 import { fetchBoards } from "@/utils/fetchBoard";
 // Main EditTask functional component
-import { useQuery } from 'react-query';
+import { useMutation,useQueryClient,useQuery } from 'react-query';
+import { editTask } from "@/utils/editTask";
+import { getTask } from "@/utils/getTask";
 
-const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
+const EditTask = (props:{columnId:string,taskId:string,index:number,indexColumn:string}) => {
+    const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
 
-        // State hooks for managing subtasks and input errors
+    const { data: task, isLoading, isError } = useQuery(
+        ['Task',currentBoardId , props.columnId, props.taskId], // Use these parameters as the query key
+        () => getTask(currentBoardId, props.columnId, props.taskId)
+    );
+    
+        
+    const {data} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+      });   // State hooks for managing subtasks and input errors
 
 const { EditTask, setEditTask, setSubTasks } = useContext(Opencontext);
 const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');
-const [subTasked, setSubTasked] = useState<Subtasked[]>([]);
-const [columnId, setColumnId] = useState<string>('');
+const [subTasked, setSubTasked] = useState<Subtask[]>([]);
 const [save, setSave] = useState<boolean>(false);
-const { currentTaskId,currentBoardIndex, boards, columns, openedTask, isMoving, SetIsMoving } = useContext(DataContext);
 const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
 const [inputError, setInputError] = useState<boolean>(false);
 const { theme, setTheme } = useTheme();
+
+useEffect(()=>{
+    if(task){
+        setTaskName(task.title)
+        setTaskDescription(task.description)
+        setSubTasked(task.subtasks)
+    }
+},[task])
 
 // Set the selected column ID whenever the prop changes
 useEffect(() => {
@@ -46,24 +60,27 @@ useEffect(() => {
 
 // Update task states when EditTask or openedTask changes
 
-useEffect(() => {
-        if (openedTask) {
-            setTaskName(openedTask.title);
-            setTaskDescription(openedTask.description);
-            setSubTasked(openedTask.subTask);
-            setColumnId(openedTask.columnId);
-        }
-    }, [EditTask, openedTask]);
 
+      
+    
 // function Add a subtask 
     const handleAddSubtask = () => {
         const newSubtask = {
+            _id:"",
             title: "",
             isCompleted: false,
+            boardId:'',
+            columnId:'',
+            taskId:''
         };
         setSubTasked([...subTasked, newSubtask]);
     };
-
+    const handleEditSubTask = (index: number, newTitle: string, subTaskId?: string, add?: boolean) => {
+        const updatedSubTasks = [...subTasked];
+        updatedSubTasks[index].title = newTitle;
+        
+        setSubTasked(updatedSubTasks);
+    }
 // function to delete a subtask
     const handleDeleteSubtask = (index: number, subTaskId?: string) => {
         const updatedSubTasks = [...subTasked];
@@ -71,48 +88,36 @@ useEffect(() => {
         setSubTasked(updatedSubTasks);
     };
 
-
+    const queryClient = useQueryClient()
+    const mutation = useMutation(
+        (formData: {boardId:string,columnId:string,taskId:string,taskName:string,taskDescription:string,subTasked:Subtask[] }) =>
+        editTask(formData.boardId, formData.columnId,formData.taskId,formData.taskName,formData.taskDescription,formData.subTasked),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['Boards']);
+        },
+        }
+    );
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
-        try{
-            const { data: { user } } = await supabase.auth.getUser()
-                    if (user) {
-                        console.log(subTasked)
-                    // User is authenticated, check if a row exists in the "User" table
-                    const response = await axios.put(
-                        `http://localhost:4000/user/${user.id}/boards/${boards[currentBoardIndex]._id}/columns/${props.columnId}/tasks/${currentTaskId}`,
-                        {
-                            title:taskName,
-                            description:taskDescription,
-                            subtask:subTasked
-                        });
-                        if(response.data){
-                            console.log('Boards add')
-                        }else{
-                            console.error("Problem to add the boards")
-                        }
-                    }
-        }catch(error){
-            console.error('message',error)
+        if(data){
+            mutation.mutate({boardId:data.Boards[currentBoardIndex]._id,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,taskId:data.Boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index]._id,taskName,taskDescription,subTasked})
         }
-        SetIsMoving(!isMoving)
         };
-    
-        const {data,isLoading,isError} = useQuery({
-            queryKey:['Boards'],
-            queryFn:()=>fetchBoards(),
-          });
-          if(isLoading){
-            return <p>Loading...</p>
-          }
-          if(isError){
-            return <p>
-              Something went wrongs
-            </p>
-          }
+        
 
-    
+
+            if(isLoading){
+                return <p>Loading...</p>
+            }
+            if(isError){
+                return <p>
+                Something went wrongs
+                </p>
+            }   
+
+            
  // Render the EditTask component
     return (
         <div className={styles.EditTaskWrapper}
@@ -121,11 +126,8 @@ useEffect(() => {
         }}
         onClick={async(e) => {
             if (e.target === e.currentTarget) {
-                
-                
             setEditTask(false);
-            SetIsMoving(!isMoving)}
-            }}
+            }}}
         
         >
             <div 
@@ -186,7 +188,7 @@ useEffect(() => {
                 SubTasks
                 </label>
                 
-                <RenderSubTask subTasks={columns[props.index].tasks} handleEditSubTask={handleEditSubTask} handleDeleteSubtask={handleDeleteSubtask}  columnErrors={columnErrors}/>
+                <RenderSubTask subTasks={subTasked} handleEditSubTask={handleEditSubTask} handleDeleteSubtask={handleDeleteSubtask}  columnErrors={columnErrors}/>
         
                 <button className={styles.EditTaskAddButton} type='button' onClick={handleAddSubtask}>Add Subtask</button>
                 <label className={`${styles.EditTaskLabel} ${
@@ -202,7 +204,7 @@ useEffect(() => {
                             theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        {renderSelect (columns)}
+                        {data && renderSelect (data.Boards[currentBoardIndex].columns)}
                     </select>
             <button className={styles.EditTaskSaveButton}  
             type='submit'

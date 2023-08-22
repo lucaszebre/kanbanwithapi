@@ -19,6 +19,7 @@ const ModalTask = (props:{
     description: string;
     columnId: string;
     subTask : Subtask[]
+    index:number
     Iscompleted:()=>number
 }) => {
     // state 
@@ -50,7 +51,7 @@ const ModalTask = (props:{
     
     return (
         <>
-        <EditTask columnId={props.columnId}   />
+        <EditTask columnId={props.columnId} taskId={props._id} index={props.index}  />
         <DeleteThisTask columnId={ColId} TaskTitle={props.title}  TaskId={props._id} />
             <div
                 className={styles.ModalTaskWrapper}

@@ -10,19 +10,32 @@ import { useRouter } from 'next/router';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { useTheme } from '@/contexts/themecontext';
 import { Logout } from '@/utils/logout';
+import { useQuery } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
 
 export default function Header() {
     // state to toggle the display of the  different components to decide to click on 
     const { setAddTask, setIsOpenModal, isOpenModal, isChanged } = useContext(Opencontext);
     // state to get the current headerTitle 
-    const {headerTitle,} = useContext(DataContext);
+    const {currentBoardIndex} = useContext(DataContext);
 
     const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
 
     const { theme, setTheme } = useTheme();
 
     const Router = useRouter()
-  
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+      });
+      if(isLoading){
+        return <p>Loading...</p>
+      }
+      if(isError){
+        return <p>
+          Something went wrongs
+        </p>
+      }
 
     return (
         <>
@@ -46,7 +59,7 @@ export default function Header() {
                     <h1 
                     className={`${styles.HeaderTitle} ${
                         theme === 'light' ? styles.light : styles.dark
-                        }`}>{headerTitle}</h1>
+                        }`}>{data.Boards[currentBoardIndex].name}</h1>
                     <div className={styles.HeaderBlock1}>
                     <button
                         onClick={() => {
@@ -89,7 +102,7 @@ export default function Header() {
                     width={56}
                     height={56}
                     />
-                    <h1 className={styles.HeaderMobileTitle}>{headerTitle}</h1>
+                    <h1 className={styles.HeaderMobileTitle}>{data.Boards[currentBoardIndex].name}</h1>
                     <Image
                     src="/assets/icon-chevron-down.svg"
                     alt="chevron-up"

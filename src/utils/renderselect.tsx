@@ -1,4 +1,4 @@
-import { Column } from '@/types/index'
+import { Column } from '@/types/Zodtype'
 const renderSelect = (columns:Column[]) => {
     return columns?.map((item, index) => {
         return (

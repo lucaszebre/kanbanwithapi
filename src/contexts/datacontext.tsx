@@ -16,7 +16,9 @@ type DataContextType = {
     boards: Board[];
     setBoards: React.Dispatch<React.SetStateAction<Board[] >>
     currentBoardIndex: number;
+    currentColumnIndex: number;
     currentBoardId: string;
+    setCurrentColumnIndex: (boardId: number) => void;
     setCurrentBoardIndex: (boardId: number) => void;
     setCurrentBoardId: (boardId:string) => void;
     headerTitle: string;
@@ -42,21 +44,31 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
-    const [boards, setBoards] = useState<Board[]>([]);
-    const [columns,setColumns]= useState<Column[]>([])
-    const [currentBoardIndex, setCurrentBoardIndex] = useState<number>(0);
-    const [currentBoardId, setCurrentBoardId] = useState<string>('');
-    const [headerTitle, setHeaderTitle] = useState<string>('');
-    const [isMoving,SetIsMoving] = useState(false)
-    const [isCompleted,setIsCompleted] = useState(false)
-    const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
-    const [ColId,setColId] = React.useState<string>('')
-    const [openedTask, setOpenedTask] = useState<{
-        _id: string;title: string;
-        description: string;
-        columnId: string;
-        subTask: Subtask[];
-        } | null>(null);
+        const [boards, setBoards] = useState<Board[]>([]);
+        const [columns,setColumns]= useState<Column[]>([])
+        const [currentBoardIndex, setCurrentBoardIndex] = useState<number>(
+            typeof window !== 'undefined'
+            ? parseInt(localStorage.getItem('currentBoardIndex') || '0', 10)
+            : 0
+        );
+        const [currentColumnIndex, setCurrentColumnIndex] = useState<number>(
+            typeof window !== 'undefined'
+            ? parseInt(localStorage.getItem('currentColumnIndex') || '0', 10)
+            : 0
+        );
+        
+            const [currentBoardId, setCurrentBoardId] = useState<string>('');
+        const [headerTitle, setHeaderTitle] = useState<string>('');
+        const [isMoving,SetIsMoving] = useState(false)
+        const [isCompleted,setIsCompleted] = useState(false)
+        const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
+        const [ColId,setColId] = React.useState<string>('')
+        const [openedTask, setOpenedTask] = useState<{
+            _id: string;title: string;
+            description: string;
+            columnId: string;
+            subTask: Subtask[];
+            } | null>(null);
 
         const onMountedAndUpdate = async () => {
             try {
@@ -95,8 +107,10 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         boards,
         setBoards,
         currentBoardIndex,
+        currentColumnIndex,
         currentBoardId,
         setCurrentBoardIndex,
+        setCurrentColumnIndex,
         setCurrentBoardId,
         headerTitle,
         setHeaderTitle,

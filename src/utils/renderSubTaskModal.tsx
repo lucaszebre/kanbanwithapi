@@ -2,6 +2,7 @@ import React from 'react';
 import Subtasks from '@/components/subTask';
 import { Subtask } from '@/types';
 import { toggleSubtaskCompletion } from '@/utils/ToggleSubtask';
+import { useMutation,useQueryClient } from 'react-query';
 
 interface RenderSubTaskProps {
     subtasks: Subtask[];
@@ -13,6 +14,16 @@ interface RenderSubTaskProps {
 }
 
 const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId, columnId, taskId, setIsMoving, isMoving }) => {
+    const queryClient = useQueryClient()
+        const mutation = useMutation(
+            (formdata:{ isCompleted:boolean, currentBoardId:string, columnId:string, taskId:string, subtaskId:string }) =>
+            toggleSubtaskCompletion(formdata.isCompleted, formdata.currentBoardId, formdata.columnId, formdata.taskId, formdata.subtaskId),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards']);
+            },
+            }
+        );
     if (subtasks) {
         return (
             <>
@@ -22,7 +33,7 @@ const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId,
                         title={sub.title}
                         checked={sub.isCompleted}
                         onClick={() => {
-                            toggleSubtaskCompletion(currentBoardId, columnId, taskId, sub.id);
+                            mutation.mutate({isCompleted:sub.isCompleted,currentBoardId, columnId, taskId,subtaskId: sub._id});
                             setIsMoving(!isMoving);
                         }}
                     />

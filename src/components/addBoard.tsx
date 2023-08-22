@@ -6,10 +6,9 @@ import { useContext } from "react";
 import { ColumnsRenderer } from './addTask/rendercolumn';  // get the render columns 
 import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient } from 'react-query';
-import { addBoard } from '@/utils/addBoard';
+import { createBoard } from '@/utils/createBoard';
 
 const AddBoard = () => {
-    const { setBoards,SetIsMoving,isMoving } = useContext(DataContext); // import the state necessary to set the data and update it 
     const { AddBoard, setAddBoard } = useContext(Opencontext);  // import the state to toggle the display of the AddBoard
     const [boardName, setBoardName] = useState<string>('');   // Boardname state 
     const [columnNames, setColumnNames] = useState<string[]>(['', '']); // COlumns Names state 
@@ -17,11 +16,10 @@ const AddBoard = () => {
     const [columnErrors, setColumnErrors] = useState<boolean[]>([]);  // state to manage is one of the column name input is empty 
     const { theme, setTheme } = useTheme();
 
-    React.useEffect(()=>{    // when we add a board we use ismoving to update the data and then here we set the current state to the 
-                            // the iniatial value 
+    React.useEffect(()=>{    // when we add a board we use ismoving to update the data and then here we set the current state to the             // the iniatial value 
         setBoardName('');
         setColumnNames(['', '']);
-    },[isMoving])
+    },[])
 
 // ********************************************************************
 
@@ -36,7 +34,7 @@ const resetForm = () => {  // function to reset the form
         const queryClient = useQueryClient()
         const mutation = useMutation(
             (formData: { boardName: string; columns: string[] }) =>
-            addBoard(formData.boardName, formData.columns),
+            createBoard(formData.boardName, formData.columns),
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['Boards']);
@@ -57,7 +55,6 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
         return;
     }
     mutation.mutate({boardName,columns:columnNames})
-    SetIsMoving(!isMoving)
     resetForm();
     };
 
@@ -91,7 +88,6 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
             onClick={(e) => {
                 if (e.target === e.currentTarget) {
                     setAddBoard(false)
-                    SetIsMoving(!isMoving)
                 }}}>
 
         <div 
@@ -102,7 +98,6 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
             <form className={styles.FormAddBoard} 
                 onSubmit={(e) => {
                     e.preventDefault()
-                    SetIsMoving(!isMoving)
                     handleSubmit(e)
                 }}
                     
@@ -127,7 +122,6 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
                             columnNames={columnNames} 
                             handleColumnTitleChange={handleColumnTitleChange}
                             removeColumn={removeColumn} 
-                            isMoving={isMoving}
                             columnErrors={columnErrors} />
                 <button disabled={inputError} type="button"  className={`${styles.AddBoardButton} ${
                     theme === 'light' ? styles.light : styles.dark }`}  onClick={addColumn}>

@@ -5,7 +5,6 @@ type ColumnsRendererProps = {
     columnNames: string[];
     handleColumnTitleChange: (index: number, updatedTitle: string) => void;
     removeColumn: (index: number) => void;
-    isMoving: boolean;
     columnErrors: boolean[];
 };
 
@@ -13,7 +12,6 @@ export const ColumnsRenderer: React.FC<ColumnsRendererProps> = ({
     columnNames,
     handleColumnTitleChange,
     removeColumn,
-    isMoving,
     columnErrors,
 }) => {
     return (
@@ -24,7 +22,6 @@ export const ColumnsRenderer: React.FC<ColumnsRendererProps> = ({
             title={text}
             Remove={() => removeColumn(index)}
             onChange={(updatedTitle:string) => handleColumnTitleChange(index, updatedTitle)}
-            resetKey={isMoving}
             error={columnErrors[index] || false}
             />
         ))}

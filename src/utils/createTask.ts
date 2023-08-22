@@ -1,14 +1,37 @@
+import supabase from "@/supabase";
 import axios from "axios";
-
-export const createTask = async (userId:string,boardId:string,columnId:string) =>{
+function createSubTaskArray(SubTaskCurrent:string[]) {
+    const SubtaskArray = [];
+  
+    for (const columnName of SubTaskCurrent) {
+      const subtask = {
+        title: columnName,
+        isCompleted: false
+      };
+      SubtaskArray.push(subtask);
+    }
+  
+    return SubtaskArray;
+  }
+export const createTask = async (taskTitle:string,taskDescription:string,boardId:string,columnId:string,SubTaskCurrent:string[]) =>{
     try{
-        const response = await axios.post(`https://kanbantask.onrender.com/user/${userId}/boards/${boardId}/columns/${columnId}`);
-        if(response){
-            return response
-        }else{
-            console.error('Error adding task')
-        }
+        const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                // User is authenticated, check if a row exists in the "User" table
+                console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'boardId',boardId,'columnId',columnId,'Subtask',SubTaskCurrent)
+                const response = await axios.post(`http://localhost:4000/user/${user.id}/boards/${boardId}/columns/${columnId}`,
+                    {
+                        title:taskTitle,
+                        description:taskDescription,
+                        subtasks:createSubTaskArray(SubTaskCurrent)
+                    });
+                    if(response.data){
+                        console.log('Task add')
+                    }else{
+                        console.error("Problem to task the boards")
+                    }
+                }
     }catch(error){
-
+        console.error('message',error)
     }
 }

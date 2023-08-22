@@ -51,7 +51,7 @@ export type ResponseError = {
 
 
 export type ColumnData = {
-    id: string;
+    _id: string;
     name: string;
 };
 
@@ -89,7 +89,7 @@ export interface Board {
     columns: Column[];
     }
     export interface ColumnAdd {
-        id: string;
+        _id: string;
         name: string;
         boardId: string;
         tasks: Task[];
@@ -131,6 +131,7 @@ export interface Board {
         NbList: number;
         columnId:string
         data: any;
+        columnIndex:number
         }
 
 

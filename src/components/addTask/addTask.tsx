@@ -2,93 +2,35 @@ import React, { useState , useEffect } from 'react';
 import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import styles from '@/styles/AddTask.module.css';
-import { createTask } from '@/utils/createTask';
 import { DataContext } from '@/contexts/datacontext';
-import { ColumnData } from '@/types';
 import renderSelect from '../../utils/renderselect';
 import SubTask from './SubTask'
 import { useTheme } from '@/contexts/themecontext';
-import supabase from '@/supabase';
-import axios from 'axios';
+import { useMutation,useQueryClient,useQuery } from 'react-query';
+import { createTask } from '@/utils/createTask';
+import { fetchBoards } from '@/utils/fetchBoard';
 
 const AddTask = () => {
-    
     const { AddTask, setAddTask } = useContext(Opencontext)  // the state to tooggle the display of addtask
     const [taskTitle, setTaskTitle] = useState(''); // state for the tasktitle
     const [taskDescription, setTaskDescription] = useState(''); // state for task description 
-    const [Select, setSelect] = useState<ColumnData[] | null>([]);  // state to render the select with the column names 
     const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
     const [SubTaskCurrent,setSubTaskCurrent] = useState<string[]>([]) // states to save up the name of all the subtasks i add
-    const { setBoards,SetIsMoving,isMoving,columns,currentBoardIndex,boards } = useContext(DataContext); // state to manage the global data 
+    const { currentBoardIndex } = useContext(DataContext); // state to manage the global data 
     const [SubTasksError, setSubTasksError] = useState<boolean[]>([]);  // state to handle if one the subtask is empty 
     const [taskTitleError, setTaskTitleError] = useState(false);  // state to handle if the task title is empty 
     const { theme, setTheme } = useTheme();
 
-    
-
-        useEffect(() => {  // everytime the data is changing we actualize the ArrayColumn 
-            const ArrayColumn = columns.map((column) => {
-                return {
-                    id: column._id,
-                    name: column.name,
-                }
-            });
-            setSelect(ArrayColumn as ColumnData[]);
-            setSubTaskCurrent([])
-        }, [isMoving,columns]);    
-
-        function createSubTaskArray(SubTaskCurrent:string[]) {
-            const SubtaskArray = [];
-          
-            for (const columnName of SubTaskCurrent) {
-              const subtask = {
-                title: columnName,
-                isCompleted: false
-              };
-              SubtaskArray.push(subtask);
+        const queryClient = useQueryClient()
+        const mutation = useMutation(
+            (formData: { taskTitle: string;  taskDescription: string,boardId:string,columnId:string,SubTaskCurrent:string[] }) =>
+            createTask(formData.taskTitle, formData.taskDescription,formData.boardId,formData.columnId,formData.SubTaskCurrent),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards']);
+            },
             }
-          
-            return SubtaskArray;
-          }
-
-        const HandleSubmit = async () => {  // function to handle the final data from the data 
-        
-            if (taskTitle && taskDescription && SelectId) {
-                
-                try{
-                    const { data: { user } } = await supabase.auth.getUser()
-                            if (user) {
-                                console.log("user.id:", user.id);
-                                console.log("currentBoardId:", boards[currentBoardIndex]._id);
-                                console.log("SelectId:", SelectId);
-                            // User is authenticated, check if a row exists in the "User" table
-                            const response = await axios.post(`http://localhost:4000/user/${user.id}/boards/${boards[currentBoardIndex]._id}/columns/${SelectId}`,
-                                {
-                                    title:taskTitle,
-                                    description:taskDescription,
-                                    subtasks:createSubTaskArray(SubTaskCurrent)
-                                });
-                                if(response.data){
-                                    console.log('Task add')
-                                }else{
-                                    console.error("Problem to task the boards")
-                                }
-                            }
-                }catch(error){
-                    console.error('message',error)
-                }
-                SetIsMoving(!isMoving)
-                setTaskTitle('');
-                setTaskDescription('');
-                setSelectId('');
-                
-            }
-            
-            
-        
-        };
-
-
+        );
 
     function addSubTask() {  
         setSubTaskCurrent([...SubTaskCurrent,'']);
@@ -106,6 +48,31 @@ const AddTask = () => {
         newSubTask.splice(index, 1);
         setSubTaskCurrent(newSubTask);
     }
+
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards()
+        ,
+        });
+        if(isLoading){
+            return <p>Loading...</p>
+        }
+        if(isError){
+            return <p>
+            Something went wrongs
+            </p>
+        }
+
+        const HandleSubmit = async () => {  // function to handle the final data from the data 
+            if (taskTitle && taskDescription && SelectId) {
+                mutation.mutate({taskTitle,taskDescription,boardId:data.Boards[currentBoardIndex]._id , columnId:SelectId,SubTaskCurrent})
+                setTaskTitle('');
+                setTaskDescription('');
+                setSelectId('');
+            }else{
+                console.error("error in Add Task")
+            }
+        };
 
 
     return (
@@ -135,12 +102,12 @@ const AddTask = () => {
                         setSubTasksError(newSubTaskErrors)
                         if(taskTitle.trim()===""){
                             setTaskTitleError(true);
-                        }else if(newSubTaskErrors.some(error => error)){                            
+                        }else if(newSubTaskErrors.some(error => error)){    
+                            console.error('error in subtask ')                       
                             return;
                         }
                     }else{
                         await HandleSubmit();
-                        SetIsMoving(!isMoving)
                         setAddTask(false)
                     }
                     
@@ -182,7 +149,6 @@ const AddTask = () => {
                     subTasks={SubTaskCurrent}
                     handleSubTaskDelete={handleSubTaskDelete}
                     handleColumnTitleChange={handleColumnTitleChange}
-                    isMoving={isMoving}
                     columnErrors={SubTasksError}
                     />                    
                     <button className={styles.AddTaskSaveButton}  
@@ -196,11 +162,12 @@ const AddTask = () => {
                     </button>
                     <select
                         onChange={(e) => setSelectId(e.target.value)}
+                        value={SelectId}
                         className={`${styles.SelectAddTask} ${
                             theme === 'light' ? styles.light : styles.dark
                             }`} 
                     >
-                        {renderSelect(columns)}
+                        {renderSelect(data.Boards[currentBoardIndex].columns)}
                     </select>
 
                     <button className={styles.AddTaskSaveButton} type="submit">

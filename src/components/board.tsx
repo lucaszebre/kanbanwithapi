@@ -44,19 +44,18 @@ const Board = () => {
     const {data,isLoading,isError} = useQuery({
         queryKey:['Boards'],
         queryFn:()=>fetchBoards(),
-      });
-      if(isLoading){
-        return <p>Loading...</p>
-      }
-      if(isError){
-      return  <p>
-          Something went wrongs
-        </p>
-      }
-      console.log(data)
-    
+        });
+        if(isLoading){
+            return <p>Loading...</p>
+        }
+        if(isError){
+        return  <p>
+            Something went wrongs
+            </p>
+        }
+        
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
+        if (data?.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
             return (
                 <>
                     {data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
@@ -67,6 +66,7 @@ const Board = () => {
                             tasks={doc.tasks}
                             data={data.Boards[currentBoardIndex]}
                             columnId={doc._id}
+                            columnIndex={index}
                         />
                     ))}
                     <div

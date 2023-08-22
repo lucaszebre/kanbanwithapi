@@ -1,8 +1,11 @@
-const z = require('zod');
+import { z } from 'zod';
 
 export const SubtaskSchema = z.object({
   title: z.string(),
   isCompleted: z.boolean(),
+  taskId: z.string(),
+  columnId: z.string(),
+  boardId: z.string(),
   _id: z.string()
 });
 
@@ -11,13 +14,16 @@ export const TaskSchema = z.object({
   description: z.string(),
   status: z.string(),
   subtasks: z.array(SubtaskSchema),
-  _id: z.string()
+  _id: z.string(),
+  columnId: z.string(),
+  boardId: z.string()
 });
 
 export const ColumnSchema = z.object({
   name: z.string(),
   tasks: z.array(TaskSchema),
-  _id: z.string()
+  _id: z.string(),
+  boardId: z.string()
 });
 
 export const BoardSchema = z.object({
@@ -33,38 +39,13 @@ export const UserSchema = z.object({
   __v: z.number()
 });
 
+export type Subtask = z.infer<typeof SubtaskSchema>;
 
+export type Task = z.infer<typeof TaskSchema>;
 
-type Subtask = {
-  title: string;
-  isCompleted: boolean;
-  _id: string;
-};
+export type Column = z.infer<typeof ColumnSchema>;
 
-type Task = {
-  title: string;
-  description: string;
-  status: string;
-  subtasks: Subtask[];
-  _id: string;
-};
+export type Board = z.infer<typeof BoardSchema>;
 
-type Column = {
-  name: string;
-  tasks: Task[];
-  _id: string;
-};
-
-export type Board = {
-  name: string;
-  columns: Column[];
-  _id: string;
-};
-
-type User = {
-  _id: string;
-  userId: string;
-  Boards: Board[];
-  __v: number;
-};
+export type User = z.infer<typeof UserSchema>;
 

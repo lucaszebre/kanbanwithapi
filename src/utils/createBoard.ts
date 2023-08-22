@@ -14,7 +14,7 @@ function createColumnsArray(columnNames:string[]) {
   
     return columnsArray;
   }
-export const addBoard = async (boardName:string,columnsName:string[]) =>{
+export const createBoard = async (boardName:string,columnsName:string[]) =>{
     try{
         const { data: { user } } = await supabase.auth.getUser()
                 if (user) {

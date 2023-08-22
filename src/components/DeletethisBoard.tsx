@@ -13,8 +13,33 @@ const DeleteThisBoard = () => {
     const { DeleteBlock, setDeleteBlock } = useContext(Opencontext); // state to toggle the display of the components
     const { currentBoardIndex,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+        });
+    
 
-    const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
+    const queryClient = useQueryClient()
+    const mutation = useMutation(
+        ( boardId: string) =>
+        deleteBoard(boardId),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['Boards']);
+        },
+        }
+    );
+
+    
+      if(isLoading){
+        return <p>Loading...</p>
+      }
+      if(isError){
+        return <p>
+          Something went wrongs
+        </p>
+      }
+      const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (user) {
@@ -28,37 +53,13 @@ const DeleteThisBoard = () => {
                     } else {
                     console.error('Error fetching boards');
                     }
-            setCurrentBoardIndex(0)
+                    localStorage.setItem('currentBoardIndex', '0');
+                    setCurrentBoardIndex(0)
             }
         } catch (error) {
             console.error('Error while deleting the board:', error);
         }
     };
-
-    const queryClient = useQueryClient()
-    const mutation = useMutation(
-        ( boardId: string) =>
-        deleteBoard(boardId),
-        {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['Boards']);
-        },
-        }
-    );
-
-    const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
-        queryFn:()=>fetchBoards(),
-      });
-      if(isLoading){
-        return <p>Loading...</p>
-      }
-      if(isError){
-        return <p>
-          Something went wrongs
-        </p>
-      }
-
     return (
         <div className={styles.DeleteThisBoardWrapper} style={{ display: DeleteBlock ? 'flex' : 'none' }}
             onClick={(e) => {
@@ -76,7 +77,8 @@ const DeleteThisBoard = () => {
                 <div className={styles.DeleteThisBoardButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate(data.Boards[currentBoardIndex]._id)
+                            mutation.mutate(data.Boards[currentBoardIndex]._id);
+                            setCurrentBoardIndex(0);
                             setDeleteBlock(false);
                         }}
                         className={styles.DeleteButton}
