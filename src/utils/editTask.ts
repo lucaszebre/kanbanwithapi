@@ -6,7 +6,7 @@ function createSubTaskArray(subTasked: Subtasked[]) {
     
         for (const subtask of subTasked) {
         const { title, isCompleted } = subtask;
-        subtaskArray.push({ title, isCompleted });
+        subtaskArray.push({ title:title, isCompleted:isCompleted });
         }
     
         return subtaskArray;
@@ -22,7 +22,7 @@ export const editTask = async (boardId:string,columnId:string,taskId:string,task
                     {
                         title:taskName,
                         description:taskDescription,
-                        subtask: createSubTaskArray(subTasked)    
+                        subtasks: subTasked    
                     });
                     if(response.data){
                         console.log('Edit Task sucessfully')

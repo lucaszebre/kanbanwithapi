@@ -33,7 +33,6 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
         title={openedTask.title}
         description={openedTask.description}
         subTask={openedTask.subTask}
-        Iscompleted={()=>Iscompleted()}
         index={props.index}
         /> }
 

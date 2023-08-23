@@ -3,18 +3,28 @@ import styles from '@/styles/Subtasks.module.css';
 import { DataContext } from '@/contexts/datacontext';
 import { useContext } from 'react';
 import { useTheme } from '@/contexts/themecontext';
-
-const Subtasks = (props: { title: string , checked: boolean , onClick:()=>void ,  }) => {
+import { toggleSubtaskCompletion } from '@/utils/ToggleSubtask';
+import { useMutation,useQueryClient } from 'react-query';
+const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,taskId:string ,subtaskId:string }) => {
 
   const { theme, setTheme } = useTheme();
 
-  const {SetIsMoving,isMoving } = useContext(DataContext); // state to update the whole data of the app
+  const {SetIsMoving,isMoving,currentBoardId } = useContext(DataContext); // state to update the whole data of the app
   const [isChecked, setIsChecked] = React.useState<boolean>(props.checked); // state to able to toggle the checkbox
 
   React.useEffect(() => {  // everytime we check the checkbox we change the value of IsChecked
     setIsChecked(props.checked);
   }, [props.checked]);
-
+  const queryClient = useQueryClient()
+        const mutation = useMutation(
+            (formdata:{ isCompleted:boolean, currentBoardId:string, columnId:string, taskId:string, subtaskId:string }) =>
+            toggleSubtaskCompletion(formdata.isCompleted, formdata.currentBoardId, formdata.columnId, formdata.taskId, formdata.subtaskId),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards,Task']);
+            },
+            }
+        );
   return (
     <div
       className={`${styles.SubtasksDiv} ${
@@ -25,8 +35,9 @@ const Subtasks = (props: { title: string , checked: boolean , onClick:()=>void ,
       
         <input type="checkbox" checked={isChecked}
             onChange={() => {
+            mutation.mutate({isCompleted:!isChecked,currentBoardId, columnId:props.colunmId, taskId:props.taskId,subtaskId:props.subtaskId});
             setIsChecked(!isChecked);
-            props.onClick();
+
             SetIsMoving(!isMoving)}} />
         <p
           className={styles.SubtaskTitle}

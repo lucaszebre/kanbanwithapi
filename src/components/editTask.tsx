@@ -12,8 +12,9 @@ import { fetchBoards } from "@/utils/fetchBoard";
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { editTask } from "@/utils/editTask";
 import { getTask } from "@/utils/getTask";
+import { Task, changeColumn } from "@/utils/changeColumn";
 
-const EditTask = (props:{columnId:string,taskId:string,index:number,indexColumn:string}) => {
+const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
 
     const { data: task, isLoading, isError } = useQuery(
@@ -69,9 +70,6 @@ useEffect(() => {
             _id:"",
             title: "",
             isCompleted: false,
-            boardId:'',
-            columnId:'',
-            taskId:''
         };
         setSubTasked([...subTasked, newSubtask]);
     };
@@ -98,14 +96,28 @@ useEffect(() => {
         },
         }
     );
+        const column = useMutation(
+            (formData: {newColumnId:string,columnId:string, boardId:string,taskId:string,newtask:Task }) =>
+            changeColumn(formData.newColumnId,formData.columnId,formData.boardId,formData.taskId,formData.newtask),
+            {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['Boards','Task']);
+            },
+            }
+        );
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
-        if(data){
+        if(data && data.Boards[currentBoardIndex]._id){
             mutation.mutate({boardId:data.Boards[currentBoardIndex]._id,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,taskId:data.Boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index]._id,taskName,taskDescription,subTasked})
         }
-        };
-        
+        if (selectedColumnId && selectedColumnId !== props.columnId) {
+            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,boardId:currentBoardId,taskId:props.taskId,newtask:{
+                title: taskName,
+                description: taskDescription,
+                subtasks: subTasked
+            }});
+            }}        
 
 
             if(isLoading){

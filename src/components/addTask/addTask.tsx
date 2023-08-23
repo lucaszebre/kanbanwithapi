@@ -11,16 +11,25 @@ import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 
 const AddTask = () => {
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards()
+        ,
+        });
     const { AddTask, setAddTask } = useContext(Opencontext)  // the state to tooggle the display of addtask
     const [taskTitle, setTaskTitle] = useState(''); // state for the tasktitle
     const [taskDescription, setTaskDescription] = useState(''); // state for task description 
-    const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
     const [SubTaskCurrent,setSubTaskCurrent] = useState<string[]>([]) // states to save up the name of all the subtasks i add
-    const { currentBoardIndex } = useContext(DataContext); // state to manage the global data 
+    const { currentBoardIndex,isMoving } = useContext(DataContext); // state to manage the global data 
     const [SubTasksError, setSubTasksError] = useState<boolean[]>([]);  // state to handle if one the subtask is empty 
     const [taskTitleError, setTaskTitleError] = useState(false);  // state to handle if the task title is empty 
     const { theme, setTheme } = useTheme();
-
+    const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
+        useEffect(()=>{
+            if(data){
+            setSelectId(data.Boards[currentBoardIndex].columns[0]._id)
+        }
+        },[data,isMoving])
         const queryClient = useQueryClient()
         const mutation = useMutation(
             (formData: { taskTitle: string;  taskDescription: string,boardId:string,columnId:string,SubTaskCurrent:string[] }) =>
@@ -49,11 +58,7 @@ const AddTask = () => {
         setSubTaskCurrent(newSubTask);
     }
 
-    const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
-        queryFn:()=>fetchBoards()
-        ,
-        });
+    
         if(isLoading){
             return <p>Loading...</p>
         }
@@ -65,11 +70,17 @@ const AddTask = () => {
 
         const HandleSubmit = async () => {  // function to handle the final data from the data 
             if (taskTitle && taskDescription && SelectId) {
+               
+
                 mutation.mutate({taskTitle,taskDescription,boardId:data.Boards[currentBoardIndex]._id , columnId:SelectId,SubTaskCurrent})
                 setTaskTitle('');
                 setTaskDescription('');
-                setSelectId('');
             }else{
+                console.log('Tasktitle',taskTitle)
+                console.log('taskDescription',taskDescription)
+                console.log('SelectId',SelectId)
+                console.log('SelectId',)
+
                 console.error("error in Add Task")
             }
         };
@@ -163,6 +174,7 @@ const AddTask = () => {
                     <select
                         onChange={(e) => setSelectId(e.target.value)}
                         value={SelectId}
+                        defaultValue={data.Boards[currentBoardIndex].columns[0]._id}
                         className={`${styles.SelectAddTask} ${
                             theme === 'light' ? styles.light : styles.dark
                             }`} 

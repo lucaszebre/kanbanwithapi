@@ -3,9 +3,6 @@ import { z } from 'zod';
 export const SubtaskSchema = z.object({
   title: z.string(),
   isCompleted: z.boolean(),
-  taskId: z.string(),
-  columnId: z.string(),
-  boardId: z.string(),
   _id: z.string()
 });
 
@@ -15,8 +12,6 @@ export const TaskSchema = z.object({
   status: z.string(),
   subtasks: z.array(SubtaskSchema),
   _id: z.string(),
-  columnId: z.string(),
-  boardId: z.string()
 });
 
 export const ColumnSchema = z.object({

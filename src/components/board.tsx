@@ -45,6 +45,7 @@ const Board = () => {
         queryKey:['Boards'],
         queryFn:()=>fetchBoards(),
         });
+    
         if(isLoading){
             return <p>Loading...</p>
         }
