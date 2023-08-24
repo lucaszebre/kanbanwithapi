@@ -99,7 +99,7 @@ export interface Board {
     export interface Column {
         _id: string;
         name: string;
-        boardId: string;
+        boardId?: string;
         tasks: Task[];
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }

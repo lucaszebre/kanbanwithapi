@@ -12,9 +12,10 @@ import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import { Task } from '@/types';
+import NoBoard from './noBoards';
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardIndex } = useContext(DataContext); // state to manage the global data 
+    const {currentBoardIndex, } = useContext(DataContext); // state to manage the global data 
     const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
     const { theme } = useTheme();
@@ -56,10 +57,10 @@ const Board = () => {
         }
         
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (data?.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
+        if ( data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
             return (
                 <>
-                    {data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
+                    {data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
                         <ListTask
                             key={index}
                             title={doc.name}
@@ -89,7 +90,9 @@ const Board = () => {
             return <EmptyBoard />;
         }
     }
-   
+   if(data.Boards[currentBoardIndex]){
+
+
     return (
         <div className={styles.AppContainer}>
             <div className={styles.HeaderBoard}>
@@ -117,7 +120,9 @@ const Board = () => {
                 </div>
             </div>
         </div>
-    );
+    );}else{
+        return <NoBoard />
+    }
 };
 
 export default Board;

@@ -3,7 +3,7 @@ import { Opencontext } from "@/contexts/contextopen";
 import { useState,useContext,useEffect } from "react";
 import { DataContext } from '@/contexts/datacontext';
 import BoardColumn from "../boardColumn";
-import { Column } from "@/types/Zodtype";
+import { Column } from "@/types";
 import { handleSaveChanges } from "./handleSave";
 import { useTheme } from '@/contexts/themecontext';
 import { useQuery,useMutation,useQueryClient } from 'react-query';
@@ -38,7 +38,7 @@ useEffect(()=>{
 },[Save])
 
     useEffect(() => {
-        if(data && data.Boards[currentBoardIndex].columns){
+        if(data && data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
             setCopyBoardColumns(data.Boards[currentBoardIndex].columns);
             setHeader(data.Boards[currentBoardIndex].name)
             const initialColumnErrors = data.Boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
@@ -119,7 +119,7 @@ function renderColumns() {
 
         const queryClient = useQueryClient()
         const mutation = useMutation(
-            (formData: { columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:Column[],currentBoardId:string,Header:string,headerTitle:string }) =>
+            (formData: { columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:ColumnAdd[],currentBoardId:string,Header:string,headerTitle:string }) =>
             handleSaveChanges(formData.columnsToDelete, formData.columnsToRename,formData.columnstoAdd,formData.currentBoardId,formData.Header,formData.headerTitle),
             {
             onSuccess: () => {
@@ -184,7 +184,7 @@ function renderColumns() {
                     
                 }}
                 >
-                <label className={`${styles.EditLabel}} ${
+                <label className={`${styles.EditLabel} ${
                 theme === 'light' ? styles.light : styles.dark
                 }`} htmlFor="boardName">
                     Board Name
@@ -203,7 +203,7 @@ function renderColumns() {
                 />
                 {inputError && <div className={styles.ErrorMessage}>Please enter a board name.</div>}
 
-                <label className={`${styles.EditLabel}} ${
+                <label className={`${styles.EditLabel} ${
                 theme === 'light' ? styles.light : styles.dark
                 }`} htmlFor="boardDescription">
                     Board Columns

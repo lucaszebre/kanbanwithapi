@@ -26,7 +26,7 @@ const AddTask = () => {
     const { theme, setTheme } = useTheme();
     const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
         useEffect(()=>{
-            if(data && data.Boards[currentBoardIndex].columns[0] ){
+            if(data && data.Boards[currentBoardIndex] &&  data.Boards[currentBoardIndex].columns[0] ){
             setSelectId(data.Boards[currentBoardIndex].columns[0]._id)
         }
         },[data,isMoving])
@@ -85,6 +85,8 @@ const AddTask = () => {
             Something went wrongs
             </p>
         }
+
+if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
 
     return (
 
@@ -194,5 +196,6 @@ const AddTask = () => {
     );
 };
 
+}
 
 export default AddTask;

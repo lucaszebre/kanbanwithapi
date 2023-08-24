@@ -71,7 +71,7 @@ const DeleteThisBoard = () => {
                 }`}>
                 <h1 className={styles.DeleteThisBoardTitle}>Delete this board?</h1>
                 <p className={styles.DeleteThisBoardText}>
-                    Are you sure you want to delete the ‘<a >{data.Boards[currentBoardIndex].name}</a>’ board? This action will remove all columns and tasks
+                    Are you sure you want to delete the ‘<a >{data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</a>’ board? This action will remove all columns and tasks
                     and cannot be reversed.
                 </p>
                 <div className={styles.DeleteThisBoardButtons}>

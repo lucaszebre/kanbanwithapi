@@ -59,7 +59,7 @@ export default function Header() {
                     <h1 
                     className={`${styles.HeaderTitle} ${
                         theme === 'light' ? styles.light : styles.dark
-                        }`}>{data.Boards[currentBoardIndex].name}</h1>
+                        }`}>{ data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</h1>
                     <div className={styles.HeaderBlock1}>
                     <button
                         onClick={() => {
@@ -102,7 +102,7 @@ export default function Header() {
                     width={56}
                     height={56}
                     />
-                    <h1 className={styles.HeaderMobileTitle}>{data.Boards[currentBoardIndex].name}</h1>
+                    <h1 className={styles.HeaderMobileTitle}>{data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</h1>
                     <Image
                     src="/assets/icon-chevron-down.svg"
                     alt="chevron-up"
