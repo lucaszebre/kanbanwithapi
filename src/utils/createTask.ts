@@ -21,7 +21,7 @@ export const createTask = async (taskTitle:string,taskDescription:string,boardId
                 // User is authenticated, check if a row exists in the "User" table
                 console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'boardId',boardId,'columnId',columnId,'Subtask',SubTaskCurrent)
                 if(subtask){
-                    const response = await axios.post(`http://localhost:4000/user/${user.id}/boards/${boardId}/columns/${columnId}`,
+                    const response = await axios.post(`https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}`,
                     {
                         title:taskTitle,
                         description:taskDescription,
@@ -33,7 +33,7 @@ export const createTask = async (taskTitle:string,taskDescription:string,boardId
                         console.error("Problem to task the boards")
                     } 
                 }else if(SubTaskCurrent){
-                const response = await axios.post(`http://localhost:4000/user/${user.id}/boards/${boardId}/columns/${columnId}`,
+                const response = await axios.post(`https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}`,
                     {
                         title:taskTitle,
                         description:taskDescription,

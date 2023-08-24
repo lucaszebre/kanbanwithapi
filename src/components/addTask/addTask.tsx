@@ -26,7 +26,7 @@ const AddTask = () => {
     const { theme, setTheme } = useTheme();
     const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
         useEffect(()=>{
-            if(data){
+            if(data && data.Boards[currentBoardIndex].columns[0] ){
             setSelectId(data.Boards[currentBoardIndex].columns[0]._id)
         }
         },[data,isMoving])
@@ -59,14 +59,6 @@ const AddTask = () => {
     }
 
     
-        if(isLoading){
-            return <p>Loading...</p>
-        }
-        if(isError){
-            return <p>
-            Something went wrongs
-            </p>
-        }
 
         const HandleSubmit = async () => {  // function to handle the final data from the data 
             if (taskTitle && taskDescription && SelectId) {
@@ -85,8 +77,18 @@ const AddTask = () => {
             }
         };
 
+        if(isLoading){
+            return <p>Loading...</p>
+        }
+        if(isError){
+            return <p>
+            Something went wrongs
+            </p>
+        }
 
     return (
+
+
     <div className={styles.AddTaskWrapper}
         style={{ display: AddTask ? 'flex' : 'none' }}
             onClick={
@@ -174,7 +176,7 @@ const AddTask = () => {
                     <select
                         onChange={(e) => setSelectId(e.target.value)}
                         value={SelectId}
-                        defaultValue={data.Boards[currentBoardIndex].columns[0]._id}
+                        // defaultValue={data.Boards[currentBoardIndex].columns[0]._id ? data.Boards[currentBoardIndex].columns[0]._id : '' }
                         className={`${styles.SelectAddTask} ${
                             theme === 'light' ? styles.light : styles.dark
                             }`} 
@@ -188,6 +190,7 @@ const AddTask = () => {
                 </form>
             </div>
         </div>
+                             
     );
 };
 

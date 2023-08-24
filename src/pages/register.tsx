@@ -50,7 +50,7 @@ const Register: React.FC = () => {
         
             // Initiate the user in your MongoDB or handle other related logic
             try {
-                const response = await axios.post('http://localhost:4000/auth/init', {
+                const response = await axios.post('https://kanbantask.onrender.com/auth/init', {
                 userId: data.user?.id,
                 }, { withCredentials: true });
         

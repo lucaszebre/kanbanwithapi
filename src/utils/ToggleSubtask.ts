@@ -6,8 +6,8 @@ export const toggleSubtaskCompletion = async (isCompleted:boolean,currentBoardId
         const { data: { user } } = await supabase.auth.getUser()
         console.log('subtaskId',subtaskId)
         console.log(isCompleted)
-        console.log('path',`http://localhost:4000/user/${user?.id}/boards/${currentBoardId}/columns/${columnId}/tasks/${taskId}/subtask/${subtaskId}`)
-        const response = await axios.put(`http://localhost:4000/user/${user?.id}/boards/${currentBoardId}/columns/${columnId}/tasks/${taskId}/subtask/${subtaskId}`,
+        console.log('path',`https://kanbantask.onrender.com/user/${user?.id}/boards/${currentBoardId}/columns/${columnId}/tasks/${taskId}/subtask/${subtaskId}`)
+        const response = await axios.put(`https://kanbantask.onrender.com/user/${user?.id}/boards/${currentBoardId}/columns/${columnId}/tasks/${taskId}/subtask/${subtaskId}`,
         {
             "isCompleted": isCompleted
         });

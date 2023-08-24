@@ -18,7 +18,7 @@ export const editTask = async (boardId:string,columnId:string,taskId:string,task
                     console.log(subTasked)
                 // User is authenticated, check if a row exists in the "User" table
                 const response = await axios.put(
-                    `http://localhost:4000/user/${user.id}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`,
+                    `https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`,
                     {
                         title:taskName,
                         description:taskDescription,

@@ -77,7 +77,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
                 if (user) {
                 // User is authenticated, check if a row exists in the "User" table
                 const response = await axios.get(
-                    `http://localhost:4000/user/${user.id}`,
+                    `https://kanbantask.onrender.com/user/${user.id}`,
                     );
             
                     if (response.data) {

@@ -20,7 +20,7 @@ export const createBoard = async (boardName:string,columnsName:string[]) =>{
                 if (user) {
                 // User is authenticated, check if a row exists in the "User" table
                 const response = await axios.post(
-                    `http://localhost:4000/user/${user.id}`,
+                    `https://kanbantask.onrender.com/user/${user.id}`,
                     {
                         name:boardName,
                         columns:createColumnsArray(columnsName)

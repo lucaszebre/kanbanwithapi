@@ -81,7 +81,7 @@ const Sidebar = () => {
                 setAddBoard(true);
               }}
             >
-              <Image className={styles.BoardImage} src="/assets/icon-board2.svg" alt="plus" width={16} height={16} />
+              <Image className={styles.BoardImage} src="/assets/icon-board2.svg" alt="plus" width={10} height={13} />
               <p className={styles.CreateBoardText}>+ Create New Board</p>
               </div>
             </div>

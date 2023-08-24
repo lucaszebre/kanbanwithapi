@@ -31,20 +31,20 @@ const DeleteThisBoard = () => {
     );
 
     
-      if(isLoading){
-        return <p>Loading...</p>
-      }
-      if(isError){
-        return <p>
-          Something went wrongs
-        </p>
-      }
+        if(isLoading){
+            return <p>Loading...</p>
+        }
+        if(isError){
+            return <p>
+            Something went wrongs
+            </p>
+        }
       const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (user) {
                 const response = await axios.delete(
-                    `http://localhost:4000/user/${user.id}/boards/${boardId}`,
+                    `https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}`,
                     );
             
                     if (response.data) {
