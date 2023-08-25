@@ -68,6 +68,7 @@ const AddTask = () => {
                 mutation.mutate({taskTitle,taskDescription,boardId:data.Boards[currentBoardIndex]._id , columnId:SelectId,SubTaskCurrent})
                 setTaskTitle('');
                 setTaskDescription('');
+                setSubTaskCurrent([])
             }else{
                 console.log('Tasktitle',taskTitle)
                 console.log('taskDescription',taskDescription)
