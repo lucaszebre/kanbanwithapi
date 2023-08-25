@@ -12,7 +12,9 @@ import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import { Task } from '@/types';
-import NoBoard from './noBoards';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
     const {currentBoardIndex, } = useContext(DataContext); // state to manage the global data 
@@ -47,8 +49,27 @@ const Board = () => {
         queryFn:()=>fetchBoards(),
         });
     
-        if(isLoading){
-            return <p>Loading...</p>
+        if (isLoading) {
+            // Return loading skeletons
+            return (
+                <div className={styles.AppContainer}>
+                    <div className={styles.HeaderBoard}>
+                        <Skeleton height={30} width={150} />
+                    </div>
+                    <div className={styles.BoardDiv}>
+                        <div className={styles.SideContainer}>
+                            <Skeleton height={500} width={70} />
+                        </div>
+                        <div className={styles.BoardWrapper}>
+                            {/* Display multiple skeletons for columns */}
+                            <div className={styles.AddColumn}>
+                                <Skeleton height={30} width={100} />
+                            </div>
+                            {/* Repeat this skeleton for each column */}
+                        </div>
+                    </div>
+                </div>
+            );
         }
         if(isError){
         return  <p>
