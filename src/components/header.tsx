@@ -12,6 +12,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
+import Skeleton from 'react-loading-skeleton';
 
 export default function Header(props:{Boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
@@ -28,14 +29,41 @@ export default function Header(props:{Boards:boolean}) {
         queryKey:['Boards'],
         queryFn:()=>fetchBoards(),
       });
-      if(isLoading){
-        return <p>Loading...</p>
-      }
-      if(isError){
-        return <p>
-          Something went wrongs
-        </p>
-      }
+      if (isLoading) {
+        // Return loading skeletons
+        return (
+            <>
+                <div className={styles.HeaderContainer}>
+                    {/* Display loading skeletons for desktop header */}
+                    <div className={`${styles.HeaderWrapperDesktop} ${theme === 'light' ? styles.light : styles.dark}`}>
+                        <Skeleton height={26} width={152} style={{ marginRight: '20px' }} />
+                        <Skeleton height={30} width={300} />
+                        <Skeleton height={30} width={100} style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {/* Display loading skeletons for mobile header */}
+                    <div className={styles.HeaderWrapperMobile}>
+                        <div className={styles.HeaderMobileLeft}>
+                            <Skeleton height={56} width={56} style={{ marginRight: '20px' }} />
+                            <Skeleton height={30} width={200} />
+                            <Skeleton height={15} width={30} style={{ marginLeft: 'auto' }} />
+                        </div>
+                        <div className={styles.HeaderMobileRight}>
+                            <Skeleton height={25} width={25} style={{ marginRight: '10px' }} />
+                            <Skeleton height={15} width={15} />
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    if (isError) {
+        return (
+            <p>
+                Something went wrong
+            </p>
+        );
+    }
 
     return (
         <>

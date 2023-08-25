@@ -9,7 +9,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { useQuery,useMutation,useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
-
+import Skeleton from "react-loading-skeleton";
 const EditBoard = () => {
 
 const { EditBoard, setEditBoard } = useContext(Opencontext); // state to toggle the display of components
@@ -138,9 +138,35 @@ function renderColumns() {
             }
         );
 
-    if(isLoading){
-        return <p>Loading...</p>
-    }
+        if (isLoading) {
+            return (
+                <div
+                    className={styles.EditBoardWrapper}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            SetIsMoving(isMoving => !isMoving);
+                            setEditBoard(false);
+                        }
+                    }}
+                    style={{ display: EditBoard ? "flex" : "none" }}
+                >
+                    <div
+                        className={`${styles.EditBoardBlock} ${
+                            theme === "light" ? styles.light : styles.dark
+                        }`}
+                    >
+                        <Skeleton height={30} width={200} style={{ marginBottom: "10px" }} />
+                        <div className={styles.SkeletonBoardColumn}>
+                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
+                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
+                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
+                            {/* Add more skeletons for each column */}
+                        </div>
+                        <Skeleton height={40} width={100} style={{ marginBottom: "10px" }} />
+                    </div>
+                </div>
+            );
+        }
     if(isError){
         return <p>
         Something went wrongs

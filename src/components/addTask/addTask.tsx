@@ -9,6 +9,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
+import Skeleton from 'react-loading-skeleton';
 
 const AddTask = () => {
     const {data,isLoading,isError} = useQuery({
@@ -77,13 +78,23 @@ const AddTask = () => {
             }
         };
 
-        if(isLoading){
-            return <p>Loading...</p>
+        if (isLoading) {
+            return (
+                <div className={styles.AddTaskWrapper} style={{ display: AddTask ? 'flex' : 'none' }}>
+                    <div className={`${styles.AddTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
+                        <Skeleton height={30} width={200} style={{ marginBottom: '10px' }} />
+                        {/* Other skeleton components */}
+                    </div>
+                </div>
+            );
         }
-        if(isError){
-            return <p>
-            Something went wrongs
-            </p>
+    
+        if (isError) {
+            return (
+                <p>
+                    Something went wrong
+                </p>
+            );
         }
 
 if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){

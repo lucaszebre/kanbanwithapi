@@ -10,6 +10,7 @@ import { Board } from '@/types';
 import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
+import Skeleton from 'react-loading-skeleton';
 
 const Sidebar = (props:{Boards:boolean}) => {
   
@@ -47,14 +48,50 @@ const Sidebar = (props:{Boards:boolean}) => {
       queryKey:['Boards'],
       queryFn:()=>fetchBoards(),
     });
-    if(isLoading){
-      return <p>Loading...</p>
-    }
-    if(isError){
-      return <p>
-        Something went wrongs
-      </p>
-    }
+    if (isLoading) {
+      // Return loading skeletons
+      return (
+          <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
+              <div className={styles.SibebarWrapper}>
+                  <div className={styles.DropDown}>
+                      {props.Boards && (
+                          <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
+                      )}
+
+                      {/* Display multiple skeletons for board carts */}
+                      {[...Array(3)].map((_, index) => (
+                          <Skeleton
+                              key={index}
+                              height={50}
+                              style={{ marginTop: '10px' }}
+                              className={currentBoardIndex === index ? styles.selected : ''}
+                          />
+                      ))}
+
+                      <div
+                          className={styles.CreateBoard}
+                          onClick={() => {
+                              setAddBoard(true);
+                          }}
+                      >
+                          <Skeleton height={13} width={10} className={styles.BoardImage} />
+                          <Skeleton height={16} width={100} className={styles.CreateBoardText} />
+                      </div>
+                  </div>
+
+                  {/* ... (existing theme toggle and hide sidebar code) */}
+              </div>
+          </div>
+      );
+  }
+
+  if (isError) {
+      return (
+          <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
+              <p>Something went wrong</p>
+          </div>
+      );
+  }
   return (
     <div className={`${styles.SidebarContainer} ${
       theme === 'light' ? styles.light : styles.dark

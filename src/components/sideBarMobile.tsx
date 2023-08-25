@@ -1,10 +1,8 @@
 import { useState,useContext, useEffect } from 'react';
-import useAuthState from './useAuthState';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { Opencontext } from '@/contexts/contextopen';
 import styles from '../styles/SidebarMobile.module.css';
 import Image from 'next/image';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Switch } from '@chakra-ui/react';
 import BoardCart from './boardCart';
 import { DataContext } from '@/contexts/datacontext';

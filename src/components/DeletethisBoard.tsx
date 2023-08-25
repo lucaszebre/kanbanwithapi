@@ -7,6 +7,7 @@ import supabase from '@/supabase';
 import axios from 'axios';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
+import Skeleton from 'react-loading-skeleton';
 
 
 const DeleteThisBoard = () => {
@@ -31,14 +32,32 @@ const DeleteThisBoard = () => {
     );
 
     
-        if(isLoading){
-            return <p>Loading...</p>
-        }
-        if(isError){
-            return <p>
-            Something went wrongs
+    if (isLoading) {
+        return (
+            <div className={styles.DeleteThisBoardWrapper}>
+                <div className={`${styles.DeletethisBoardDiv} ${theme === 'light' ? styles.light : styles.dark}`}>
+                    <Skeleton height={30} width={150} style={{ marginBottom: '10px' }} />
+                    <div style={{ marginBottom: '10px' }}>
+                        <Skeleton height={20} width={250} style={{ marginBottom: '10px' }} />
+                        <Skeleton height={20} width={250} />
+                    </div>
+                    <Skeleton height={20} width={300} style={{ marginBottom: '10px' }} />
+                    <div className={styles.DeleteThisBoardButtons}>
+                        <Skeleton height={40} width={100} style={{ marginRight: '10px' }} />
+                        <Skeleton height={40} width={100} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <p>
+                Something went wrong
             </p>
-        }
+        );
+    }
       const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
         try {
             const { data: { user } } = await supabase.auth.getUser()

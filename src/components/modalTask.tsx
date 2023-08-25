@@ -15,6 +15,8 @@ import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { getTask } from '@/utils/getTask';
 import { fetchBoards } from '@/utils/fetchBoard';
+import Skeleton from 'react-loading-skeleton';
+
 const ModalTask = (props:{
     _id: string;
     title: string;
@@ -78,14 +80,30 @@ const ModalTask = (props:{
             i++
         }}}
     return i }
-        if(isLoading){
-            return <p>Loading...</p>
-        }
-        if(isError){
-            return <p>
-            Something went wrongs
+    if (isLoading) {
+        // Return loading skeletons
+        return (
+            <>
+                <Skeleton height={30} width={300} />
+                <Skeleton height={20} width={200} />
+                {/* Display multiple skeletons for subtasks */}
+                {[...Array(3)].map((_, index) => (
+                    <Skeleton key={index} height={15} width={150} style={{ marginTop: '10px' }} />
+                ))}
+                <Skeleton height={20} width={150} style={{ marginTop: '20px' }} />
+                {/* Display skeleton for select */}
+                <Skeleton height={30} width={150} style={{ marginTop: '10px' }} />
+            </>
+        );
+    }
+
+    if (isError) {
+        return (
+            <p>
+                Something went wrong
             </p>
-        }   
+        );
+    } 
     return (
         <>
         <EditTask columnId={props.columnId} taskId={props._id} index={props.index}  />

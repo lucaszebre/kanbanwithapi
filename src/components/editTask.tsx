@@ -13,6 +13,7 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { editTask } from "@/utils/editTask";
 import { getTask } from "@/utils/getTask";
 import { Task, changeColumn } from "@/utils/changeColumn";
+import Skeleton from "react-loading-skeleton";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
@@ -120,14 +121,36 @@ useEffect(() => {
             }}        
 
 
-            if(isLoading){
-                return <p>Loading...</p>
+            if (isLoading) {
+                return (
+                    <div className={styles.EditTaskWrapper}>
+                        <div className={`${styles.EditTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
+                            <Skeleton height={30} width={150} style={{ marginBottom: '10px' }} />
+                            <Skeleton height={20} width={200} style={{ marginBottom: '10px' }} />
+                            <div style={{ marginBottom: '10px' }}>
+                                <Skeleton height={20} width={100} style={{ marginRight: '10px' }} />
+                                <Skeleton height={20} width={100} />
+                            </div>
+                            <Skeleton height={30} width={100} style={{ marginBottom: '10px' }} />
+                            <Skeleton height={20} width={150} style={{ marginBottom: '10px' }} />
+                            <div style={{ marginBottom: '10px' }}>
+                                <Skeleton height={20} width={150} style={{ marginRight: '10px' }} />
+                                <Skeleton height={20} width={150} />
+                            </div>
+                            <Skeleton height={20} width={100} style={{ marginBottom: '10px' }} />
+                            <Skeleton height={30} width={100} style={{ marginBottom: '10px' }} />
+                        </div>
+                    </div>
+                );
             }
-            if(isError){
-                return <p>
-                Something went wrongs
-                </p>
-            }   
+        
+            if (isError) {
+                return (
+                    <p>
+                        Something went wrong
+                    </p>
+                );
+            }
 
             
  // Render the EditTask component
