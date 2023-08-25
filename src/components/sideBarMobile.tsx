@@ -10,8 +10,11 @@ import { Board } from '@/types';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/contexts/themecontext';
 import { Switch as MuiSwitch } from '@mui/material';
+import Skeleton from 'react-loading-skeleton';
+import { useQuery } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard';
 
-const Sidebar = () => {
+const Sidebar = (props:{Boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 
 const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
@@ -19,13 +22,13 @@ const { setAddBoard } = useContext(Opencontext);  // state to toggle the display
 const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
 
 const {
-    boards,
-    setBoards,
     currentBoardId,
     setCurrentBoardId,
-    headerTitle,
+    SetIsMoving,
     setHeaderTitle,
-    isMoving
+    isMoving,
+    currentBoardIndex,
+    setCurrentBoardIndex
     } = useContext(DataContext);
 
     useEffect(() => {
@@ -60,13 +63,62 @@ const {
         };
 
   // function to handle the click on a board cart 
-const handleBoardClick = (boardName: string, boardId: string) => {
+  const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
     setHeaderTitle(boardName);
-    setCurrentBoardId(boardId);
+    setCurrentBoardIndex(boardIndex);
+    setCurrentBoardId(boardId)
+    localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
-    setIsSidebarMobile(false)
+    SetIsMoving(prev=>!prev)
     };
+    const {data,isLoading,isError} = useQuery({
+        queryKey:['Boards'],
+        queryFn:()=>fetchBoards(),
+      });
+      if (isLoading) {
+        // Return loading skeletons
+        return (
+            <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
+              <div className={styles.SibebarWrapper}>
+                  <div className={styles.DropDown}>
+                      {props.Boards && (
+                          <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
+                      )}
 
+                      {/* Display multiple skeletons for board carts */}
+                      {[...Array(3)].map((_, index) => (
+                          <Skeleton
+                              key={index}
+                              height={50}
+                              style={{ marginTop: '10px' }}
+                              className={currentBoardIndex === index ? styles.selected : ''}
+                          />
+                      ))}
+
+                      <div
+                          className={styles.CreateBoard}
+                          onClick={() => {
+                              setAddBoard(true);
+                          }}
+                      >
+                          <Skeleton height={13} width={10} className={styles.BoardImage} />
+                          <Skeleton height={16} width={100} className={styles.CreateBoardText} />
+                      </div>
+                  </div>
+
+                  {/* ... (existing theme toggle and hide sidebar code) */}
+              </div>
+          </div>
+        );
+    }
+  
+    if (isError) {
+        return (
+            <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
+                <p>Something went wrong</p>
+            </div>
+        );
+    }
     return (
         <div className={styles.SidebarContainer} 
         style={{ display: isSidebarMobile ? 'flex' : 'none' }}
@@ -84,16 +136,17 @@ const handleBoardClick = (boardName: string, boardId: string) => {
                     <h1 className={`${styles.SideBarTitle} ${
                         theme === 'light' ? styles.light : styles.dark
                         }`}
-                    >ALL BOARDS({boards.length})</h1>
+                    >ALL BOARDS({data.Boards.length})</h1>
                 
-                    {boards.map((board,index) => (
-                        <BoardCart 
-                        text={board.name} 
-                        key={index} 
-                        onClick={() => { handleBoardClick(board.name, board.id) }}
-                        selected={currentBoardId === board.id}
-                        />
-                    ))}
+                    
+          {data.Boards.map((board: { name: string; _id: string; },index: number) => (
+            <BoardCart 
+            text={board.name} 
+            key={index} 
+            onClick={() => { handleBoardClick(board.name, index,board._id) }}
+            selected={currentBoardIndex === index}
+            />
+          ))}
                 
                     <div className={`${styles.CreateBoard} ${
                         theme === 'light' ? styles.light : styles.dark

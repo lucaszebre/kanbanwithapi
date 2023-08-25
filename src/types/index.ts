@@ -119,6 +119,7 @@ export interface Board {
     }
 
     export interface Subtasked{
+        _id:string
         title:string;
         isCompleted:boolean
     }
@@ -130,7 +131,6 @@ export interface Board {
         title: string;
         NbList: number;
         columnId:string
-        data: any;
         columnIndex:number
         }
 

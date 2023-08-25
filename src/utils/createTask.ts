@@ -1,13 +1,15 @@
 import supabase from "@/supabase";
 import { Subtask } from "@/types/Zodtype";
 import axios from "axios";
+import { nanoid } from "nanoid";
+
 function createSubTaskArray(SubTaskCurrent:string[]) {
     const SubtaskArray = [];
   
     for (const columnName of SubTaskCurrent) {
       const subtask = {
         title: columnName,
-        isCompleted: false
+        isCompleted: false,
       };
       SubtaskArray.push(subtask);
     }

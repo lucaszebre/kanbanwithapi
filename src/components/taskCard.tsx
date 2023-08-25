@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
 
+
 const TaskCard = (props: {index:number,title: string;description: string;id: string;subtask: Subtask[];columnId:string,onClick:() => void,columnIndex:number}) => {
 
   const { SubTasks, setSubTasks } = useContext(Opencontext); // state to be able to toggle the subTaskk
@@ -21,8 +22,8 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
         i++
       }}}
     return i }
-
-
+   
+  
 
   return (
     <>

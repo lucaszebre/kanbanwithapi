@@ -93,7 +93,7 @@ useEffect(() => {
         editTask(formData.boardId, formData.columnId,formData.taskId,formData.taskName,formData.taskDescription,formData.subTasked),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['Boards']);
+            queryClient.invalidateQueries(['Boards','Task']);
         },
         }
     );

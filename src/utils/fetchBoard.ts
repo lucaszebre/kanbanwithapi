@@ -7,7 +7,6 @@ export const fetchBoards = async () =>{
 
         const response = await axios.get(`https://kanbantask.onrender.com/user/${user?.id}`);
         if(response){
-            console.log(response.data[0])
             return response.data[0]; // Return the data without type assertion
         }else{
             console.error('Error fetching boards')

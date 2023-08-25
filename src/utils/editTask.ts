@@ -6,7 +6,7 @@ function createSubTaskArray(subTasked: Subtasked[]) {
     
         for (const subtask of subTasked) {
         const { title, isCompleted } = subtask;
-        subtaskArray.push({ title:title, isCompleted:isCompleted });
+        subtaskArray.push({_id:subtask._id, title:title, isCompleted:isCompleted });
         }
     
         return subtaskArray;

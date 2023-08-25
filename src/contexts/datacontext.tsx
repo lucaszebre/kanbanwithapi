@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Column, Subtask ,Board} from '@/types/index';
-import axios from 'axios';
-import supabase from '@/supabase';
 
 
 type openedTaskType= {
@@ -13,8 +11,6 @@ type openedTaskType= {
     subTask: Subtask[];
 } | null 
 type DataContextType = {
-    boards: Board[];
-    setBoards: React.Dispatch<React.SetStateAction<Board[] >>
     currentBoardIndex: number;
     currentColumnIndex: number;
     currentBoardId: string;
@@ -23,14 +19,12 @@ type DataContextType = {
     setCurrentBoardId: (boardId:string) => void;
     headerTitle: string;
     setHeaderTitle: (title: string) => void;
-    columns: Column[];
-    setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
     isMoving:boolean;
     SetIsMoving:React.Dispatch<React.SetStateAction<boolean>>;
-    isCompleted:boolean;
-    setIsCompleted:React.Dispatch<React.SetStateAction<boolean>>;
     currentTaskId:string;
+    Interval:number;
     SetCurrentTaskId:React.Dispatch<React.SetStateAction<string>>;
+    setInterval:React.Dispatch<React.SetStateAction<number>>;
     ColId:string;
     setColId:React.Dispatch<React.SetStateAction<string>>;
     openedTask:openedTaskType;
@@ -44,8 +38,6 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
-        const [boards, setBoards] = useState<Board[]>([]);
-        const [columns,setColumns]= useState<Column[]>([])
         const [currentBoardIndex, setCurrentBoardIndex] = useState<number>(
             typeof window !== 'undefined'
             ? parseInt(localStorage.getItem('currentBoardIndex') || '0', 10)
@@ -59,6 +51,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         
             const [currentBoardId, setCurrentBoardId] = useState<string>('');
         const [headerTitle, setHeaderTitle] = useState<string>('');
+        const [Interval,setInterval] = useState<number>(100000);
         const [isMoving,SetIsMoving] = useState(false)
         const [isCompleted,setIsCompleted] = useState(false)
         const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
@@ -70,42 +63,12 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             subTask: Subtask[];
             } | null>(null);
 
-        const onMountedAndUpdate = async () => {
-            try {
-              // Check if the user is authenticated
-            const { data: { user } } = await supabase.auth.getUser()
-                if (user) {
-                // User is authenticated, check if a row exists in the "User" table
-                const response = await axios.get(
-                    `https://kanbantask.onrender.com/user/${user.id}`,
-                    );
-            
-                    if (response.data) {
-                    // Assuming the response data is an array of boards
-                    setBoards(response.data[0].Boards);
-                    setColumns(response.data[0].Boards[currentBoardIndex].columns)
-                    console.log('data',response.data[0].Boards);
-                    } else {
-                    console.error('Error fetching boards');
-                    }
-                }
-                } catch (error) {
-                console.error(error);
-            }
-            };
-
-
-        useEffect(() => {
-                onMountedAndUpdate();
-            }, [,currentBoardIndex,isMoving]);
-
+        
             
             
 
     return (
         <DataContext.Provider value={{
-        boards,
-        setBoards,
         currentBoardIndex,
         currentColumnIndex,
         currentBoardId,
@@ -114,12 +77,11 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         setCurrentBoardId,
         headerTitle,
         setHeaderTitle,
-        columns,setColumns,
         isMoving,SetIsMoving,
-        isCompleted,setIsCompleted,
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
+        Interval,setInterval
         }}>{props.children}</DataContext.Provider>
     );
     };

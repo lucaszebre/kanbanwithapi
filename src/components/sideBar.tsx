@@ -20,7 +20,6 @@ const Sidebar = (props:{Boards:boolean}) => {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
   const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const {
-    boards,
     currentBoardIndex,
     setCurrentBoardIndex,
     setCurrentBoardId,

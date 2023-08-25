@@ -13,17 +13,16 @@ import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import { Task } from '@/types';
 import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
-
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardIndex, } = useContext(DataContext); // state to manage the global data 
+    const {currentBoardIndex,Interval,setInterval } = useContext(DataContext); // state to manage the global data 
     const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
     const { theme } = useTheme();
 
 
     useEffect(() => {
+        setInterval(1000)
         // Check if the window object is available
         if (typeof window !== 'undefined') {
             // Add this useEffect to update the windowWidth state when the window is resized
@@ -44,9 +43,10 @@ const Board = () => {
         }
     }, [windowWidth, setIsSidebarOpen]);
     
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,isFetching} = useQuery({
         queryKey:['Boards'],
         queryFn:()=>fetchBoards(),
+        refetchInterval: Interval,
         });
     
         if (isLoading) {
@@ -87,7 +87,6 @@ const Board = () => {
                             title={doc.name}
                             NbList={index}
                             tasks={doc.tasks}
-                            data={data.Boards[currentBoardIndex]}
                             columnId={doc._id}
                             columnIndex={index}
                         />
