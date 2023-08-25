@@ -57,7 +57,7 @@ const Board = () => {
         }
         
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if ( data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
+        if (  data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
             return (
                 <>
                     {data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
@@ -87,16 +87,17 @@ const Board = () => {
                 </>
             );
         } else {
-            return <EmptyBoard />;
+            return <EmptyBoard Boards={true} />;
         }
     }
    if(data.Boards[currentBoardIndex]){
 
 
     return (
+        <>
         <div className={styles.AppContainer}>
             <div className={styles.HeaderBoard}>
-                <Header />
+                <Header Boards={true} />
             </div>
             <div className={styles.BoardDiv}>
                 <div
@@ -106,7 +107,7 @@ const Board = () => {
                         transition: 'all 0.3s ease-in-out',
                     }}
                 >
-                    <Sidebar />
+                    <Sidebar Boards={true} />
                 </div>
                 <div
                     className={styles.BoardWrapper}
@@ -120,8 +121,39 @@ const Board = () => {
                 </div>
             </div>
         </div>
+        </>
     );}else{
-        return <NoBoard />
+        return (
+            <>
+            
+            <div className={styles.AppContainer}>
+                <div className={styles.HeaderBoard}>
+                    <Header Boards={false}/>
+                </div>
+                <div className={styles.BoardDiv}>
+                    <div
+                        className={styles.SideContainer}
+                        style={{
+                            display: isSidebarOpen ? 'block' : 'none',
+                            transition: 'all 0.3s ease-in-out',
+                        }}
+                    >
+                        <Sidebar Boards={false} />
+                    </div>
+                    <div
+                        className={styles.BoardWrapper}
+                        tabIndex={0}
+                        style={{
+                            marginLeft: isSidebarOpen ? '-70px' : '0px',
+                            transition: 'all 0.3s ease-in-out',
+                        }}
+                    >
+                        <EmptyBoard Boards={false} />
+                    </div>
+                </div>
+            </div>
+            </>
+        )
     }
 };
 

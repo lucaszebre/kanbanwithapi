@@ -11,7 +11,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 
-const Sidebar = () => {
+const Sidebar = (props:{Boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
@@ -61,10 +61,10 @@ const Sidebar = () => {
     }`}>
       <div className={styles.SibebarWrapper}>
         <div className={styles.DropDown}>
-          <h1 
+          {props.Boards && <h1 
           className={`${styles.SideBarTitle} ${
             theme === 'light' ? styles.light : styles.dark
-          }`}>ALL BOARDS({data.Boards.length})</h1>
+          }`}>ALL BOARDS({data.Boards.length})</h1>}
         
           {data.Boards.map((board: { name: string; _id: string; },index: number) => (
             <BoardCart 

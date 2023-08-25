@@ -13,7 +13,7 @@ import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 
-export default function Header() {
+export default function Header(props:{Boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const { setAddTask, setIsOpenModal, isOpenModal, isChanged } = useContext(Opencontext);
     // state to get the current headerTitle 
@@ -61,14 +61,14 @@ export default function Header() {
                         theme === 'light' ? styles.light : styles.dark
                         }`}>{ data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</h1>
                     <div className={styles.HeaderBlock1}>
-                    <button
+                    {props.Boards && <button
                         onClick={() => {
                         setAddTask(true);
                         }}
                         className={styles.HeaderButton}
                     >
                         + Add New Task
-                    </button>
+                    </button>}
                     <button
                             onClick={()=>{Logout()
                             Router.push('/login')}}
@@ -76,7 +76,7 @@ export default function Header() {
                     >
                         Logout
                     </button>
-                    <Image
+                    {props.Boards && <Image
                         onClick={() => {
                         setIsOpenModal(!isOpenModal);
                         }}
@@ -85,7 +85,7 @@ export default function Header() {
                         alt="vertical-ellipsis"
                         width={100}
                         height={100}
-                    />
+                    />}
                     </div>
                 </div>
             </div>

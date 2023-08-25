@@ -23,6 +23,9 @@ export type contextopen = { // Type for context
     setEditTask:React.Dispatch<React.SetStateAction<boolean>>;
     DeleteTaskBlock:boolean,
     setDeleteTaskBlock:React.Dispatch<React.SetStateAction<boolean>>;
+    setNoBoards:React.Dispatch<React.SetStateAction<boolean>>;
+    NoBoards:boolean,
+
 
 };
 
@@ -43,7 +46,9 @@ export const Opencontext = createContext<contextopen>({ // Create context
     EditTask: false,
     setEditTask:()=>{},
     DeleteTaskBlock:false,
-    setDeleteTaskBlock:()=>{}
+    setDeleteTaskBlock:()=>{},
+    NoBoards:false,
+    setNoBoards:()=>{}
     
 });
 
@@ -68,6 +73,7 @@ const ContextOpen = (props: { children: React.ReactNode }) => { // Context provi
     const [isChanged, setIsChanged] = useState<boolean>(false);  // Set initial state for Add Board
     const [EditTask, setEditTask]= useState<boolean>(false);
     const [DeleteTaskBlock, setDeleteTaskBlock]=useState<boolean>(false)
+    const [NoBoards, setNoBoards]=useState<boolean>(false)
 
     // const {BoardId, setBoardId} = useData();
 
@@ -83,7 +89,8 @@ const ContextOpen = (props: { children: React.ReactNode }) => { // Context provi
             ,AddBoard,setAddBoard
             ,isChanged,setIsChanged,
             EditTask, setEditTask,
-            DeleteTaskBlock, setDeleteTaskBlock
+            DeleteTaskBlock, setDeleteTaskBlock,
+            NoBoards,setNoBoards
 
         }}
         >
