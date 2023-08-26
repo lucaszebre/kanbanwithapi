@@ -11,13 +11,12 @@ import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 
-const AddTask = () => {
+const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const {data,isLoading,isError} = useQuery({
         queryKey:['Boards'],
         queryFn:()=>fetchBoards()
         ,
         });
-    const { AddTask, setAddTask } = useContext(Opencontext)  // the state to tooggle the display of addtask
     const [taskTitle, setTaskTitle] = useState(''); // state for the tasktitle
     const [taskDescription, setTaskDescription] = useState(''); // state for task description 
     const [SubTaskCurrent,setSubTaskCurrent] = useState<string[]>([]) // states to save up the name of all the subtasks i add
@@ -81,7 +80,7 @@ const AddTask = () => {
 
         if (isLoading) {
             return (
-                <div className={styles.AddTaskWrapper} style={{ display: AddTask ? 'flex' : 'none' }}>
+                <div className={styles.AddTaskWrapper} style={{ display: props.addTask ? 'flex' : 'none' }}>
                     <div className={`${styles.AddTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
                         <Skeleton height={30} width={200} style={{ marginBottom: '10px' }} />
                         {/* Other skeleton components */}
@@ -104,11 +103,11 @@ if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
 
 
     <div className={styles.AddTaskWrapper}
-        style={{ display: AddTask ? 'flex' : 'none' }}
+        style={{ display: props.addTask ? 'flex' : 'none' }}
             onClick={
             (e) => {
                 if (e.target === e.currentTarget) {
-                    setAddTask(false)
+                    props.setAddTask(false)
                 }
             }
         }
@@ -135,7 +134,7 @@ if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
                         }
                     }else{
                         await HandleSubmit();
-                        setAddTask(false)
+                        props.setAddTask(false)
                     }
                     
                 }}

@@ -13,14 +13,21 @@ import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
+import AddBoard from './addBoard';
+import EditBoard from './editBoard/editBoard';
+import AddTask from './addTask/addTask';
+import DeleteThisBoard from './DeletethisBoard';
 
 export default function Header(props:{Boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
-    const { setAddTask, setIsOpenModal, isOpenModal, isChanged } = useContext(Opencontext);
+    const {  setIsOpenModal, isOpenModal, } = useContext(Opencontext);
     // state to get the current headerTitle 
     const {currentBoardIndex} = useContext(DataContext);
 
     const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
+    const [editBoard,setEditBoard] = useState(false)
+    const [addTask,setAddTask] = useState(false)
+    const [DeleteBlock,setDeleteBlock] = useState(false)
 
     const { theme, setTheme } = useTheme();
 
@@ -67,8 +74,11 @@ export default function Header(props:{Boards:boolean}) {
 
     return (
         <>
+        <DeleteThisBoard  DeleteBlock={DeleteBlock} setDeleteBlock={setDeleteBlock} />
+        <AddTask addTask={addTask} setAddTask={setAddTask} />
+        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
         {isOpenModal && (
-            <ModalAbout right={'2rem'} top={'7rem'} visible={isOpenModal} />
+            <ModalAbout right={'2rem'} top={'7rem'} visible={isOpenModal} editBoard={editBoard} setEditBoard={setEditBoard} setDeleteBlock={setDeleteBlock} />
         )}
         <div className={styles.HeaderContainer}>
             <div 

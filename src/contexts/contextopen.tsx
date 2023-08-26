@@ -9,8 +9,6 @@ export type contextopen = { // Type for context
     setDeleteBlock: React.Dispatch<React.SetStateAction<boolean>>;
     isOpenModal: boolean; // Delete block state
     setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    EditBoard: boolean; // Delete block state
-    setEditBoard: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
     AddTask: boolean; // Delete block state
     setAddTask: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
     SubTasks: boolean; // Delete block state
@@ -31,8 +29,6 @@ export const Opencontext = createContext<contextopen>({ // Create context
     DeleteBlock: true,
     setDeleteBlock: () => {},
     isOpenModal : false , setIsOpenModal: () => {},
-    EditBoard: false,
-    setEditBoard: () => {},
     AddTask: false,
     setAddTask: () => {},
     SubTasks: false,
@@ -62,7 +58,6 @@ export type BoardType = {
 const ContextOpen = (props: { children: React.ReactNode }) => { // Context provider
     const [DeleteBlock, setDeleteBlock] = useState<boolean>(false);  // Set initial state for delete block
     const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)  // Set initial state for the Open Modal
-    const [EditBoard, setEditBoard] = useState<boolean>(false); // Set initial state for Edit Board
     const [AddTask, setAddTask] = useState<boolean>(false);  // Set initial state for Add Task
     const [SubTasks, setSubTasks] = useState<boolean>(false);  // Set initial state for Sub Tasks
     const [isChanged, setIsChanged] = useState<boolean>(false);  // Set initial state for Add Board
@@ -78,8 +73,7 @@ const ContextOpen = (props: { children: React.ReactNode }) => { // Context provi
             DeleteBlock,
             setDeleteBlock,
             isOpenModal, setIsOpenModal,
-            EditBoard,setEditBoard
-            ,AddTask,setAddTask
+            AddTask,setAddTask
             ,SubTasks,setSubTasks
             ,isChanged,setIsChanged,
             EditTask, setEditTask,

@@ -10,8 +10,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 
 
-const DeleteThisBoard = () => {
-    const { DeleteBlock, setDeleteBlock } = useContext(Opencontext); // state to toggle the display of the components
+const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { currentBoardIndex,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
     const {data,isLoading,isError} = useQuery({
@@ -80,10 +79,10 @@ const DeleteThisBoard = () => {
         }
     };
     return (
-        <div className={styles.DeleteThisBoardWrapper} style={{ display: DeleteBlock ? 'flex' : 'none' }}
+        <div className={styles.DeleteThisBoardWrapper} style={{ display: props.DeleteBlock ? 'flex' : 'none' }}
             onClick={(e) => {
                 if (e.target === e.currentTarget) {
-                    setDeleteBlock(false);
+                    props.setDeleteBlock(false);
                 }}}>
             <div className={`${styles.DeletethisBoardDiv} ${
                 theme === 'light' ? styles.light : styles.dark
@@ -98,13 +97,13 @@ const DeleteThisBoard = () => {
                         onClick={() => {
                             mutation.mutate(data.Boards[currentBoardIndex]._id);
                             setCurrentBoardIndex(0);
-                            setDeleteBlock(false);
+                            props.setDeleteBlock(false);
                         }}
                         className={styles.DeleteButton}
                     >
                         Delete
                     </button>
-                    <button className={styles.CancelButton} onClick={() => setDeleteBlock(false)}>
+                    <button className={styles.CancelButton} onClick={() => props.setDeleteBlock(false)}>
                         Cancel
                     </button>
                 </div>

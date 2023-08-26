@@ -6,20 +6,20 @@ import { KanbanContext } from '@/contexts/sidebarcontext';
 import Header from './header';
 import styles from '../styles/Board.module.css';
 import { DataContext } from '@/contexts/datacontext';
-import { Opencontext } from '@/contexts/contextopen';  // get the context to toggle the board 
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import { Task } from '@/types';
 import Skeleton from 'react-loading-skeleton'
+import EditBoard from './editBoard/editBoard';
+
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
     const {currentBoardIndex,Interval,setInterval } = useContext(DataContext); // state to manage the global data 
-    const {setEditBoard}= useContext(Opencontext) // state to toggle the display of the components EditBoard 
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
     const { theme } = useTheme();
-
+    const [editBoard,setEditBoard]= useState(false)
 
     useEffect(() => {
         setInterval(1000)
@@ -115,6 +115,7 @@ const Board = () => {
 
     return (
         <>
+        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
         <div className={styles.AppContainer}>
             <div className={styles.HeaderBoard}>
                 <Header Boards={true} />
