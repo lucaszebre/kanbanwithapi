@@ -1,8 +1,7 @@
 import styles from '../styles/modalAbout.module.css';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Opencontext } from '@/contexts/contextopen';
 import { useTheme } from '@/contexts/themecontext';
-import DeleteThisBoard from './DeletethisBoard';
 
 const ModalAbout = (props: {right: string;top: string;visible: boolean,editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
 

@@ -13,7 +13,6 @@ import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
-import AddBoard from './addBoard';
 import EditBoard from './editBoard/editBoard';
 import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';

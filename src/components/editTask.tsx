@@ -29,7 +29,7 @@ const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
         queryFn:()=>fetchBoards(),
       });   // State hooks for managing subtasks and input errors
 
-const { EditTask, setEditTask, setSubTasks } = useContext(Opencontext);
+const { EditTask, setEditTask } = useContext(Opencontext);
 const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');
 const [subTasked, setSubTasked] = useState<Subtask[]>([]);
