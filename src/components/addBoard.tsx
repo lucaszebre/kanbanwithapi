@@ -8,8 +8,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient } from 'react-query';
 import { createBoard } from '@/utils/createBoard';
 
-const AddBoard = () => {
-    const { AddBoard, setAddBoard } = useContext(Opencontext);  // import the state to toggle the display of the AddBoard
+const AddBoard = (props:{addBoard:boolean,setAddBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const [boardName, setBoardName] = useState<string>('');   // Boardname state 
     const [columnNames, setColumnNames] = useState<string[]>(['', '']); // COlumns Names state 
     const [inputError, setInputError] = useState<boolean>(false);   // state to manage is the input of board name is empty 
@@ -26,7 +25,7 @@ const AddBoard = () => {
 const resetForm = () => {  // function to reset the form 
     setBoardName('');
     setColumnNames(['', '']);
-    setAddBoard(false);
+    props.setAddBoard(false);
     };
 
     
@@ -84,10 +83,10 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
     
     return (
     <div className={styles.AddBoardWrapper}
-        style={{ display: AddBoard ? 'flex' : 'none' }}  // toggle the display of addBoard components 
+        style={{ display: props.addBoard ? 'flex' : 'none' }}  // toggle the display of addBoard components 
             onClick={(e) => {
                 if (e.target === e.currentTarget) {
-                    setAddBoard(false)
+                    props.setAddBoard(false)
                 }}}>
 
         <div 

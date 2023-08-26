@@ -15,8 +15,6 @@ export type contextopen = { // Type for context
     setAddTask: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
     SubTasks: boolean; // Delete block state
     setSubTasks: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    AddBoard: boolean; // Delete block state
-    setAddBoard: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
     isChanged: boolean; // Delete block state
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
     EditTask:boolean;
@@ -39,8 +37,6 @@ export const Opencontext = createContext<contextopen>({ // Create context
     setAddTask: () => {},
     SubTasks: false,
     setSubTasks: () => {},
-    AddBoard: false,
-    setAddBoard: () => {},
     isChanged: false,
     setIsChanged: () => {},
     EditTask: false,
@@ -69,7 +65,6 @@ const ContextOpen = (props: { children: React.ReactNode }) => { // Context provi
     const [EditBoard, setEditBoard] = useState<boolean>(false); // Set initial state for Edit Board
     const [AddTask, setAddTask] = useState<boolean>(false);  // Set initial state for Add Task
     const [SubTasks, setSubTasks] = useState<boolean>(false);  // Set initial state for Sub Tasks
-    const [AddBoard, setAddBoard] = useState<boolean>(false);  // Set initial state for Add Board
     const [isChanged, setIsChanged] = useState<boolean>(false);  // Set initial state for Add Board
     const [EditTask, setEditTask]= useState<boolean>(false);
     const [DeleteTaskBlock, setDeleteTaskBlock]=useState<boolean>(false)
@@ -86,7 +81,6 @@ const ContextOpen = (props: { children: React.ReactNode }) => { // Context provi
             EditBoard,setEditBoard
             ,AddTask,setAddTask
             ,SubTasks,setSubTasks
-            ,AddBoard,setAddBoard
             ,isChanged,setIsChanged,
             EditTask, setEditTask,
             DeleteTaskBlock, setDeleteTaskBlock,

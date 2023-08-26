@@ -1,6 +1,7 @@
 import supabase from "@/supabase";
 import axios from "axios";
-supabase
+
+
 export const deleteTask = async (boardId:string,columnId:string,taskId:string) =>{
     try{
         const { data: { user } } = await supabase.auth.getUser()

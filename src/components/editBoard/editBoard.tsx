@@ -10,9 +10,8 @@ import { useQuery,useMutation,useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
 import Skeleton from "react-loading-skeleton";
-const EditBoard = () => {
+const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
-const { EditBoard, setEditBoard } = useContext(Opencontext); // state to toggle the display of components
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database
 const [Header,setHeader]= useState<string>(''); // state to know the current boardname selected
 const [Save,SetSave]= useState<boolean>(false) // state to toggle the disabled thhe button save 
@@ -145,10 +144,10 @@ function renderColumns() {
                     onClick={(e) => {
                         if (e.target === e.currentTarget) {
                             SetIsMoving(isMoving => !isMoving);
-                            setEditBoard(false);
+                            props.setEditBoard(false);
                         }
                     }}
-                    style={{ display: EditBoard ? "flex" : "none" }}
+                    style={{ display: props.editBoard ? "flex" : "none" }}
                 >
                     <div
                         className={`${styles.EditBoardBlock} ${
@@ -178,10 +177,10 @@ function renderColumns() {
             if (e.target === e.currentTarget) {
             SetIsMoving(isMoving => !isMoving);
             mutationed.mutate();
-            setEditBoard(false);
+            props.setEditBoard(false);
             }}}
         style={{
-            display: EditBoard ? "flex" : "none", // toggle the display 
+            display: props.editBoard ? "flex" : "none", // toggle the display 
         }}>
         <div 
         className={`${styles.EditBoardBlock} ${
@@ -202,7 +201,7 @@ function renderColumns() {
                         return;
                     }else{
                         mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.Boards[currentBoardIndex]._id,Header,headerTitle:data.Boards[currentBoardIndex].name})
-                        setEditBoard(false);
+                        props.setEditBoard(false);
                         SetSave(!Save);
                         SetIsMoving(isMoving=>!isMoving)
                     }

@@ -113,7 +113,8 @@ useEffect(() => {
             mutation.mutate({boardId:data.Boards[currentBoardIndex]._id,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,taskId:data.Boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index]._id,taskName,taskDescription,subTasked})
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
-            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,boardId:currentBoardId,taskId:props.taskId,newtask:{
+            console.log('columnId',props.columnId)
+            column.mutate({newColumnId:selectedColumnId,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,boardId:currentBoardId,taskId:props.taskId,newtask:{
                 title: taskName,
                 description: taskDescription,
                 subtasks: subTasked

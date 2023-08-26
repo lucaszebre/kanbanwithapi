@@ -1,12 +1,14 @@
 import styles from '../styles/modalAbout.module.css';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Opencontext } from '@/contexts/contextopen';
 import { useTheme } from '@/contexts/themecontext';
+import EditBoard from './editBoard/editBoard';
 
 const ModalAbout = (props: {right: string;top: string;visible: boolean;}) => {
 
   // state to toggle the display of the Delete Components or the EditBoard 
-  const {setDeleteBlock,setIsOpenModal,setEditBoard,} = useContext(Opencontext); 
+  const {setDeleteBlock,setIsOpenModal,} = useContext(Opencontext); 
+  const [editBoard,setEditBoard] = useState(false)
 
   const { theme, setTheme } = useTheme();
 
@@ -22,6 +24,8 @@ const ModalAbout = (props: {right: string;top: string;visible: boolean;}) => {
   }
   
   return (
+    <>
+        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
     <div className={styles.ModalWrapper}>
       <div
         className={`${styles.modalAboutDiv} ${
@@ -47,6 +51,7 @@ const ModalAbout = (props: {right: string;top: string;visible: boolean;}) => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 

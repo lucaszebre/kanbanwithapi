@@ -39,7 +39,7 @@ export const createTask = async (taskTitle:string,taskDescription:string,boardId
                     {
                         title:taskTitle,
                         description:taskDescription,
-                        subtasks:createSubTaskArray(SubTaskCurrent)
+                        subtasks:[]
                     });
                     if(response.data){
                         console.log('Task add')

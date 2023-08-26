@@ -1,13 +1,17 @@
 import { Opencontext } from '@/contexts/contextopen';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import styles from '../styles/EmptyBoard.module.css';
+import AddBoard from './addBoard';
+import EditBoard from './editBoard/editBoard';
 
 const EmptyBoard = (props:{Boards:boolean}) => {
   
-  const { setEditBoard,setAddBoard } = useContext(Opencontext);
-
+  const [addBoard,setAddBoard] = useState(false)
+  const [editBoard,setEditBoard] = useState(false)
 if(props.Boards){
   return (
+    <>
+    <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
     <div className={styles.emptyBoardDiv}>
       <h1 className={styles.emptyBoardTitle}>
         This board is empty. Create a new column to get started.
@@ -18,9 +22,12 @@ if(props.Boards){
         + Add New Column
       </button>
     </div>
+    </>
   );
 }else{
   return (
+    <>
+    <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
     <div className={styles.emptyBoardDiv}>
       <h1 className={styles.emptyBoardTitle}>
         You have no boards you should create one Boards to start.
@@ -31,6 +38,7 @@ if(props.Boards){
         + Add a Boards
       </button>
     </div>
+    </>
   )
 }
 };

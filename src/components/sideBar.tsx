@@ -1,4 +1,4 @@
-import { Key, useContext, useEffect } from 'react';
+import { Key, useContext, useEffect, useState } from 'react';
 import { KanbanContext } from '@/contexts/sidebarcontext';
 import { Opencontext } from '@/contexts/contextopen';
 import styles from '@/styles/Sidebar.module.css';
@@ -11,6 +11,7 @@ import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
+import AddBoard from './addBoard';
 
 const Sidebar = (props:{Boards:boolean}) => {
   
@@ -18,7 +19,8 @@ const Sidebar = (props:{Boards:boolean}) => {
   const { theme, setTheme } = useTheme();
 
   const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-  const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
+  // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
+  const [addBoard,setAddBoard] = useState(false)
   const {
     currentBoardIndex,
     setCurrentBoardIndex,
@@ -92,6 +94,8 @@ const Sidebar = (props:{Boards:boolean}) => {
       );
   }
   return (
+    <>
+    <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
     <div className={`${styles.SidebarContainer} ${
       theme === 'light' ? styles.light : styles.dark
     }`}>
@@ -149,7 +153,7 @@ const Sidebar = (props:{Boards:boolean}) => {
         </div>
       </div>
     </div>
-      
+    </>
   );
 };
 
