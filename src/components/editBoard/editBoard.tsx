@@ -26,7 +26,7 @@ const { theme } = useTheme();
 
 
 const {data,isLoading,isError} = useQuery({
-    queryKey:['Boards'],
+    queryKey:['boards'],
     queryFn:()=>fetchBoards(),
     });
     
@@ -37,17 +37,17 @@ useEffect(()=>{
 },[Save])
 
     useEffect(() => {
-        if(data && data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
-            setCopyBoardColumns(data.Boards[currentBoardIndex].columns);
-            setHeader(data.Boards[currentBoardIndex].name)
-            const initialColumnErrors = data.Boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
+        if(data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns){
+            setCopyBoardColumns(data.boards[currentBoardIndex].columns);
+            setHeader(data.boards[currentBoardIndex].name)
+            const initialColumnErrors = data.boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
             setColumnErrors(initialColumnErrors);}
     }, [currentBoardIndex, data, isMoving]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
 
 
     const handleAddColumn = () => { // function to add column 
         const newColumn = {
-        _id:'',
+        id:'',
         name: "",
         tasks: [],
         add:true
@@ -64,7 +64,7 @@ useEffect(()=>{
     
         // Filter out the deleted column from columnsToRename
         const updatedColumnsToRename = columnsToRename.filter(
-            (column) => column._id !== columnId
+            (column) => column.id !== columnId
         );
         setColumnsToRename(updatedColumnsToRename);
     
@@ -85,14 +85,14 @@ useEffect(()=>{
         setColumnErrors(updatedColumnErrors);
     
         if (add) {
-            const existingColumnIndex = columnstoAdd.findIndex((c) => c._id === updatedColumns[index]._id);
+            const existingColumnIndex = columnstoAdd.findIndex((c) => c.id === updatedColumns[index].id);
             if (existingColumnIndex !== -1) {
                 const updatedColumnsToAdd = [...columnstoAdd];
                 updatedColumnsToAdd[existingColumnIndex] = updatedColumns[index];
                 setColumnstoAdd(updatedColumnsToAdd);
             }
         } else {
-            const existingColumnIndex = columnsToRename.findIndex((c) => c._id === updatedColumns[index]._id);
+            const existingColumnIndex = columnsToRename.findIndex((c) => c.id === updatedColumns[index].id);
             if (existingColumnIndex === -1) {
                 setColumnsToRename([...columnsToRename, updatedColumns[index]]);
             } else {
@@ -110,7 +110,7 @@ function renderColumns() {
             key={index}
             title={column.name}
             onChange={(updatedTitle: string) =>handleEditColumn(index,updatedTitle,column.add)}
-            Remove={ ()=> handleDeleteColumn(index,column._id) }
+            Remove={ ()=> handleDeleteColumn(index,column.id) }
             error={columnErrors[index] || false}
         />
     ));
@@ -122,7 +122,7 @@ function renderColumns() {
             handleSaveChanges(formData.columnsToDelete, formData.columnsToRename,formData.columnstoAdd,formData.currentBoardId,formData.Header,formData.headerTitle),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards']);
+                queryClient.invalidateQueries(['boards']);
             },
             }
         );
@@ -132,7 +132,7 @@ function renderColumns() {
             fetchBoards(),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards']);
+                queryClient.invalidateQueries(['boards']);
             },
             }
         );
@@ -200,7 +200,7 @@ function renderColumns() {
                     }else if (newColumnErrors.some((error) => error)) {
                         return;
                     }else{
-                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.Boards[currentBoardIndex]._id,Header,headerTitle:data.Boards[currentBoardIndex].name})
+                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.boards[currentBoardIndex].id,Header,headerTitle:data.boards[currentBoardIndex].name})
                         props.setEditBoard(false);
                         SetSave(!Save);
                         SetIsMoving(isMoving=>!isMoving)

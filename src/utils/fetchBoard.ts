@@ -1,17 +1,24 @@
-import supabase from '@/supabase';
-import axios from 'axios';
-import { UserSchema } from '@/types/Zodtype';
-export const fetchBoards = async () =>{
-    try{
-        const { data: { user } } = await supabase.auth.getUser()
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { axiosInstance } from './instance';
 
-        const response = await axios.get(`https://kanbantask.onrender.com/user/${user?.id}`);
-        if(response){
-            return response.data[0]; // Return the data without type assertion
-        }else{
-            console.error('Error fetching boards')
-        }
-    }catch(error){
-        console.error(error)
+export const fetchBoards = async () => {
+  try {
+    // Check if localStorage is available (client-side)
+    if (typeof window !== 'undefined') {      
+
+      const data = await axiosInstance.get(`/auth/profile`);
+      console.log(data)
+      const response = await axiosInstance.get(`/users/${data.data.id}`);
+      if (response) {
+        console.log(response.data)
+        return response.data;
+      } else {
+        console.error('Error fetching boards');
+      }
     }
+  } catch (error) {
+    console.error(error);
+  }
 };
+

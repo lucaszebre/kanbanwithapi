@@ -3,18 +3,16 @@ import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
-import supabase from '@/supabase';
-import axios from 'axios';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
-
+import { axiosInstance } from '@/utils/instance';
 
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const { currentBoardIndex,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
+    const { currentBoardId,setCurrentBoardId} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
     const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         });
     
@@ -25,7 +23,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
         deleteBoard(boardId),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['Boards']);
+            queryClient.invalidateQueries(['boards']);
         },
         }
     );
@@ -59,10 +57,8 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
     }
       const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (user) {
-                const response = await axios.delete(
-                    `https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}`,
+                const response = await axiosInstance.delete(
+                    `http://localhost:4000/boards/${boardId}`,
                     );
             
                     if (response.data) {
@@ -72,8 +68,8 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                     console.error('Error fetching boards');
                     }
                     localStorage.setItem('currentBoardIndex', '0');
-                    setCurrentBoardIndex(0)
-            }
+                    setCurrentBoardId(data.data.id)
+            
         } catch (error) {
             console.error('Error while deleting the board:', error);
         }
@@ -89,14 +85,16 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                 }`}>
                 <h1 className={styles.DeleteThisBoardTitle}>Delete this board?</h1>
                 <p className={styles.DeleteThisBoardText}>
-                    Are you sure you want to delete the ‘<a >{data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</a>’ board? This action will remove all columns and tasks
+                    Are you sure you want to delete the ‘<a >
+                        {/* {data.boards.find? data.boards[currentBoardIndex].name : ''} */}
+                    </a>’ board? This action will remove all columns and tasks
                     and cannot be reversed.
                 </p>
                 <div className={styles.DeleteThisBoardButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate(data.Boards[currentBoardIndex]._id);
-                            setCurrentBoardIndex(0);
+                            mutation.mutate(currentBoardId);
+                            setCurrentBoardId(data.id);
                             props.setDeleteBlock(false);
                         }}
                         className={styles.DeleteButton}

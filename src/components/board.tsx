@@ -44,7 +44,7 @@ const Board = () => {
     }, [windowWidth, setIsSidebarOpen]);
     
     const {data,isLoading,isError,isFetching} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         refetchInterval: Interval,
         });
@@ -78,16 +78,16 @@ const Board = () => {
         }
         
     function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (  data.Boards[currentBoardIndex].columns && data.Boards[currentBoardIndex].columns.length > 0) {
+        if (  data.boards[currentBoardIndex].columns && data.boards[currentBoardIndex].columns.length > 0) {
             return (
                 <>
-                    {data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; _id: string; }, index: number) => (
+                    {data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; id: string; }, index: number) => (
                         <ListTask
                             key={index}
                             title={doc.name}
                             NbList={index}
                             tasks={doc.tasks}
-                            columnId={doc._id}
+                            columnId={doc.id}
                             columnIndex={index}
                         />
                     ))}
@@ -107,10 +107,10 @@ const Board = () => {
                 </>
             );
         } else {
-            return <EmptyBoard Boards={true} />;
+            return <EmptyBoard boards={true} />;
         }
     }
-   if(data.Boards[currentBoardIndex]){
+   if(data.boards[currentBoardIndex]){
 
 
     return (
@@ -118,7 +118,7 @@ const Board = () => {
         <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
         <div className={styles.AppContainer}>
             <div className={styles.HeaderBoard}>
-                <Header Boards={true} />
+                <Header boards={true} />
             </div>
             <div className={styles.BoardDiv}>
                 <div
@@ -128,7 +128,7 @@ const Board = () => {
                         transition: 'all 0.3s ease-in-out',
                     }}
                 >
-                    <Sidebar Boards={true} />
+                    <Sidebar boards={true} />
                 </div>
                 <div
                     className={styles.BoardWrapper}
@@ -149,7 +149,7 @@ const Board = () => {
             
             <div className={styles.AppContainer}>
                 <div className={styles.HeaderBoard}>
-                    <Header Boards={false}/>
+                    <Header boards={false}/>
                 </div>
                 <div className={styles.BoardDiv}>
                     <div
@@ -159,7 +159,7 @@ const Board = () => {
                             transition: 'all 0.3s ease-in-out',
                         }}
                     >
-                        <Sidebar Boards={false} />
+                        <Sidebar boards={false} />
                     </div>
                     <div
                         className={styles.BoardWrapper}
@@ -169,7 +169,7 @@ const Board = () => {
                             transition: 'all 0.3s ease-in-out',
                         }}
                     >
-                        <EmptyBoard Boards={false} />
+                        <EmptyBoard boards={false} />
                     </div>
                 </div>
             </div>

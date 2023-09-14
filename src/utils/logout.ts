@@ -1,15 +1,9 @@
-import supabase from '@/supabase';
-import axios from 'axios';
+import { axiosInstance } from "./instance";
 import { useRouter } from 'next/router';
 
 export const Logout = async () =>{
     try{
-        let { error } = await supabase.auth.signOut()
-       if(error){
-        console.error(error)
-       }else{
-        console.log("sucessfully logout")
-       }
+        const response  =  await axiosInstance.post('http://localhost:3000/auth/logout')
     }catch(error){
         console.error(error)
     }

@@ -24,7 +24,7 @@ const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId,
                         checked={sub.isCompleted}
                         colunmId={columnId}
                         taskId={taskId}
-                        subtaskId={sub._id}
+                        subtaskId={sub.id}
                     />
                 ))}
             </>

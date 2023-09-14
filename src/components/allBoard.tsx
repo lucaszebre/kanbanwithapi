@@ -1,5 +1,5 @@
 // import React, { useState, useEffect } from 'react';
-// import { Boards } from '@/types';
+// import { boards } from '@/types';
 // import BoardCart from './boardCart';
 // import { useContext } from 'react';
 // import { DataContext } from '@/contexts/datacontext';
@@ -7,11 +7,11 @@
 
 // const AllBoard = () => {
 //     const { setCurrentBoardId,setHeaderTitle,isMoving,currentBoardId } = useContext(DataContext);  // get state to manage the global data 
-//     const [AllBoard,setAllBoard]=useState<Boards[]>([])  // state we all the Board 
+//     const [AllBoard,setAllBoard]=useState<boards[]>([])  // state we all the Board 
 
 //     function GetBoards(){ // function to get All the board présent in firestore of the current user 
 //         for (const board of boards){
-//             setAllBoard([...AllBoard, {id:board._id,name:board.name}])  
+//             setAllBoard([...AllBoard, {id:board.id,name:board.name}])  
 //         }
 //     }
     
@@ -20,7 +20,7 @@
 //     },[isMoving]) 
     
 
-//     return (AllBoard || []).map((doc: Boards,index:number) => (
+//     return (AllBoard || []).map((doc: boards,index:number) => (
 //         <BoardCart
 //         key={index}
 //         text={doc.name}

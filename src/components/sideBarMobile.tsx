@@ -14,12 +14,12 @@ import Skeleton from 'react-loading-skeleton';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 
-const Sidebar = (props:{Boards:boolean}) => {
+const Sidebar = (props:{boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 
 const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
-const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
 const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
+const [addBoard,setAddBoard] = useState(false)
 
 const {
     currentBoardId,
@@ -72,46 +72,46 @@ const {
     SetIsMoving(prev=>!prev)
     };
     const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
-      });
-      if (isLoading) {
-        // Return loading skeletons
-        return (
-            <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
-              <div className={styles.SibebarWrapper}>
-                  <div className={styles.DropDown}>
-                      {props.Boards && (
-                          <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
-                      )}
+        });
+        if (isLoading) {
+            // Return loading skeletons
+            return (
+                <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
+                <div className={styles.SibebarWrapper}>
+                    <div className={styles.DropDown}>
+                        {props.boards && (
+                            <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
+                        )}
 
-                      {/* Display multiple skeletons for board carts */}
-                      {[...Array(3)].map((_, index) => (
-                          <Skeleton
-                              key={index}
-                              height={50}
-                              style={{ marginTop: '10px' }}
-                              className={currentBoardIndex === index ? styles.selected : ''}
-                          />
-                      ))}
+                        {/* Display multiple skeletons for board carts */}
+                        {[...Array(3)].map((_, index) => (
+                            <Skeleton
+                                key={index}
+                                height={50}
+                                style={{ marginTop: '10px' }}
+                                className={currentBoardIndex === index ? styles.selected : ''}
+                            />
+                        ))}
 
-                      <div
-                          className={styles.CreateBoard}
-                          onClick={() => {
-                              setAddBoard(true);
-                          }}
-                      >
-                          <Skeleton height={13} width={10} className={styles.BoardImage} />
-                          <Skeleton height={16} width={100} className={styles.CreateBoardText} />
-                      </div>
-                  </div>
+                        <div
+                            className={styles.CreateBoard}
+                            onClick={() => {
+                                setAddBoard(true);
+                            }}
+                        >
+                            <Skeleton height={13} width={10} className={styles.BoardImage} />
+                            <Skeleton height={16} width={100} className={styles.CreateBoardText} />
+                        </div>
+                    </div>
 
-                  {/* ... (existing theme toggle and hide sidebar code) */}
-              </div>
-          </div>
-        );
-    }
-  
+                    {/* ... (existing theme toggle and hide sidebar code) */}
+                </div>
+            </div>
+            );
+        }
+    
     if (isError) {
         return (
             <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
@@ -136,14 +136,14 @@ const {
                     <h1 className={`${styles.SideBarTitle} ${
                         theme === 'light' ? styles.light : styles.dark
                         }`}
-                    >ALL BOARDS({data.Boards.length})</h1>
+                    >ALL boards({data.boards.length})</h1>
                 
                     
-          {data.Boards.map((board: { name: string; _id: string; },index: number) => (
+          {data.boards.map((board: { name: string; id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, index,board._id) }}
+            onClick={() => { handleBoardClick(board.name, index,board.id) }}
             selected={currentBoardIndex === index}
             />
           ))}

@@ -18,7 +18,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 
 const ModalTask = (props:{
-    _id: string;
+    id: string;
     title: string;
     description: string;
     columnId: string;
@@ -28,12 +28,12 @@ const ModalTask = (props:{
     const { setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
 
     const { data: task, isLoading, isError } = useQuery(
-        ['Task',currentBoardId , props.columnId, props._id], // Use these parameters as the query key
-        () => getTask(currentBoardId, props.columnId,props._id)
+        ['Task',currentBoardId , props.columnId, props.id], // Use these parameters as the query key
+        () => getTask(currentBoardId, props.columnId,props.id)
     );
 
     const {data} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
     // state 
@@ -51,9 +51,9 @@ const ModalTask = (props:{
     },[])
 
     React.useEffect(()=>{  // when the current board id change we set defaultly the col id to the first column 
-        if(data.Boards[currentBoardIndex].columns[0]){
-            setColId(data.Boards[currentBoardIndex].columns[0]._id)
-            setCurrentBoardId(data.Boards[currentBoardIndex]._id)
+        if(data.boards[currentBoardIndex].columns[0]){
+            setColId(data.boards[currentBoardIndex].columns[0].id)
+            setCurrentBoardId(data.boards[currentBoardIndex].id)
         }
     },[currentBoardIndex])
 
@@ -67,7 +67,7 @@ const ModalTask = (props:{
             changeColumn(formData.newColumnId,formData.columnId,formData.boardId,formData.taskId,formData.newtask),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards','Task']);
+                queryClient.invalidateQueries(['boards','Task']);
             },
             }
         );
@@ -106,8 +106,8 @@ const ModalTask = (props:{
     } 
     return (
         <>
-        <EditTask columnId={props.columnId} taskId={props._id} index={props.index}  />
-        <DeleteThisTask columnId={ColId} TaskTitle={props.title}  TaskId={props._id} />
+        <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
+        <DeleteThisTask columnId={ColId} TaskTitle={props.title}  TaskId={props.id} />
             <div
                 className={styles.ModalTaskWrapper}
                 style={{
@@ -118,7 +118,7 @@ const ModalTask = (props:{
                 if (e.target === e.currentTarget) {
                     setOpenedTask(null);
                     if (selectedColumnId && selectedColumnId !== props.columnId) {
-                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,boardId:currentBoardId,taskId:props._id,newtask:{
+                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,boardId:currentBoardId,taskId:props.id,newtask:{
                             title: props.title,
                             description: props.description,
                             subtasks: props.subTask
@@ -177,7 +177,7 @@ const ModalTask = (props:{
                             theme === 'light' ? styles.light : styles.dark
                             }`}
                     >
-                        {renderSelect(data.Boards[currentBoardIndex].columns)}
+                        {renderSelect(data.boards[currentBoardIndex].columns)}
                     </select>
                 </div>
             </div>

@@ -1,11 +1,9 @@
-import supabase from "@/supabase";
-import axios from "axios";
+import { axiosInstance } from "./instance";
 
 
-export const deleteTask = async (boardId:string,columnId:string,taskId:string) =>{
+export const deleteTask = async (taskId:string) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-        const response = await axios.delete(`https://kanbantask.onrender.com/user/${user?.id}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`);
+        const response = await axiosInstance.delete(`http://localhost:4000/tasks/${taskId}`);
         if(response){
             console.log(response.status)
         }else{

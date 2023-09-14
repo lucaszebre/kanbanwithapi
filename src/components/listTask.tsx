@@ -12,7 +12,7 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId,colum
 
     const { setOpenedTask,setCurrentColumnIndex,currentBoardIndex} = useContext(DataContext) // state to toggle the display of the  modalTask 
     const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         });
     if (isLoading) {
@@ -44,19 +44,19 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList,columnId,colum
     }
 
     const RenderTask = (): React.ReactNode[] => {  // functioon to render the all the tasks 
-        return data.Boards[currentBoardIndex].columns[columnIndex].tasks.map((task: { title: string; description: string; _id: string; subtasks: Subtask[]; },index: number) => (
+        return data.boards[currentBoardIndex].columns[columnIndex].tasks.map((task: { title: string; description: string; id: string; subtasks: Subtask[]; },index: number) => (
         <TaskCard
             key={index}
             title={task.title}
             description={task.description}
-            id={task._id}
+            id={task.id}
             columnId={columnId}
             subtask={task.subtasks}
             index={index}
             columnIndex={columnIndex}
             onClick={() => {
                 setOpenedTask({
-                    _id: task._id,
+                    id: task.id,
                     title: task.title,
                     description: task.description,
                     columnId: columnId,

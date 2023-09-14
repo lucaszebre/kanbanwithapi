@@ -51,7 +51,7 @@ export type ResponseError = {
 
 
 export type ColumnData = {
-    _id: string;
+    id: string;
     name: string;
 };
 
@@ -70,7 +70,7 @@ export type TaskData = {
 
 
 
-export type Boards = {
+export type boards = {
     id: string;
     name: string;
 };
@@ -83,13 +83,13 @@ export type AddBoardType = {
 
 
 export interface Board {
-    _id: string;
+    id: string;
     name: string;
     userId: string;
     columns: Column[];
     }
     export interface ColumnAdd {
-        _id: string;
+        id: string;
         name: string;
         boardId: string;
         tasks: Task[];
@@ -97,14 +97,14 @@ export interface Board {
     }
 
     export interface Column {
-        _id: string;
+        id: string;
         name: string;
         boardId?: string;
         tasks: Task[];
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }
     export interface Task {
-        _id: string;
+        id: string;
         title: string;
         description: string;
         columnId: string;
@@ -112,14 +112,14 @@ export interface Board {
     }
     
     export interface Subtask {
-        _id: string;
+        id: string;
         title: string;
         isCompleted: boolean;
         taskId: string;
     }
 
     export interface Subtasked{
-        _id:string
+        id:string
         title:string;
         isCompleted:boolean
     }

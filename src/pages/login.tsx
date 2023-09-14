@@ -5,11 +5,8 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SchemaLogin } from '@/types';
-import axios from 'axios';
 import Link from 'next/link';
-import { DataContext } from '@/contexts/datacontext';
-import { cookieStorageManager } from '@chakra-ui/react';
-import supabase from '@/supabase';
+import { login } from '@/utils/login';
 const Login: React.FC = () => {
 
     const Router = useRouter();
@@ -21,18 +18,13 @@ const Login: React.FC = () => {
     const onSubmit = async () => {
         try {
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
+        const response = await login(email,password)
         
-        if(error){
-            console.error('Error login ',error.message)
+        if(!response){
+            console.error('Error login ')
         }else{
             Router.push('/')
         }
-    
-       
         } catch (error) {
         console.error('Login error:', error);
         // Handle registration error (display error message, etc.)

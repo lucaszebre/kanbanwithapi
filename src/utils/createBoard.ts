@@ -1,35 +1,34 @@
-import supabase from "@/supabase";
 import { Column } from "@/types";
-import axios from "axios";
-function createColumnsArray(columnNames:string[]) {
-    const columnsArray = [];
+import { axiosInstance } from "./instance";
+// function createColumnsArray(columnNames:string[]) {
+//     const columnsArray = [];
   
-    for (const columnName of columnNames) {
-      const column = {
-        name: columnName,
-        tasks: []
-      };
-      columnsArray.push(column);
-    }
+//     for (const columnName of columnNames) {
+//       const column = {
+//         name: columnName,
+//         tasks: []
+//       };
+//       columnsArray.push(column);
+//     }
   
-    return columnsArray;
-  }
+//     return columnsArray;
+//   }
 export const createBoard = async (boardName:string,columnsName:string[]) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-                if (user) {
+        const data = await axiosInstance.get(`/auth/profile`);
+
                 // User is authenticated, check if a row exists in the "User" table
-                const response = await axios.post(
-                    `https://kanbantask.onrender.com/user/${user.id}`,
+                const response = await axiosInstance.post(
+                    `http://localhost:4000/users/${data.data.id}/boards`,
                     {
                         name:boardName,
-                        columns:createColumnsArray(columnsName)
+                        columns:columnsName
                     });
                     if(response.data){
-                        console.log('Boards add')
+                        console.log('boards add')
                     }else{
                         console.error("Problem to add the boards")
-                    }
+                    
                 }
     }catch(error){
         console.error('message',error)

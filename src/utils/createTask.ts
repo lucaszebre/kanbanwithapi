@@ -1,6 +1,5 @@
-import supabase from "@/supabase";
 import { Subtask } from "@/types/Zodtype";
-import axios from "axios";
+import { axiosInstance } from "./instance";
 import { nanoid } from "nanoid";
 
 function createSubTaskArray(SubTaskCurrent:string[]) {
@@ -16,14 +15,12 @@ function createSubTaskArray(SubTaskCurrent:string[]) {
   
     return SubtaskArray;
   }
-export const createTask = async (taskTitle:string,taskDescription:string,boardId:string,columnId:string,SubTaskCurrent?:string[],subtask?:Subtask[]) =>{
+export const createTask = async (taskTitle:string,taskDescription:string,columnId:string,SubTaskCurrent?:string[],subtask?:Subtask[]) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-                if (user) {
                 // User is authenticated, check if a row exists in the "User" table
-                console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'boardId',boardId,'columnId',columnId,'Subtask',SubTaskCurrent)
+                console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'columnId',columnId,'Subtask',SubTaskCurrent)
                 if(subtask){
-                    const response = await axios.post(`https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}`,
+                    const response = await axiosInstance.post(`http://localhost:4000/columns/${columnId}/tasks`,
                     {
                         title:taskTitle,
                         description:taskDescription,
@@ -34,21 +31,10 @@ export const createTask = async (taskTitle:string,taskDescription:string,boardId
                     }else{
                         console.error("Problem to task the boards")
                     } 
-                }else if(SubTaskCurrent){
-                const response = await axios.post(`https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}`,
-                    {
-                        title:taskTitle,
-                        description:taskDescription,
-                        subtasks:[]
-                    });
-                    if(response.data){
-                        console.log('Task add')
-                    }else{
-                        console.error("Problem to task the boards")
-                    }
                 }
+                
             }
-    }catch(error){
+    catch(error){
         console.error('message',error)
     }
 }

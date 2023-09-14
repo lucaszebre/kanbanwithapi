@@ -4,7 +4,7 @@ import { Column, Subtask ,Board} from '@/types/index';
 
 
 type openedTaskType= {
-    _id: string;
+    id: string;
     title: string;
     description: string;
     columnId: string;
@@ -57,7 +57,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
         const [ColId,setColId] = React.useState<string>('')
         const [openedTask, setOpenedTask] = useState<{
-            _id: string;title: string;
+            id: string;title: string;
             description: string;
             columnId: string;
             subTask: Subtask[];

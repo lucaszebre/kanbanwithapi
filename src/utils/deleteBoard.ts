@@ -1,8 +1,8 @@
-import axios from "axios";
+import { axiosInstance } from "./instance";
 
-export const deleteBoard = async (userId:string,boardId:string) =>{
+export const deleteBoard = async (boardId:string) =>{
     try{
-        const response = await axios.delete(`https://kanbantask.onrender.com/user/${userId}/boards/${boardId}`);
+        const response = await axiosInstance.delete(`http://localhost:4000/boards/${boardId}`);
         if(response){
             return response
         }else{

@@ -16,7 +16,7 @@ export const changeColumn = async (newColumnId: string,columnId:string,boardId:s
             // Reference to the current task
             
             await createTask(newtask.title,newtask.description,boardId,newColumnId,undefined,newtask.subtasks)
-            await deleteTask(boardId,columnId,taskId)
+            await deleteTask(taskId)
             
         } catch (error) {
             console.error("Error updating task column:", error);

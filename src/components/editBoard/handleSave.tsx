@@ -24,9 +24,9 @@ if (columnsToRename.length > 0) {
     for (const column of columnsToRename) {
         
       try {
-        await changeColumnName(currentBoardId,column._id,column.name);
+        await changeColumnName(currentBoardId,column.id,column.name);
     } catch (error) {
-        console.log(`Error deleting column with ID ${column._id}:`, error);
+        console.log(`Error deleting column with ID ${column.id}:`, error);
     }
     }
     }

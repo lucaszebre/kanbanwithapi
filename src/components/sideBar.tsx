@@ -13,7 +13,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
 
-const Sidebar = (props:{Boards:boolean}) => {
+const Sidebar = (props:{boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
@@ -39,6 +39,7 @@ const Sidebar = (props:{Boards:boolean}) => {
   const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
     setHeaderTitle(boardName);
     setCurrentBoardIndex(boardIndex);
+    console.log(boardId)
     setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
@@ -46,7 +47,7 @@ const Sidebar = (props:{Boards:boolean}) => {
     };
 
     const {data,isLoading,isError} = useQuery({
-      queryKey:['Boards'],
+      queryKey:['boards'],
       queryFn:()=>fetchBoards(),
     });
     if (isLoading) {
@@ -55,7 +56,7 @@ const Sidebar = (props:{Boards:boolean}) => {
           <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
               <div className={styles.SibebarWrapper}>
                   <div className={styles.DropDown}>
-                      {props.Boards && (
+                      {props.boards && (
                           <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
                       )}
 
@@ -101,16 +102,16 @@ const Sidebar = (props:{Boards:boolean}) => {
     }`}>
       <div className={styles.SibebarWrapper}>
         <div className={styles.DropDown}>
-          {props.Boards && <h1 
+          {props.boards && <h1 
           className={`${styles.SideBarTitle} ${
             theme === 'light' ? styles.light : styles.dark
-          }`}>ALL BOARDS({data.Boards.length})</h1>}
+          }`}>ALL boards({data.boards.length})</h1>}
         
-          {data.Boards.map((board: { name: string; _id: string; },index: number) => (
+          {data.boards.map((board: { name: string; id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, index,board._id) }}
+            onClick={() => { handleBoardClick(board.name, index,board.id) }}
             selected={currentBoardIndex === index}
             />
           ))}

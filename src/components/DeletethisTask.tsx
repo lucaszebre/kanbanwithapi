@@ -14,10 +14,10 @@ const {currentBoardId} = useContext(DataContext);  // state to manage the global
 const queryClient = useQueryClient()
     const mutation = useMutation(
         (formData: {boardId:string,columnId:string,taskId:string}) =>
-        deleteTask(formData.boardId,formData.columnId,formData.taskId),
+        deleteTask(formData.taskId),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['Boards']);
+            queryClient.invalidateQueries(['boards']);
         },
         }
     );

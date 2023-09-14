@@ -1,24 +1,21 @@
-import supabase from "@/supabase";
 import {  Subtasked } from "@/types";
-import axios from "axios";
+import { axiosInstance } from "./instance";
 function createSubTaskArray(subTasked: Subtasked[]) {
         const subtaskArray = [];
     
         for (const subtask of subTasked) {
         const { title, isCompleted } = subtask;
-        subtaskArray.push({_id:subtask._id, title:title, isCompleted:isCompleted });
+        subtaskArray.push({id:subtask.id, title:title, isCompleted:isCompleted });
         }
     
         return subtaskArray;
 }
-export const editTask = async (boardId:string,columnId:string,taskId:string,taskName:string,taskDescription:string,subTasked:Subtasked[]) =>{
+export const editTask = async (taskId:string,taskName:string,taskDescription:string,subTasked:Subtasked[]) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-                if (user) {
                     console.log(subTasked)
                 // User is authenticated, check if a row exists in the "User" table
-                const response = await axios.put(
-                    `https://kanbantask.onrender.com/user/${user.id}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`,
+                const response = await axiosInstance.put(
+                    `hhttp://localhost:4000/tasks/${taskId}`,
                     {
                         title:taskName,
                         description:taskDescription,
@@ -30,7 +27,7 @@ export const editTask = async (boardId:string,columnId:string,taskId:string,task
                         console.error("Problem to Edit the tasks")
                     }
                 }
-    }catch(error){
+    catch(error){
         console.error('message',error)
     }
 }

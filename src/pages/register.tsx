@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import z from 'zod';
 import { FormDataRegister } from '@/types';
-import axios from 'axios'; // Import axios for making API requests
+import axiosInstance from 'axiosInstance'; // Import axiosInstance for making API requests
 import supabase from '@/supabase';
 
 const schemaRegister = z.object({
@@ -30,29 +30,17 @@ const Register: React.FC = () => {
     const Router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [success,setSuccess]=useState<boolean>(false)
     const { register, handleSubmit,watch, formState: { errors } } = useForm<FormDataRegister>({ resolver: zodResolver(schemaRegister) });
     const watched = watch()
     const onSubmit = async () => {
         try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-            });
         
-            if (error) {
-                console.error('Registration error:', error.message);
-                // Handle registration error (e.g., display an error message to the user)
-                return; // Exit early in case of error
-            }
-        
-            console.log('Registration successful:', data.user);
-        
-            // Initiate the user in your MongoDB or handle other related logic
             try {
-                const response = await axios.post('https://kanbantask.onrender.com/auth/init', {
-                userId: data.user?.id,
-                }, { withCredentials: true });
+                const response = await axiosInstance.post('http://localhost:4000/auth/register', {
+                email,
+                password,
+                name:"pablo"
+                });
         
                 if (response.status === 201) {
                 console.log('User initiated successfully');

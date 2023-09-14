@@ -1,10 +1,8 @@
-import supabase from "@/supabase";
-import axios from "axios";
+import { axiosInstance } from "./instance";
 
 export const changeBoardName = async (boardId:string,name:string) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-        const response = await axios.put(`https://kanbantask.onrender.com/user/${user?.id}/boards/${boardId}`,{
+        const response = await axiosInstance.put(`hhttp://localhost:4000/boards/${boardId}`,{
             name:name
         });
         if(response){

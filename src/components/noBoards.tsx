@@ -18,7 +18,7 @@ const queryClient = useQueryClient()
         deleteTask(formData.boardId,formData.columnId,formData.taskId),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['Boards']);
+            queryClient.invalidateQueries(['boards']);
         },
         }
     );
@@ -42,7 +42,7 @@ const queryClient = useQueryClient()
                         }}
                         className={styles.DeleteButton}
                     >
-                        Add a Boards
+                        Add a boards
                     </button>
                     
                 </div>

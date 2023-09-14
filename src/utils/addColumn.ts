@@ -1,9 +1,8 @@
-import supabase from "@/supabase";
-import axios from "axios";
+import { axiosInstance } from "./instance";
 export const addColumn = async (boardId:string,name:string) =>{
     try{
-        const { data: { user } } = await supabase.auth.getUser()
-        const response = await axios.post(`https://kanbantask.onrender.com/user/${user?.id}/boards/${boardId}`,{
+
+        const response = await axiosInstance.post(`hhttp://localhost:4000/boards/${boardId}/columns`,{
             name:name
         });
         if(response){

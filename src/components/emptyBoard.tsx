@@ -4,11 +4,11 @@ import styles from '../styles/EmptyBoard.module.css';
 import AddBoard from './addBoard';
 import EditBoard from './editBoard/editBoard';
 
-const EmptyBoard = (props:{Boards:boolean}) => {
+const EmptyBoard = (props:{boards:boolean}) => {
   
   const [addBoard,setAddBoard] = useState(false)
   const [editBoard,setEditBoard] = useState(false)
-if(props.Boards){
+if(props.boards){
   return (
     <>
     <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
@@ -30,12 +30,12 @@ if(props.Boards){
     <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
     <div className={styles.emptyBoardDiv}>
       <h1 className={styles.emptyBoardTitle}>
-        You have no boards you should create one Boards to start.
+        You have no boards you should create one boards to start.
       </h1>
       <button
         onClick={() => { setAddBoard(true) }} 
       className={styles.emptyBoardButton}>
-        + Add a Boards
+        + Add a boards
       </button>
     </div>
     </>

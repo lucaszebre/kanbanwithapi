@@ -17,7 +17,7 @@ import EditBoard from './editBoard/editBoard';
 import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
 
-export default function Header(props:{Boards:boolean}) {
+export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {  setIsOpenModal, isOpenModal, } = useContext(Opencontext);
     // state to get the current headerTitle 
@@ -32,7 +32,7 @@ export default function Header(props:{Boards:boolean}) {
 
     const Router = useRouter()
     const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
       if (isLoading) {
@@ -96,9 +96,9 @@ export default function Header(props:{Boards:boolean}) {
                     <h1 
                     className={`${styles.HeaderTitle} ${
                         theme === 'light' ? styles.light : styles.dark
-                        }`}>{ data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</h1>
+                        }`}>{ data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
                     <div className={styles.HeaderBlock1}>
-                    {props.Boards && <button
+                    {props.boards && <button
                         onClick={() => {
                         setAddTask(true);
                         }}
@@ -113,7 +113,7 @@ export default function Header(props:{Boards:boolean}) {
                     >
                         Logout
                     </button>
-                    {props.Boards && <Image
+                    {props.boards && <Image
                         onClick={() => {
                         setIsOpenModal(!isOpenModal);
                         }}
@@ -139,7 +139,7 @@ export default function Header(props:{Boards:boolean}) {
                     width={56}
                     height={56}
                     />
-                    <h1 className={styles.HeaderMobileTitle}>{data.Boards[currentBoardIndex]? data.Boards[currentBoardIndex].name : ''}</h1>
+                    <h1 className={styles.HeaderMobileTitle}>{data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
                     <Image
                     src="/assets/icon-chevron-down.svg"
                     alt="chevron-up"

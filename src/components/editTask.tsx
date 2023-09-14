@@ -19,13 +19,13 @@ const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
 
     const { data: task, isLoading, isError } = useQuery(
-        ['Task',currentBoardId , props.columnId, props.taskId], // Use these parameters as the query key
-        () => getTask(currentBoardId, props.columnId, props.taskId)
+        ['Task', props.taskId], // Use these parameters as the query key
+        () => getTask( props.taskId)
     );
     
         
     const {data} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });   // State hooks for managing subtasks and input errors
 
@@ -68,7 +68,7 @@ useEffect(() => {
 // function Add a subtask 
     const handleAddSubtask = () => {
         const newSubtask = {
-            _id:"",
+            id:"",
             title: "",
             isCompleted: false,
         };
@@ -93,7 +93,7 @@ useEffect(() => {
         editTask(formData.boardId, formData.columnId,formData.taskId,formData.taskName,formData.taskDescription,formData.subTasked),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['Boards','Task']);
+            queryClient.invalidateQueries(['boards','Task']);
         },
         }
     );
@@ -102,19 +102,19 @@ useEffect(() => {
             changeColumn(formData.newColumnId,formData.columnId,formData.boardId,formData.taskId,formData.newtask),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards','Task']);
+                queryClient.invalidateQueries(['boards','Task']);
             },
             }
         );
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
-        if(data && data.Boards[currentBoardIndex]._id){
-            mutation.mutate({boardId:data.Boards[currentBoardIndex]._id,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,taskId:data.Boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index]._id,taskName,taskDescription,subTasked})
+        if(data && data.boards[currentBoardIndex].id){
+            mutation.mutate({boardId:data.boards[currentBoardIndex].id,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,taskId:data.boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index].id,taskName,taskDescription,subTasked})
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
             console.log('columnId',props.columnId)
-            column.mutate({newColumnId:selectedColumnId,columnId:data.Boards[currentBoardIndex].columns[currentColumnIndex]._id,boardId:currentBoardId,taskId:props.taskId,newtask:{
+            column.mutate({newColumnId:selectedColumnId,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,boardId:currentBoardId,taskId:props.taskId,newtask:{
                 title: taskName,
                 description: taskDescription,
                 subtasks: subTasked
@@ -240,7 +240,7 @@ useEffect(() => {
                             theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        {data && renderSelect (data.Boards[currentBoardIndex].columns)}
+                        {data && renderSelect (data.boards[currentBoardIndex].columns)}
                     </select>
             <button className={styles.EditTaskSaveButton}  
             type='submit'

@@ -21,7 +21,7 @@ const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,ta
             toggleSubtaskCompletion(formdata.isCompleted, formdata.currentBoardId, formdata.columnId, formdata.taskId, formdata.subtaskId),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards,Task']);
+                queryClient.invalidateQueries(['boards,Task']);
             },
             }
         );

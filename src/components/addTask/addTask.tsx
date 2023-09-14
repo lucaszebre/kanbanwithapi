@@ -13,7 +13,7 @@ import Skeleton from 'react-loading-skeleton';
 
 const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const {data,isLoading,isError} = useQuery({
-        queryKey:['Boards'],
+        queryKey:['boards'],
         queryFn:()=>fetchBoards()
         ,
         });
@@ -26,17 +26,17 @@ const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetState
     const { theme, setTheme } = useTheme();
     const [SelectId, setSelectId] = useState('');  // state to know wich column is select 
         useEffect(()=>{
-            if(data && data.Boards[currentBoardIndex] &&  data.Boards[currentBoardIndex].columns[0] ){
-            setSelectId(data.Boards[currentBoardIndex].columns[0]._id)
+            if(data && data.boards[currentBoardIndex] &&  data.boards[currentBoardIndex].columns[0] ){
+            setSelectId(data.boards[currentBoardIndex].columns[0].id)
         }
         },[data,isMoving])
         const queryClient = useQueryClient()
         const mutation = useMutation(
             (formData: { taskTitle: string;  taskDescription: string,boardId:string,columnId:string,SubTaskCurrent:string[] }) =>
-            createTask(formData.taskTitle, formData.taskDescription,formData.boardId,formData.columnId,formData.SubTaskCurrent),
+            createTask(formData.taskTitle, formData.taskDescription,formData.columnId,formData.SubTaskCurrent),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards']);
+                queryClient.invalidateQueries(['boards']);
             },
             }
         );
@@ -64,7 +64,7 @@ const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetState
             if (taskTitle && taskDescription && SelectId) {
                
 
-                mutation.mutate({taskTitle,taskDescription,boardId:data.Boards[currentBoardIndex]._id , columnId:SelectId,SubTaskCurrent})
+                mutation.mutate({taskTitle,taskDescription,boardId:data.boards[currentBoardIndex].id , columnId:SelectId,SubTaskCurrent})
                 setTaskTitle('');
                 setTaskDescription('');
                 setSubTaskCurrent([])
@@ -97,7 +97,7 @@ const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetState
             );
         }
 
-if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
+if(data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns){
 
     return (
 
@@ -188,13 +188,14 @@ if(data.Boards[currentBoardIndex] && data.Boards[currentBoardIndex].columns){
                     </button>
                     <select
                         onChange={(e) => setSelectId(e.target.value)}
+            
                         value={SelectId}
-                        // defaultValue={data.Boards[currentBoardIndex].columns[0]._id ? data.Boards[currentBoardIndex].columns[0]._id : '' }
+                        // defaultValue={data.boards[currentBoardIndex].columns[0].id ? data.boards[currentBoardIndex].columns[0].id : '' }
                         className={`${styles.SelectAddTask} ${
                             theme === 'light' ? styles.light : styles.dark
                             }`} 
                     >
-                        {renderSelect(data.Boards[currentBoardIndex].columns)}
+                        {renderSelect(data.boards[currentBoardIndex].columns)}
                     </select>
 
                     <button className={styles.AddTaskSaveButton} type="submit">

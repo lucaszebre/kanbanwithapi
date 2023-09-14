@@ -36,7 +36,7 @@ const resetForm = () => {  // function to reset the form
             createBoard(formData.boardName, formData.columns),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['Boards']);
+                queryClient.invalidateQueries(['boards']);
             },
             }
         );

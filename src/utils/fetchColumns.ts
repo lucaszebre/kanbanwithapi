@@ -1,8 +1,9 @@
-import axios from 'axios';
+import { axiosInstance } from "./instance";
 
-export const fetchColumns = async (userId:string,boardId:string,columnId:string) =>{
+
+export const fetchColumns = async (columnId:string) =>{
     try{
-        const response = await axios.get(`https://kanbantask.onrender.com/user/${userId}/boards/${boardId}/columns/${columnId}`);
+        const response = await axiosInstance.get(`hhttp://localhost:4000/columns/${columnId}`);
         if(response){
             return response
         }else{
