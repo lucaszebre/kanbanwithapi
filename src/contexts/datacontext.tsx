@@ -29,6 +29,8 @@ type DataContextType = {
     setColId:React.Dispatch<React.SetStateAction<string>>;
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
+    isCompleted:number;
+    setIsCompleted:React.Dispatch<React.SetStateAction<number>>
 
 };
 
@@ -52,8 +54,9 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             const [currentBoardId, setCurrentBoardId] = useState<string>('');
         const [headerTitle, setHeaderTitle] = useState<string>('');
         const [Interval,setInterval] = useState<number>(100000);
+
         const [isMoving,SetIsMoving] = useState(false)
-        const [isCompleted,setIsCompleted] = useState(false)
+        const [isCompleted,setIsCompleted] = useState(0)
         const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
         const [ColId,setColId] = React.useState<string>('')
         const [openedTask, setOpenedTask] = useState<{
@@ -81,7 +84,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
-        Interval,setInterval
+        Interval,setInterval,isCompleted,setIsCompleted
         }}>{props.children}</DataContext.Provider>
     );
     };

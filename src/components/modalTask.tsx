@@ -26,11 +26,11 @@ const ModalTask = (props:{
     index:number
     numberSub:number
 }) => {
-    const { setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
+    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
 
     const { data: task, isLoading, isError } = useQuery(
-        ['Task', props.columnId], // Use these parameters as the query key
-        () => getTask( props.columnId)
+        ['Task', props.id], // Use these parameters as the query key
+        () => getTask( props.id)
     );
 
     const {data} = useQuery({
@@ -75,11 +75,12 @@ const ModalTask = (props:{
             
         function Iscompleted(){  // function to get the amout of subtask completed 
             var i:number=0;
-            if (props.subTask){
-              for(const sub of props.subTask){
-              if( sub.isCompleted){
-                i++
-              }}}
+            console.log(task)
+            if (task){
+                for(const sub of task.subtasks){
+                if( sub.isCompleted){
+                    i++
+                }}}
             return i }
     if (isLoading) {
         // Return loading skeletons
@@ -156,7 +157,7 @@ const ModalTask = (props:{
                     <p className={styles.TaskDescription}>
                         {props.description}
                     </p>
-                    <h2 className={styles.ModalTaskH2}>Subtasks ({props.numberSub} of {props.subTask.length})</h2>
+                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {props.subTask.length})</h2>
                     <RenderSubTask 
                         subtasks={props.subTask} 
                         currentBoardId={currentBoardId}

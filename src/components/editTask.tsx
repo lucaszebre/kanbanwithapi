@@ -182,7 +182,6 @@ const handleAddSubtask = () => {
                 );
             }
 
-            console.log(subTasktoDelete)
 
  // Render the EditTask component
     return (

@@ -11,7 +11,7 @@ import { useTheme } from '@/contexts/themecontext';
 const TaskCard = (props: {index:number,title: string;description: string;id: string;subtask: Subtask[];columnId:string,onClick:() => void,columnIndex:number}) => {
 
   const { SubTasks, setSubTasks } = useContext(Opencontext); // state to be able to toggle the subTaskk
-  const {currentTaskId,SetCurrentTaskId,setColId,openedTask,setCurrentColumnIndex,isMoving} = useContext(DataContext) // state to able to manage the Global Data 
+  const {setIsCompleted,SetCurrentTaskId,setColId,openedTask,setCurrentColumnIndex,isMoving} = useContext(DataContext) // state to able to manage the Global Data 
   const { theme, setTheme } = useTheme();
   const [number,setNumber]=useState(0)
   function Iscompleted(){  // function to get the amout of subtask completed 
@@ -21,7 +21,7 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
       if( sub.isCompleted){
         i++
       }}}
-      
+      setIsCompleted(i)
     return i }
    
 
