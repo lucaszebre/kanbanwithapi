@@ -1,9 +1,9 @@
 import { axiosInstance } from "./instance";
-export const addColumn = async (boardId:string,name:string) =>{
+export const addColumn = async (boardId:string,Columnname:string) =>{
     try{
 
-        const response = await axiosInstance.post(`hhttp://localhost:4000/boards/${boardId}/columns`,{
-            name:name
+        const response = await axiosInstance.post(`/boards/${boardId}/columns`,{
+            name:Columnname
         });
         if(response){
             return response

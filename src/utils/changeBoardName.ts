@@ -2,7 +2,7 @@ import { axiosInstance } from "./instance";
 
 export const changeBoardName = async (boardId:string,name:string) =>{
     try{
-        const response = await axiosInstance.put(`hhttp://localhost:4000/boards/${boardId}`,{
+        const response = await axiosInstance.put(`/boards/${boardId}`,{
             name:name
         });
         if(response){

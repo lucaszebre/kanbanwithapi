@@ -1,8 +1,8 @@
 import { axiosInstance } from "./instance";
 
-export const changeColumnName = async (boardId:string,columnId:string,name:string) =>{
+export const changeColumnName = async (columnId:string,name:string) =>{
     try{
-        const response = await axiosInstance.put(`hhttp://localhost:4000/columns/${columnId}`,{
+        const response = await axiosInstance.put(`/column/${columnId}`,{
             name:name
         });
         if(response){

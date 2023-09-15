@@ -2,7 +2,7 @@ import { axiosInstance } from "./instance";
 
 export const deleteColumn = async (columnId:string) =>{
     try{
-        const response = await axiosInstance.delete(`hhttp://localhost:4000/columns/${columnId}`);
+        const response = await axiosInstance.delete(`/column/${columnId}`);
         if(response){
             return response
         }else{
