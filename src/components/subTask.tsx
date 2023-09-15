@@ -17,8 +17,8 @@ const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,ta
   }, [props.checked]);
   const queryClient = useQueryClient()
         const mutation = useMutation(
-            (formdata:{ isCompleted:boolean, currentBoardId:string, columnId:string, taskId:string, subtaskId:string }) =>
-            toggleSubtaskCompletion(formdata.isCompleted, formdata.currentBoardId, formdata.columnId, formdata.taskId, formdata.subtaskId),
+            (formdata:{ isCompleted:boolean,  subtaskId:string }) =>
+            toggleSubtaskCompletion(formdata.isCompleted,  formdata.subtaskId),
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['boards,Task']);
@@ -35,7 +35,7 @@ const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,ta
       
         <input type="checkbox" checked={isChecked}
             onChange={() => {
-            mutation.mutate({isCompleted:!isChecked,currentBoardId, columnId:props.colunmId, taskId:props.taskId,subtaskId:props.subtaskId});
+            mutation.mutate({isCompleted:!isChecked,subtaskId:props.subtaskId});
             setIsChecked(!isChecked);
 
             SetIsMoving(!isMoving)}} />
