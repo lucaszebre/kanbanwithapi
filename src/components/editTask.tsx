@@ -14,6 +14,7 @@ import { editTask } from "@/utils/editTask";
 import { getTask } from "@/utils/getTask";
 import { Task, changeColumn } from "@/utils/changeColumn";
 import Skeleton from "react-loading-skeleton";
+import { Subtasked } from "@/types";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
@@ -32,7 +33,10 @@ const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
 const { EditTask, setEditTask } = useContext(Opencontext);
 const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');
-const [subTasked, setSubTasked] = useState<Subtask[]>([]);
+const [subTasked, setSubTasked] = useState<Subtasked[]>([]);
+const [subTasktoDelete, setSubTasktoDelete] = useState<string[]>([]);
+const [subTask, setSubTask] = useState<Subtask[]>([]);
+const [subTasktoAdd, setSubTasktoAdd] = useState<string[]>([]);
 const [save, setSave] = useState<boolean>(false);
 const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
@@ -44,6 +48,9 @@ useEffect(()=>{
         setTaskName(task.title)
         setTaskDescription(task.description)
         setSubTasked(task.subtasks)
+        setSubTask(task.subtasks)
+        setSubTasktoAdd([])
+        setSubTasktoDelete([])
     }
 },[task])
 
@@ -65,32 +72,50 @@ useEffect(() => {
 
       
     
-// function Add a subtask 
-    const handleAddSubtask = () => {
-        const newSubtask = {
-            id:"",
-            title: "",
-            isCompleted: false,
-        };
-        setSubTasked([...subTasked, newSubtask]);
+// Function to add a new subtask
+const handleAddSubtask = () => {
+    const newSubtask = {
+        id: "", // You can generate a unique ID here if needed
+        title: "",
+        isCompleted: false,
+        add:true
     };
-    const handleEditSubTask = (index: number, newTitle: string, subTaskId?: string, add?: boolean) => {
+    setSubTasked([...subTasked, newSubtask]);
+  };
+  
+
+    
+    // Function to edit/update a subtask
+    const handleEditSubtask = (index:number, newTitle:string, subTaskId:string, add:boolean) => {
+        // If 'add' is true, add the subtask to the 'subTasksToAdd' state
+        
+        // Update the subtask title
         const updatedSubTasks = [...subTasked];
         updatedSubTasks[index].title = newTitle;
-        
         setSubTasked(updatedSubTasks);
-    }
-// function to delete a subtask
-    const handleDeleteSubtask = (index: number, subTaskId?: string) => {
+    };
+    
+
+
+    // Function to delete a subtask
+    const handleDeleteSubtask = (index:number, subtaskId:string) => {
+        // If 'subTaskId' is provided, add it to the 'subTasksToDelete' state
+        if (subtaskId) {
+        setSubTasktoDelete([...subTasktoDelete, subtaskId]);
+        }
+    
+        // Remove the subtask from the 'subTasks' state
         const updatedSubTasks = [...subTasked];
         updatedSubTasks.splice(index, 1);
         setSubTasked(updatedSubTasks);
     };
 
+
+
     const queryClient = useQueryClient()
     const mutation = useMutation(
-        (formData: {boardId:string,columnId:string,taskId:string,taskName:string,taskDescription:string,subTasked:Subtask[] }) =>
-        editTask(formData.boardId, formData.columnId,formData.taskId,formData.taskName,formData.taskDescription,formData.subTasked),
+        (formData: {taskId:string,taskName:string,taskDescription:string,subTasktoAdd:string[],subTasktoDelete:string[],subTask:Subtasked[]}) =>
+        editTask(formData.taskId,formData.taskName,formData.taskDescription,formData.subTasktoAdd,formData.subTasktoDelete,formData.subTask),
         {
         onSuccess: () => {
             queryClient.invalidateQueries(['boards','Task']);
@@ -110,7 +135,11 @@ useEffect(() => {
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
         if(data && data.boards[currentBoardIndex].id){
-            mutation.mutate({boardId:data.boards[currentBoardIndex].id,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,taskId:data.boards[currentBoardIndex].columns[currentColumnIndex].tasks[props.index].id,taskName,taskDescription,subTasked})
+            mutation.mutate({taskId:props.taskId,taskName,taskDescription,subTasktoAdd:subTasked
+                .filter((sub) => sub.add)
+                .map((sub) => sub.title),subTasktoDelete,subTask})
+            setSubTasktoAdd([])
+            setSubTasktoDelete([])
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
             console.log('columnId',props.columnId)
@@ -153,7 +182,8 @@ useEffect(() => {
                 );
             }
 
-            
+            console.log(subTasktoDelete)
+
  // Render the EditTask component
     return (
         <div className={styles.EditTaskWrapper}
@@ -224,7 +254,7 @@ useEffect(() => {
                 SubTasks
                 </label>
                 
-                <RenderSubTask subTasks={subTasked} handleEditSubTask={handleEditSubTask} handleDeleteSubtask={handleDeleteSubtask}  columnErrors={columnErrors}/>
+                <RenderSubTask subTasks={subTasked} handleDeleteSubtask={handleDeleteSubtask} handleEditSubTask={handleEditSubtask}  columnErrors={columnErrors}/>
         
                 <button className={styles.EditTaskAddButton} type='button' onClick={handleAddSubtask}>Add Subtask</button>
                 <label className={`${styles.EditTaskLabel} ${

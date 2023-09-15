@@ -15,23 +15,24 @@ function createSubTaskArray(SubTaskCurrent:string[]) {
   
     return SubtaskArray;
   }
-export const createTask = async (taskTitle:string,taskDescription:string,columnId:string,SubTaskCurrent?:string[],subtask?:Subtask[]) =>{
+export const createTask = async (taskTitle:string,taskDescription:string,columnId:string,SubTaskCurrent?:string[]) =>{
     try{
+        
                 // User is authenticated, check if a row exists in the "User" table
                 console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'columnId',columnId,'Subtask',SubTaskCurrent)
-                if(subtask){
-                    const response = await axiosInstance.post(`http://localhost:4000/columns/${columnId}/tasks`,
+                
+                    const response = await axiosInstance.post(`/column/${columnId}/tasks/`,
                     {
                         title:taskTitle,
                         description:taskDescription,
-                        subtasks:subtask
+                        subtasks:createSubTaskArray(SubTaskCurrent||[])
                     });
                     if(response.data){
                         console.log('Task add')
                     }else{
                         console.error("Problem to task the boards")
                     } 
-                }
+                
                 
             }
     catch(error){

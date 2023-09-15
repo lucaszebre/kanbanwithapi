@@ -17,7 +17,7 @@ const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId,
         return (
             <>
                 {subtasks.map((sub, index) => (
-                    console.log(sub),
+                    
                     <Subtasks
                         key={index}
                         title={sub.title}

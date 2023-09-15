@@ -8,10 +8,8 @@ export const fetchBoards = async () => {
     if (typeof window !== 'undefined') {      
 
       const data = await axiosInstance.get(`/auth/profile`);
-      console.log(data)
       const response = await axiosInstance.get(`/users/${data.data.id}`);
       if (response) {
-        console.log(response.data)
         return response.data;
       } else {
         console.error('Error fetching boards');

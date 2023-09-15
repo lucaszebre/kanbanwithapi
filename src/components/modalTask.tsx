@@ -28,8 +28,8 @@ const ModalTask = (props:{
     const { setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
 
     const { data: task, isLoading, isError } = useQuery(
-        ['Task',currentBoardId , props.columnId, props.id], // Use these parameters as the query key
-        () => getTask(currentBoardId, props.columnId,props.id)
+        ['Task', props.columnId], // Use these parameters as the query key
+        () => getTask( props.columnId)
     );
 
     const {data} = useQuery({

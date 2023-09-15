@@ -32,7 +32,7 @@ const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetState
         },[data,isMoving])
         const queryClient = useQueryClient()
         const mutation = useMutation(
-            (formData: { taskTitle: string;  taskDescription: string,boardId:string,columnId:string,SubTaskCurrent:string[] }) =>
+            (formData: { taskTitle: string;  taskDescription: string,columnId:string,SubTaskCurrent:string[] }) =>
             createTask(formData.taskTitle, formData.taskDescription,formData.columnId,formData.SubTaskCurrent),
             {
             onSuccess: () => {
@@ -64,7 +64,7 @@ const AddTask = (props:{addTask:boolean,setAddTask:React.Dispatch<React.SetState
             if (taskTitle && taskDescription && SelectId) {
                
 
-                mutation.mutate({taskTitle,taskDescription,boardId:data.boards[currentBoardIndex].id , columnId:SelectId,SubTaskCurrent})
+                mutation.mutate({taskTitle,taskDescription , columnId:SelectId,SubTaskCurrent})
                 setTaskTitle('');
                 setTaskDescription('');
                 setSubTaskCurrent([])
@@ -188,8 +188,8 @@ if(data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns){
                     </button>
                     <select
                         onChange={(e) => setSelectId(e.target.value)}
-            
                         value={SelectId}
+                        onClick={()=>{console.log(SelectId)}}
                         // defaultValue={data.boards[currentBoardIndex].columns[0].id ? data.boards[currentBoardIndex].columns[0].id : '' }
                         className={`${styles.SelectAddTask} ${
                             theme === 'light' ? styles.light : styles.dark
