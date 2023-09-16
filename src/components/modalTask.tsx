@@ -64,8 +64,8 @@ const ModalTask = (props:{
 
     const queryClient = useQueryClient()
         const column = useMutation(
-            (formData: {newColumnId:string,columnId:string, boardId:string,taskId:string,newtask:Task }) =>
-            changeColumn(formData.newColumnId,formData.columnId,formData.boardId,formData.taskId,formData.newtask),
+            (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
+            changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['boards','Task']);
@@ -120,7 +120,9 @@ const ModalTask = (props:{
                 if (e.target === e.currentTarget) {
                     setOpenedTask(null);
                     if (selectedColumnId && selectedColumnId !== props.columnId) {
-                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,boardId:currentBoardId,taskId:props.id,newtask:{
+                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
+                            id:props.id,
+                            status:"to do",
                             title: props.title,
                             description: props.description,
                             subtasks: props.subTask

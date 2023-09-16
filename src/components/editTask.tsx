@@ -123,8 +123,8 @@ const handleAddSubtask = () => {
         }
     );
         const column = useMutation(
-            (formData: {newColumnId:string,columnId:string, boardId:string,taskId:string,newtask:Task }) =>
-            changeColumn(formData.newColumnId,formData.columnId,formData.boardId,formData.taskId,formData.newtask),
+            (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
+            changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['boards','Task']);
@@ -143,8 +143,10 @@ const handleAddSubtask = () => {
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
             console.log('columnId',props.columnId)
-            column.mutate({newColumnId:selectedColumnId,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,boardId:currentBoardId,taskId:props.taskId,newtask:{
+            column.mutate({newColumnId:selectedColumnId,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,newtask:{
+                id:props.taskId,
                 title: taskName,
+                status: "Todo",
                 description: taskDescription,
                 subtasks: subTasked
             }});
