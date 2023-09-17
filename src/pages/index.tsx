@@ -12,15 +12,12 @@ function Home() {
 
     return (
     <>
-        <Sidebar />
+        
         <Hide />
         <ChakraProvider theme={Theme} >
         <Board  />
         </ChakraProvider>
-        <DeleteThisBoard />
-        <EditBoard />
-        <AddBoard  />
-        <AddTask />
+        
         </>
     )
 }

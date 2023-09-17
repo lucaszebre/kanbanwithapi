@@ -43,7 +43,7 @@ const Board = () => {
         }
     }, [windowWidth, setIsSidebarOpen]);
     
-    const {data,isLoading,isError,isFetching} = useQuery({
+    const {data,isLoading,isError} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         refetchInterval: Interval,

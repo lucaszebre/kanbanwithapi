@@ -27,7 +27,7 @@ const ModalTask = (props:{
     numberSub:number
 }) => {
     const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
-
+    const [subtask,setSubtask] = useState(props.subTask)
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -125,7 +125,7 @@ const ModalTask = (props:{
                             status:"to do",
                             title: props.title,
                             description: props.description,
-                            subtasks: props.subTask
+                            subtasks: subtask
                         }});
                         setInterval(1)
                     SetIsMoving(prevIsmoving => !prevIsmoving)
@@ -159,9 +159,9 @@ const ModalTask = (props:{
                     <p className={styles.TaskDescription}>
                         {props.description}
                     </p>
-                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {props.subTask.length})</h2>
+                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {subtask.length})</h2>
                     <RenderSubTask 
-                        subtasks={props.subTask} 
+                        subtasks={subtask} 
                         currentBoardId={currentBoardId}
                         columnId={props.columnId}
                         taskId={currentTaskId}

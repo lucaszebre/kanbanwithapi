@@ -8,38 +8,34 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import z from 'zod';
 import { FormDataRegister } from '@/types';
-import axiosInstance from 'axiosInstance'; // Import axiosInstance for making API requests
-import supabase from '@/supabase';
+import { axiosInstance } from '@/utils/instance';
+
 
 const schemaRegister = z.object({
     email: z.string().email({ message: 'Invalid email format' }),
-    password1: z.string()
+    password: z.string()
         .min(8, { message: 'Password must be at least 8 characters long' })
         .regex(/[A-Za-z]/, { message: 'Password must contain at least one letter' })
         .regex(/[0-9]/, { message: 'Password must contain at least one digit' })
         .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Password must contain at least one special character' }),
-    password2: z.string()
-        .min(8, { message: 'Password must be at least 8 characters long' })
-        .regex(/[A-Za-z]/, { message: 'Password must contain at least one letter' })
-        .regex(/[0-9]/, { message: 'Password must contain at least one digit' })
-        .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Password must contain at least one special character' })
+    username: z.string()
+        .min(1, { message: 'Username must be at least 1 characters long' })
+        
         ,
 });
 
 const Register: React.FC = () => {
     const Router = useRouter()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
     const { register, handleSubmit,watch, formState: { errors } } = useForm<FormDataRegister>({ resolver: zodResolver(schemaRegister) });
     const watched = watch()
-    const onSubmit = async () => {
+    const onSubmit = async (email:string,password:string,username:string) => {
         try {
         
             try {
-                const response = await axiosInstance.post('http://localhost:4000/auth/register', {
+                const response = await axiosInstance.post('/auth/register', {
                 email,
                 password,
-                name:"pablo"
+                name:username
                 });
         
                 if (response.status === 201) {
@@ -72,9 +68,7 @@ const Register: React.FC = () => {
                     </div>
                 </div>            
                 <form onSubmit={handleSubmit(()=>{
-                    setEmail(watched.email);
-                    setPassword(watched.password1);
-                    onSubmit();
+                    onSubmit(watched.email,watched.password,watched.username);
                 })} className={styles.RegisterForm} action="">
                 <h1 className={styles.RegisterH1}>
                     Create account
@@ -82,6 +76,16 @@ const Register: React.FC = () => {
                 <p className={styles.RegisterDescription}>
                 Let’s get you started sharing your links!
                 </p>
+                <label className={styles.RegisterLabel} htmlFor="">
+                    Username
+                </label>
+                
+                <div className={styles.RegisterInputWrapper}>
+                    <Image  className={styles.RegisterImageInput} src='/assets/images/icon-password.svg' alt='icon-password' height={16} width={16} />
+                    <input type='text' style={errors.username ? { border: '#EC5757 1px solid' } : {}}    {...register('username')} className={styles.RegisterInput}  placeholder='At least 1 characters' />
+                    {errors.username && <p className={styles.RegisterError}>{errors.username.message?.toString()}</p>}
+                </div>
+
                 <label  className={styles.RegisterLabel} htmlFor="">
                     Email adress
                 </label>
@@ -90,23 +94,15 @@ const Register: React.FC = () => {
                     <input style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('email')}  className={styles.RegisterInput} type="text" placeholder='e.g. alex@email.com' />
                     {errors.email && <p className={styles.RegisterError}>{errors.email.message?.toString()}</p>}
                 </div>
-                <label className={styles.RegisterLabel} htmlFor="">
-                    Create password
-                </label>
                 
-                <div className={styles.RegisterInputWrapper}>
-                    <Image  className={styles.RegisterImageInput} src='/assets/images/icon-password.svg' alt='icon-password' height={16} width={16} />
-                    <input type='password' style={errors.password1 ? { border: '#EC5757 1px solid' } : {}}    {...register('password1')} className={styles.RegisterInput}  placeholder='At least 8 characters' />
-                    {errors.password1 && <p className={styles.RegisterError}>{errors.password1.message?.toString()}</p>}
-                </div>
                 <label className={styles.RegisterLabel} htmlFor="">
                     Confirm password
                 </label>
                 
                 <div className={styles.RegisterInputWrapper}>
                     <Image  className={styles.RegisterImageInput} src='/assets/images/icon-password.svg' alt='icon-password' height={16} width={16} />
-                    <input type='password' style={errors.password2 ? { border: '#EC5757 1px solid' } : {}}    {...register('password2')} className={styles.RegisterInput}  placeholder='At least 8 characters' />
-                    {errors.password2 && <p className={styles.RegisterError}>{errors.password2.message?.toString()}</p>}
+                    <input type='password' style={errors.password ? { border: '#EC5757 1px solid' } : {}}    {...register('password')} className={styles.RegisterInput}  placeholder='At least 8 characters' />
+                    {errors.password && <p className={styles.RegisterError}>{errors.password.message?.toString()}</p>}
                 </div>
                 <p className={styles.RegisterP}>
                 Password must contain at least 8 characters

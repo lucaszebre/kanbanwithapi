@@ -7,22 +7,27 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SchemaLogin } from '@/types';
 import Link from 'next/link';
 import { login } from '@/utils/login';
+import { useQueryClient } from 'react-query';
+import { DataContext } from '@/contexts/datacontext';
+
 const Login: React.FC = () => {
 
     const Router = useRouter();
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const queryClient = useQueryClient(); // Get the query client instance
+    const {setInterval,SetIsMoving } = useContext(DataContext); // state to manage the global data 
 
 
-    const onSubmit = async () => {
+    const onSubmit = async (email:string,password:string) => {
+        queryClient.invalidateQueries(['boards','Task']);
         try {
 
         const response = await login(email,password)
-        
         if(!response){
             console.error('Error login ')
         }else{
+            SetIsMoving(prevIsmoving =>  !prevIsmoving)
+            setInterval(0)
             Router.push('/')
         }
         } catch (error) {
@@ -46,9 +51,7 @@ const Login: React.FC = () => {
                 
                 <form onSubmit={handleSubmit(()=>{
                     const watched=watch()
-                    setEmail(watched.email)
-                    setPassword(watched.password)
-                    onSubmit()
+                    onSubmit(watched.email,watched.password)
                 })} className={styles.LoginForm} action="">
                     <h1 className={styles.LoginH1}>
                         Login
