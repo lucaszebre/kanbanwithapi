@@ -22,6 +22,7 @@ const Board = () => {
     const [editBoard,setEditBoard]= useState(false)
 
     useEffect(() => {
+        
         setInterval(1000)
         // Check if the window object is available
         if (typeof window !== 'undefined') {

@@ -21,7 +21,7 @@ export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {  setIsOpenModal, isOpenModal, } = useContext(Opencontext);
     // state to get the current headerTitle 
-    const {currentBoardIndex} = useContext(DataContext);
+    const {currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
 
     const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
     const [editBoard,setEditBoard] = useState(false)
@@ -107,8 +107,10 @@ export default function Header(props:{boards:boolean}) {
                         + Add New Task
                     </button>}
                     <button
-                            onClick={()=>{Logout()
-                            Router.push('/login')}}
+                            onClick={()=>{
+                                Logout()
+                                setIsLoggedIn(false)
+                                window.location.reload}}
                         className={styles.LogoutButton}
                     >
                         Logout

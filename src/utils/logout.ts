@@ -1,9 +1,11 @@
 import { axiosInstance } from "./instance";
-import { useRouter } from 'next/router';
 
 export const Logout = async () =>{
     try{
-        const response  =  await axiosInstance.post('http://localhost:3000/auth/logout')
+        const response  =  await axiosInstance.post('/auth/logout')
+        localStorage.removeItem('key')
+        localStorage.removeItem('isLoggedIn')
+        window.location.reload
     }catch(error){
         console.error(error)
     }

@@ -48,7 +48,7 @@ const Register: React.FC = () => {
             }
         
             // Redirect to login page after a successful registration and initiation
-            Router.push('/login');
+            Router.push('/');
             } catch (error) {
             console.error('Registration error:', error);
             // Handle registration error (display error message, etc.)
@@ -110,7 +110,7 @@ const Register: React.FC = () => {
                 <button className={styles.RegisterButton}>Create new account</button>
                 <div className={styles.RegisterDiv}>
                     Already have a account
-                    <Link href={'/login'} className={styles.RegisterNoAccount}>
+                    <Link href={'/'} className={styles.RegisterNoAccount}>
                         Login
                     </Link>
                 </div>

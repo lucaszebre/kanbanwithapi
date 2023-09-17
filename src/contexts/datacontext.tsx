@@ -30,8 +30,9 @@ type DataContextType = {
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
     isCompleted:number;
-    setIsCompleted:React.Dispatch<React.SetStateAction<number>>
-
+    setIsCompleted:React.Dispatch<React.SetStateAction<number>>;
+    isLoggedIn:boolean, setIsLoggedIn:React.Dispatch<React.SetStateAction<boolean>>;
+    tokenExpiration:any, setTokenExpiration:React.Dispatch<React.SetStateAction<any>>
 };
 
 
@@ -54,7 +55,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             const [currentBoardId, setCurrentBoardId] = useState<string>('');
         const [headerTitle, setHeaderTitle] = useState<string>('');
         const [Interval,setInterval] = useState<number>(100000);
-
+        const [tokenExpiration, setTokenExpiration] = useState(null);
         const [isMoving,SetIsMoving] = useState(false)
         const [isCompleted,setIsCompleted] = useState(0)
         const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
@@ -65,6 +66,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             columnId: string;
             subTask: Subtask[];
             } | null>(null);
+        const [isLoggedIn, setIsLoggedIn] = useState(false);
 
         
             
@@ -84,7 +86,8 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
-        Interval,setInterval,isCompleted,setIsCompleted
+        Interval,setInterval,isCompleted,setIsCompleted,
+        isLoggedIn, setIsLoggedIn,tokenExpiration, setTokenExpiration
         }}>{props.children}</DataContext.Provider>
     );
     };

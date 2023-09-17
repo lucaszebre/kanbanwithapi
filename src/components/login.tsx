@@ -15,7 +15,7 @@ const Login: React.FC = () => {
     const Router = useRouter();
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
     const queryClient = useQueryClient(); // Get the query client instance
-    const {setInterval,SetIsMoving } = useContext(DataContext); // state to manage the global data 
+    const {setInterval,SetIsMoving,setIsLoggedIn } = useContext(DataContext); // state to manage the global data 
 
 
     const onSubmit = async (email:string,password:string) => {
@@ -28,7 +28,11 @@ const Login: React.FC = () => {
         }else{
             SetIsMoving(prevIsmoving =>  !prevIsmoving)
             setInterval(0)
-            Router.push('/')
+            localStorage.setItem('isLoggedIn', 'true')
+            setIsLoggedIn(true)
+            window.location.reload();
+            
+
         }
         } catch (error) {
         console.error('Login error:', error);
