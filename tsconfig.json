@@ -19,6 +19,8 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["./custom.d.ts","next-env.d.ts", "**/*.ts", "**/*.tsx", "src/supabase.js"],
-  "exclude": ["node_modules"]
+  "include": ["./custom.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx", "src/supabase.js"],
+  "exclude": ["node_modules"],
+  "types": ["react-beautiful-dnd"]
 }
+

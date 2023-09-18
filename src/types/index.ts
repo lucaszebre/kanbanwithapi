@@ -106,6 +106,7 @@ export interface Board {
     export interface Task {
         id: string;
         title: string;
+        status:string
         description: string;
         columnId: string;
         subtasks : Subtask[]

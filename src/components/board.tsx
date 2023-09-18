@@ -1,4 +1,5 @@
-import  {useState, useEffect, useContext, Key } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useState, useEffect, useContext } from 'react';
 import ListTask from './listTask';
 import Sidebar from './sideBar';
 import EmptyBoard from './emptyBoard';
@@ -8,25 +9,37 @@ import styles from '../styles/Board.module.css';
 import { DataContext } from '@/contexts/datacontext';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/contexts/themecontext';
-import { useQuery } from 'react-query';
-import { fetchBoards } from '@/utils/fetchBoard';
-import { Task } from '@/types';
-import Skeleton from 'react-loading-skeleton'
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
+import { Task, Column } from '@/types';
+import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
+import {
+    DragDropContext,
+    DropResult,
+} from 'react-beautiful-dnd';
+import { changeColumn } from '@/utils/changeColumn';
 
 const Board = () => {
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
-    const {currentBoardIndex,Interval,setInterval } = useContext(DataContext); // state to manage the global data 
-    const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
+    const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);
+    const { currentBoardIndex, Interval, setInterval } = useContext(DataContext);
+    const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const { theme } = useTheme();
-    const [editBoard,setEditBoard]= useState(false)
-
+    const [editBoard, setEditBoard] = useState(false);
+    const queryClient = useQueryClient();
+    const column = useMutation(
+        (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
+        changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['boards','Task']);
+        },
+        }
+    );
     useEffect(() => {
-        
-        setInterval(1000)
-        // Check if the window object is available
+        setInterval(1000);
+
         if (typeof window !== 'undefined') {
-            // Add this useEffect to update the windowWidth state when the window is resized
             const handleResize = () => {
                 setWindowWidth(window.innerWidth);
             };
@@ -37,146 +50,171 @@ const Board = () => {
             };
         }
     }, []);
+
     useEffect(() => {
-        // Add this useEffect to update the isSidebarOpen state based on the windowWidth state
         if (windowWidth <= 767) {
             setIsSidebarOpen(false);
         }
     }, [windowWidth, setIsSidebarOpen]);
-    
-    const {data,isLoading,isError} = useQuery({
-        queryKey:['boards'],
-        queryFn:()=>fetchBoards(),
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['boards'],
+        queryFn: () => fetchBoards(),
         refetchInterval: Interval,
-        });
+    });
+
     
-        if (isLoading) {
-            // Return loading skeletons
-            return (
-                <div className={styles.AppContainer}>
-                    <div className={styles.HeaderBoard}>
-                        <Skeleton height={30} width={150} />
+
+    if (isLoading) {
+        return (
+            <div className={styles.AppContainer}>
+                <div className={styles.HeaderBoard}>
+                    <Skeleton height={30} width={150} />
+                </div>
+                <div className={styles.BoardDiv}>
+                    <div className={styles.SideContainer}>
+                        <Skeleton height={500} width={70} />
                     </div>
-                    <div className={styles.BoardDiv}>
-                        <div className={styles.SideContainer}>
-                            <Skeleton height={500} width={70} />
-                        </div>
-                        <div className={styles.BoardWrapper}>
-                            {/* Display multiple skeletons for columns */}
-                            <div className={styles.AddColumn}>
-                                <Skeleton height={30} width={100} />
-                            </div>
-                            {/* Repeat this skeleton for each column */}
+                    <div className={styles.BoardWrapper}>
+                        <div className={styles.AddColumn}>
+                            <Skeleton height={30} width={100} />
                         </div>
                     </div>
                 </div>
-            );
+            </div>
+        );
+    }
+
+    if (isError) {
+        return <p>Something went wrong.</p>;
+    }
+   
+
+
+    // Define the onDragEnd function
+    const onDragEnd = (result: DropResult) => {
+        // Check if the task was dropped into a different column
+        if (!result.destination) {
+          return;
         }
-        if(isError){
-        return  <p>
-            Something went wrongs
-            </p>
+    
+        // Find the source column based on the source droppableId
+        const sourceColumnId = result.source.droppableId;
+        const sourceColumn = data.boards[currentBoardIndex].columns.find((column: { id: string; }) => column.id === sourceColumnId);
+    
+        // Check if the source column was found
+        if (!sourceColumn) {
+          return;
         }
-        
-    function renderListTask() {    // function to render the columns if no we display the empty board components
-        if (  data.boards[currentBoardIndex].columns && data.boards[currentBoardIndex].columns.length > 0) {
+    
+        // Find the task that was dragged based on its index in the source column
+        const draggedTask = sourceColumn.tasks[result.source.index];
+    
+        // Find the destination column's ID
+        const destinationColumnId = result.destination.droppableId;
+    
+        // Call the changeColumn mutation to update the task's column
+        column.mutate({
+          newColumnId: destinationColumnId,
+          columnId: sourceColumnId,
+          newtask: draggedTask,
+        });
+    
+        // Invalidate queries to trigger a refetch
+        queryClient.invalidateQueries(['boards', 'Task']);
+      };
+
+    function renderListTask() {
+        if (
+            data.boards[currentBoardIndex].columns &&
+            data.boards[currentBoardIndex].columns.length > 0
+        ) {
             return (
-                <>
-                    {data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns.map((doc: { name: string; tasks: Task[]; id: string; }, index: number) => (
-                        <ListTask
-                            key={index}
-                            title={doc.name}
-                            NbList={index}
-                            tasks={doc.tasks}
-                            columnId={doc.id}
-                            columnIndex={index}
-                        />
-                    ))}
-                    <div
-                        onClick={() => {
-                            // Perform any action you want when the div is clicked
-                            setEditBoard(true)
-                            
-                        }}
-                        
-                        className={`${styles.AddColumn} ${
-                            theme === 'light' ? styles.light : styles.dark
-                            }`}
-                    >
-                        + New Columns
-                    </div>
-                </>
+                <DragDropContext onDragEnd={onDragEnd}>
+                    {data.boards[currentBoardIndex].columns.map(
+                        (column: Column, columnIndex: number) => (
+                            <ListTask
+                                key={column.id}
+                                title={column.name}
+                                tasks={column.tasks}
+                                columnId={column.id}
+                                columnIndex={columnIndex}
+                                NbList={columnIndex}
+                            />
+                        )
+                    )}
+                </DragDropContext>
             );
         } else {
             return <EmptyBoard boards={true} />;
         }
     }
-   if(data.boards[currentBoardIndex]){
 
-
-    return (
-        <>
-        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
-        <div className={styles.AppContainer}>
-            <div className={styles.HeaderBoard}>
-                <Header boards={true} />
-            </div>
-            <div className={styles.BoardDiv}>
-                <div
-                    className={styles.SideContainer}
-                    style={{
-                        display: isSidebarOpen ? 'block' : 'none',
-                        transition: 'all 0.3s ease-in-out',
-                    }}
-                >
-                    <Sidebar boards={true} />
-                </div>
-                <div
-                    className={styles.BoardWrapper}
-                    tabIndex={0}
-                    style={{
-                        marginLeft: isSidebarOpen ? '-70px' : '0px',
-                        transition: 'all 0.3s ease-in-out',
-                    }}
-                >
-                    {renderListTask()}
-                </div>
-            </div>
-        </div>
-        </>
-    );}else{
+    if (data.boards[currentBoardIndex]) {
         return (
             <>
-            
-            <div className={styles.AppContainer}>
-                <div className={styles.HeaderBoard}>
-                    <Header boards={false}/>
-                </div>
-                <div className={styles.BoardDiv}>
-                    <div
-                        className={styles.SideContainer}
-                        style={{
-                            display: isSidebarOpen ? 'block' : 'none',
-                            transition: 'all 0.3s ease-in-out',
-                        }}
-                    >
-                        <Sidebar boards={false} />
+                <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
+                <div className={styles.AppContainer}>
+                    <div className={styles.HeaderBoard}>
+                        <Header boards={true} />
                     </div>
-                    <div
-                        className={styles.BoardWrapper}
-                        tabIndex={0}
-                        style={{
-                            marginLeft: isSidebarOpen ? '-70px' : '0px',
-                            transition: 'all 0.3s ease-in-out',
-                        }}
-                    >
-                        <EmptyBoard boards={false} />
+                    <div className={styles.BoardDiv}>
+                        <div
+                            className={styles.SideContainer}
+                            style={{
+                                display: isSidebarOpen ? 'block' : 'none',
+                                transition: 'all 0.3s ease-in-out',
+                            }}
+                        >
+                            <Sidebar boards={true} />
+                        </div>
+                        <div
+                            className={styles.BoardWrapper}
+                            tabIndex={0}
+                            style={{
+                                marginLeft: isSidebarOpen ? '-70px' : '0px',
+                                transition: 'all 0.3s ease-in-out',
+                            }}
+                        >
+                            {renderListTask()}
+                        </div>
                     </div>
                 </div>
-            </div>
             </>
-        )
+        );
+    } else {
+        return (
+            <>
+                <div className={styles.AppContainer}>
+                    <div className={styles.HeaderBoard}>
+                        <Header boards={false} />
+                    </div>
+                    <div className={styles.BoardDiv}>
+                        <div
+                            className={styles.SideContainer}
+                            style={{
+                                display: isSidebarOpen ? 'block' : 'none',
+                                transition: 'all 0.3s ease-in-out',
+                            }}
+                        >
+                            <Sidebar boards={false} />
+                        </div>
+                        <div
+                            className={styles.BoardWrapper}
+                            tabIndex={0}
+                            style={{
+                                marginLeft: isSidebarOpen ? '-70px' : '0px',
+                                transition: 'all 0.3s ease-in-out',
+                            }}
+                        >
+                            <EmptyBoard boards={false} />
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
     }
 };
 
 export default Board;
+
