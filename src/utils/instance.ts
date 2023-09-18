@@ -8,7 +8,7 @@ if (typeof window !== "undefined") {
 }
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:4000', // Replace with your API's base URL
+  baseURL: 'https://kanbantaskapi.onrender.com', // Replace with your API's base URL
   headers: {
     common: {
       Authorization: `Bearer ${token}`,
