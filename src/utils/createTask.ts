@@ -1,6 +1,7 @@
 import { Subtask } from "@/types/Zodtype";
 import { axiosInstance } from "./instance";
 import { nanoid } from "nanoid";
+import { handleSessionExpiration } from "./handleSessionexpiration";
 
 function createSubTaskArray(SubTaskCurrent:string[]) {
     const SubtaskArray = [];
@@ -30,12 +31,14 @@ export const createTask = async (taskTitle:string,taskDescription:string,columnI
                     if(response.data){
                         console.log('Task add')
                     }else{
+                        handleSessionExpiration()
                         console.error("Problem to task the boards")
                     } 
                 
                 
             }
     catch(error){
+        handleSessionExpiration()
         console.error('message',error)
     }
 }

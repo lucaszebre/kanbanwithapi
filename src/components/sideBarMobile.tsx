@@ -13,11 +13,13 @@ import { Switch as MuiSwitch } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
+import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Sidebar = (props:{boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 
 const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
+const { setIsLoggedIn } = useContext(DataContext);  // state to toggle the sidebar 
 const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
 const [addBoard,setAddBoard] = useState(false)
 
@@ -71,10 +73,17 @@ const {
     localStorage.setItem('currentBoardId', boardId);
     SetIsMoving(prev=>!prev)
     };
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         });
+        if ( data === undefined) {
+            // If there's an error or data is undefined, display the custom error page
+            
+          }else{
+            setIsLoggedIn(true)
+          }
+
         if (isLoading) {
             // Return loading skeletons
             return (

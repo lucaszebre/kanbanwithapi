@@ -18,7 +18,6 @@ export const ColumnSchema = z.object({
   name: z.string(),
   tasks: z.array(TaskSchema),
   id: z.string(),
-  boardId: z.string()
 });
 
 export const BoardSchema = z.object({

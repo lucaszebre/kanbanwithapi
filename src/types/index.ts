@@ -99,7 +99,13 @@ export interface Board {
     export interface Column {
         id: string;
         name: string;
-        boardId?: string;
+        tasks: Task[];
+        add?:boolean // Make sure it's 'tasks' instead of 'task'
+    }
+     export interface ColumntoAdd {
+        id: string;
+        name: string;
+        boardId: string;
         tasks: Task[];
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }

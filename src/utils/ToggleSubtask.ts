@@ -1,3 +1,4 @@
+import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 
 export const toggleSubtaskCompletion = async (isCompleted:boolean, subtaskId: string) => {
@@ -10,9 +11,11 @@ export const toggleSubtaskCompletion = async (isCompleted:boolean, subtaskId: st
         if(response){
             return 
         }else{
+            handleSessionExpiration()
             console.error('Error fetching boards')
         }
     }catch(error){
+        handleSessionExpiration()
         console.error(error)
     }
     

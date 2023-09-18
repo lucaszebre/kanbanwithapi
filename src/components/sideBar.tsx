@@ -12,12 +12,13 @@ import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
+import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Sidebar = (props:{boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
-
+  const {setIsLoggedIn} = useContext(DataContext)
   const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
   // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const [addBoard,setAddBoard] = useState(false)
@@ -46,10 +47,17 @@ const Sidebar = (props:{boards:boolean}) => {
     SetIsMoving(prev=>!prev)
     };
 
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,error} = useQuery({
       queryKey:['boards'],
       queryFn:()=>fetchBoards(),
     });
+    if ( data === undefined) {
+      // If there's an error or data is undefined, display the custom error page
+      
+    }else{
+      setIsLoggedIn(true)
+    }
+
     if (isLoading) {
       // Return loading skeletons
       return (

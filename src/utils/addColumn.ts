@@ -1,3 +1,4 @@
+import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 export const addColumn = async (boardId:string,Columnname:string) =>{
     try{
@@ -8,9 +9,11 @@ export const addColumn = async (boardId:string,Columnname:string) =>{
         if(response){
             return response
         }else{
+            handleSessionExpiration()
             console.error('Error add Column')
         }
     }catch(error){
+        handleSessionExpiration()
         console.error("message",'Internal server error')
     }
 }

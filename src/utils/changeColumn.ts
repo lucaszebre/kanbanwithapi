@@ -1,6 +1,6 @@
 import { Subtask } from "@/types/Zodtype";
 import { axiosInstance } from "./instance";
-
+import { handleSessionExpiration } from "./handleSessionexpiration";
 
 
 export  interface Task {
@@ -21,8 +21,10 @@ export const changeColumn = async (newColumnId: string,columnId:string,newtask:T
                 return response
             }else{
                 console.error('Error changing column name')
+                handleSessionExpiration()
             }
         }catch(error){
+            handleSessionExpiration()
             console.error("message",'Internal server error')
         }
         }

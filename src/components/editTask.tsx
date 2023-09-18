@@ -15,21 +15,32 @@ import { getTask } from "@/utils/getTask";
 import { Task, changeColumn } from "@/utils/changeColumn";
 import Skeleton from "react-loading-skeleton";
 import { Subtasked } from "@/types";
+import { handleSessionExpiration } from "@/utils/handleSessionexpiration";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
-    const { currentBoardIndex,currentColumnIndex,currentBoardId} = useContext(DataContext);
+    const { currentBoardIndex,currentColumnIndex,setIsLoggedIn} = useContext(DataContext);
 
-    const { data: task, isLoading, isError } = useQuery(
+    const { data: task, isLoading, isError,error } = useQuery(
         ['Task', props.taskId], // Use these parameters as the query key
         () => getTask( props.taskId)
     );
-    
+    if ( task === undefined) {
+        // If there's an error or data is undefined, display the custom error page
+        
+      }else{
+        setIsLoggedIn(true)
+      }
         
     const {data} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });   // State hooks for managing subtasks and input errors
-
+      if ( data === undefined) {
+        // If there's an error or data is undefined, display the custom error page
+        
+      }else{
+        setIsLoggedIn(true)
+      }
 const { EditTask, setEditTask } = useContext(Opencontext);
 const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');

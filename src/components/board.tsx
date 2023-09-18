@@ -19,10 +19,11 @@ import {
     DropResult,
 } from 'react-beautiful-dnd';
 import { changeColumn } from '@/utils/changeColumn';
+import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);
-    const { currentBoardIndex, Interval, setInterval } = useContext(DataContext);
+    const { currentBoardIndex, Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const { theme } = useTheme();
     const [editBoard, setEditBoard] = useState(false);
@@ -57,13 +58,13 @@ const Board = () => {
         }
     }, [windowWidth, setIsSidebarOpen]);
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, error, isError } = useQuery({
         queryKey: ['boards'],
         queryFn: () => fetchBoards(),
         refetchInterval: Interval,
     });
 
-    
+
 
     if (isLoading) {
         return (

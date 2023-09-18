@@ -1,3 +1,4 @@
+import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 
 export const getTask = async (taskId:string) =>{
@@ -8,9 +9,11 @@ export const getTask = async (taskId:string) =>{
             return response.data
             
         }else{
+            handleSessionExpiration()
             console.error('Error fetching boards')
         }
     }catch(error){
+        handleSessionExpiration()
         console.error(error)
     }
 };

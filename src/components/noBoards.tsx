@@ -10,12 +10,11 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 
 const noBoard = () => {
 const { theme } = useTheme();
-const { NoBoards,setNoBoards,setAddBoard } = useContext(Opencontext); // state to toggle the display of the components 
 const {currentBoardId} = useContext(DataContext);  // state to manage the global data 
 const queryClient = useQueryClient()
     const mutation = useMutation(
         (formData: {boardId:string,columnId:string,taskId:string}) =>
-        deleteTask(formData.boardId,formData.columnId,formData.taskId),
+        deleteTask(formData.taskId),
         {
         onSuccess: () => {
             queryClient.invalidateQueries(['boards']);

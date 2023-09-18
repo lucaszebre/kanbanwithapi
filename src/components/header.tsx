@@ -16,6 +16,7 @@ import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
 import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
+import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
@@ -31,10 +32,17 @@ export default function Header(props:{boards:boolean}) {
     const { theme, setTheme } = useTheme();
 
     const Router = useRouter()
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
+      if ( data === undefined) {
+        // If there's an error or data is undefined, display the custom error page
+        
+      }else{
+        setIsLoggedIn(true)
+      }
+
       if (isLoading) {
         // Return loading skeletons
         return (

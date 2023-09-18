@@ -1,3 +1,4 @@
+import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 
 export const deleteColumn = async (columnId:string) =>{
@@ -6,9 +7,11 @@ export const deleteColumn = async (columnId:string) =>{
         if(response){
             return response
         }else{
+            handleSessionExpiration()
             console.error('Error deleting Column')
         }
     }catch(error){
+        handleSessionExpiration()
         console.error("message",'Internal server error')
     }
 }

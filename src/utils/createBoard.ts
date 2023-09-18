@@ -1,5 +1,6 @@
 import { Column } from "@/types";
 import { axiosInstance } from "./instance";
+import { handleSessionExpiration } from "./handleSessionexpiration";
 // function createColumnsArray(columnNames:string[]) {
 //     const columnsArray = [];
   
@@ -19,7 +20,7 @@ export const createBoard = async (boardName:string,columnsName:string[]) =>{
 
                 // User is authenticated, check if a row exists in the "User" table
                 const response = await axiosInstance.post(
-                    `http://localhost:4000/users/${data.data.id}/boards`,
+                    `/users/${data.data.id}/boards`,
                     {
                         name:boardName,
                         columns:columnsName
@@ -28,9 +29,10 @@ export const createBoard = async (boardName:string,columnsName:string[]) =>{
                         console.log('boards add')
                     }else{
                         console.error("Problem to add the boards")
-                    
+                        handleSessionExpiration()
                 }
     }catch(error){
+        handleSessionExpiration()
         console.error('message',error)
     }
 }

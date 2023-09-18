@@ -1,5 +1,6 @@
 import { Subtask, Subtasked, Task } from '@/types';
 import { axiosInstance } from './instance';
+import { handleSessionExpiration } from './handleSessionexpiration';
 
 export const editTask = async (
   taskId: string,
@@ -27,9 +28,11 @@ export const editTask = async (
     if (response.data) {
       console.log('Edit Task successfully');
     } else {
+      handleSessionExpiration()
       console.error('Problem editing the task');
     }
   } catch (error) {
+    handleSessionExpiration()
     console.error('Error:', error);
   }
 };

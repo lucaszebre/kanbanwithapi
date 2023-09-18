@@ -118,7 +118,7 @@ function renderColumns() {
 
         const queryClient = useQueryClient()
         const mutation = useMutation(
-            (formData: { columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:ColumnAdd[],currentBoardId:string,Header:string,headerTitle:string }) =>
+            (formData: { columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:Column[],currentBoardId:string,Header:string,headerTitle:string }) =>
             handleSaveChanges(formData.columnsToDelete, formData.columnsToRename,formData.columnstoAdd,formData.currentBoardId,formData.Header,formData.headerTitle),
             {
             onSuccess: () => {

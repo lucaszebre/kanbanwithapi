@@ -16,6 +16,7 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { getTask } from '@/utils/getTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
+import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const ModalTask = (props:{
     id: string;
@@ -26,17 +27,28 @@ const ModalTask = (props:{
     index:number
     numberSub:number
 }) => {
-    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval } = useContext(DataContext);
+    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval,setIsLoggedIn } = useContext(DataContext);
     const [subtask,setSubtask] = useState(props.subTask)
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
     );
-
-    const {data} = useQuery({
+    if ( task === undefined) {
+        // If there's an error or data is undefined, display the custom error page
+        
+      }else{
+        setIsLoggedIn(true)
+      }
+    const {data,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
+      if ( data === undefined) {
+        // If there's an error or data is undefined, display the custom error page
+        
+      }else{
+        setIsLoggedIn(true)
+      }
     // state 
     const { SubTasks, setSubTasks } = useContext(Opencontext); // state to toggle the display of Subtasks
     const [openModalAbout, setOpenModalAbout] = React.useState(false);// state to toggle th displat of the ModalAbout
