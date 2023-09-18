@@ -3,7 +3,7 @@ import { axiosInstance } from './instance';
 
 export const login = async (email:string, password:string) => {
     try {
-        const response = await axiosInstance.post('http://localhost:4000/auth/login', {
+        const response = await axiosInstance.post('/auth/login', {
             email,
             password,
         });

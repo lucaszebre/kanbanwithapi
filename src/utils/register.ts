@@ -1,9 +1,9 @@
-import axiosInstance from 'axiosInstance';
 import { UserSchema } from '@/types/Zodtype';
+import { axiosInstance } from './instance';
 
 export const register = async (email:string, password:string,name:string) => {
     try {
-        const response = await axiosInstance.post('http://localhost:3000/auth/register', {
+        const response = await axiosInstance.post('/auth/register', {
             email,
             password,
             name
