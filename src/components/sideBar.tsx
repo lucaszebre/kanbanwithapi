@@ -18,7 +18,6 @@ const Sidebar = (props:{boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
-  const {setIsLoggedIn} = useContext(DataContext)
   const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
   // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const [addBoard,setAddBoard] = useState(false)
@@ -27,7 +26,8 @@ const Sidebar = (props:{boards:boolean}) => {
     setCurrentBoardIndex,
     setCurrentBoardId,
     setHeaderTitle,
-    SetIsMoving
+    SetIsMoving,
+    setIsLoggedIn
     } = useContext(DataContext);
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {

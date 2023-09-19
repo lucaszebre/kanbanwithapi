@@ -7,11 +7,10 @@ export const deleteBoard = async (boardId:string) =>{
         if(response){
             return response
         }else{
-            handleSessionExpiration()
+            
             console.error('Error deleting Board')
         }
     }catch(error){
-        handleSessionExpiration()
 
     }
 }

@@ -28,7 +28,6 @@ const ModalTask = (props:{
     numberSub:number
 }) => {
     const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval,setIsLoggedIn } = useContext(DataContext);
-    const [subtask,setSubtask] = useState(props.subTask)
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -135,9 +134,9 @@ const ModalTask = (props:{
                         column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
                             id:props.id,
                             status:"to do",
-                            title: props.title,
-                            description: props.description,
-                            subtasks: subtask
+                            title: task.title,
+                            description: task.description,
+                            subtasks: task.subtasks
                         }});
                         setInterval(1)
                     SetIsMoving(prevIsmoving => !prevIsmoving)
@@ -171,12 +170,12 @@ const ModalTask = (props:{
                     <p className={styles.TaskDescription}>
                         {props.description}
                     </p>
-                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {subtask.length})</h2>
+                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {task.subtasks.length})</h2>
                     <RenderSubTask 
-                        subtasks={subtask} 
+                        subtasks={task.subtasks} 
                         currentBoardId={currentBoardId}
                         columnId={props.columnId}
-                        taskId={currentTaskId}
+                        taskId={props.id}
                         setIsMoving={SetIsMoving}
                         isMoving={isMoving}
                         />

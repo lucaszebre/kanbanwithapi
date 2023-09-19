@@ -17,12 +17,6 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
         queryFn:()=>fetchBoards(),
         });
     
-        if ( data === undefined) {
-            // If there's an error or data is undefined, display the custom error page
-            
-          }else{
-            setIsLoggedIn(true)
-          }
 
     const queryClient = useQueryClient()
     const mutation = useMutation(
@@ -65,7 +59,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
       const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
         try {
                 const response = await axiosInstance.delete(
-                    `http://localhost:4000/boards/${boardId}`,
+                    `/boards/${boardId}`,
                     );
             
                     if (response.data) {
