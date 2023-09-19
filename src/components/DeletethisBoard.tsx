@@ -10,7 +10,7 @@ import { axiosInstance } from '@/utils/instance';
 import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const { currentBoardId,setCurrentBoardId,setIsLoggedIn} = useContext(DataContext);  // state to manage the global data 
+    const { currentBoardId,setCurrentBoardId,setIsLoggedIn,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
         
     const {data,isLoading,isError,error} = useQuery({
@@ -96,7 +96,10 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                     <button
                         onClick={() => {
                             mutation.mutate(currentBoardId);
-                            setCurrentBoardId(data.id);
+                            if(data.boards){
+                                setCurrentBoardId(data.boards[0].id);
+                                setCurrentBoardIndex(0)
+                            }
                             props.setDeleteBlock(false);
                         }}
                         className={styles.DeleteButton}

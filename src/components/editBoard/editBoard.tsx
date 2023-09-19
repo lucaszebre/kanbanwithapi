@@ -103,7 +103,6 @@ useEffect(()=>{
         }
     };
     
-    console.log(copyBoardColumns)
     
 function renderColumns() {  
     return copyBoardColumns.map((column, index) => (
