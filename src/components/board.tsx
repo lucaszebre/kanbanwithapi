@@ -125,6 +125,7 @@ const Board = () => {
         queryClient.invalidateQueries(['boards', 'Task']);
       };
 
+    // function to render data 
     function renderListTask() {
         if (
             data.boards[currentBoardIndex].columns &&

@@ -126,6 +126,7 @@ const ModalTask = (props:{
                 console.log(selectedColumnId,props.columnId)
                 if (e.target === e.currentTarget) {
                     setOpenedTask(null);
+                    setSubTasks(false)
                     if (selectedColumnId && selectedColumnId !== props.columnId) {
                         column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
                             id:props.id,

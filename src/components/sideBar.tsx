@@ -102,6 +102,7 @@ const Sidebar = (props:{boards:boolean}) => {
           </div>
       );
   }
+ 
   return (
     <>
     <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />

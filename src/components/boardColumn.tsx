@@ -18,8 +18,11 @@ const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, rese
     React.useEffect(() => {  // every time the value of resetkey change we reset the value inside the input 
       if(resetKey){
         setInputValue('');
+      }else{
+        setInputValue(title)
       }
-    }, [resetKey]);  
+    }, [resetKey,title]); 
+
   
 
 
@@ -28,7 +31,6 @@ const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, rese
     setInputValue(newValue);
     onChange(newValue);
   };
-
 
   return (
     <>

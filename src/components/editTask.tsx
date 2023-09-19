@@ -161,7 +161,9 @@ const handleAddSubtask = () => {
                 description: taskDescription,
                 subtasks: subTasked
             }});
-            }}        
+            }
+        queryClient.invalidateQueries(['Task','boards'])
+        }        
 
 
             if (isLoading) {

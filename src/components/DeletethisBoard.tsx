@@ -12,6 +12,7 @@ import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { currentBoardId,setCurrentBoardId,setIsLoggedIn} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
+        
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
