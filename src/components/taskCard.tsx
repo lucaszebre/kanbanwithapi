@@ -36,11 +36,7 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
     <ModalTask
         columnId={openedTask.columnId}
         id={openedTask.id}
-        title={openedTask.title}
-        description={openedTask.description}
-        subTask={openedTask.subTask}
         index={props.index}
-        numberSub={number}
         /> }
 
     <div 

@@ -20,12 +20,8 @@ import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const ModalTask = (props:{
     id: string;
-    title: string;
-    description: string;
     columnId: string;
-    subTask : Subtask[]
     index:number
-    numberSub:number
 }) => {
     const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
@@ -120,7 +116,7 @@ const ModalTask = (props:{
     return (
         <>
         <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
-        <DeleteThisTask columnId={ColId} TaskTitle={props.title}  TaskId={props.id} />
+        <DeleteThisTask columnId={ColId} TaskTitle={task.title}  TaskId={props.id} />
             <div
                 className={styles.ModalTaskWrapper}
                 style={{
@@ -156,7 +152,7 @@ const ModalTask = (props:{
                         theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        <h1>{props.title}</h1>
+                        <h1>{task.title}</h1>
                         <Image
                             onClick={() => {
                                 setOpenModalAbout(!openModalAbout);
@@ -168,7 +164,7 @@ const ModalTask = (props:{
                             height={20}/>
                     </div>
                     <p className={styles.TaskDescription}>
-                        {props.description}
+                        {task.description}
                     </p>
                     <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {task.subtasks.length})</h2>
                     <RenderSubTask 
