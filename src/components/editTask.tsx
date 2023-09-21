@@ -153,7 +153,6 @@ const handleAddSubtask = () => {
             setSubTasktoDelete([])
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
-            console.log('columnId',props.columnId)
             column.mutate({newColumnId:selectedColumnId,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,newtask:{
                 id:props.taskId,
                 title: taskName,

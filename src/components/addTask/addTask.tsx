@@ -63,9 +63,6 @@ const AddTask = (props: {
       setTaskDescription('');
       setSubTaskCurrent([]);
     } else {
-      console.log('Tasktitle', taskTitle);
-      console.log('taskDescription', taskDescription);
-      console.log('SelectId', SelectId);
       console.error("error in Add Task");
     }
   };

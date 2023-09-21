@@ -12,9 +12,8 @@ export const handleSaveChanges = async (columnsToDelete:string[],columnsToRename
         for (const columnId of columnsToDelete) {
         try {
             await deleteColumn(columnId);
-            console.log(`Column with ID ${columnId} deleted successfully`);
         } catch (error) {
-            console.log(`Error deleting column with ID ${columnId}:`, error);
+            console.error(`Error deleting column with ID ${columnId}:`, error);
         }
         }
     }
@@ -38,7 +37,7 @@ for (const column of columnstoAdd) {
     try {
         await addColumn(currentBoardId,column.name)
     } catch (error) {
-        console.log('Error to add column')
+        console.error('Error to add column')
     }
 
 }

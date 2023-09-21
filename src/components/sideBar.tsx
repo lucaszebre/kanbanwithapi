@@ -40,7 +40,6 @@ const Sidebar = (props:{boards:boolean}) => {
   const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
     setHeaderTitle(boardName);
     setCurrentBoardIndex(boardIndex);
-    console.log(boardId)
     setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);

@@ -82,7 +82,6 @@ const ModalTask = (props:{
             
         function Iscompleted(){  // function to get the amout of subtask completed 
             var i:number=0;
-            console.log(task)
             if (task){
                 for(const sub of task.subtasks){
                 if( sub.isCompleted){
@@ -123,7 +122,6 @@ const ModalTask = (props:{
                     display: SubTasks ? 'flex' : 'none',
                 }}
                 onClick={async (e) => {
-                console.log(selectedColumnId,props.columnId)
                 if (e.target === e.currentTarget) {
                     setOpenedTask(null);
                     setSubTasks(false)

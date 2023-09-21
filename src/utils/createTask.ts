@@ -20,7 +20,6 @@ export const createTask = async (taskTitle:string,taskDescription:string,columnI
     try{
         
                 // User is authenticated, check if a row exists in the "User" table
-                console.log('taskTitle',taskTitle,'taskDescription',taskDescription,'columnId',columnId,'Subtask',SubTaskCurrent)
                 
                     const response = await axiosInstance.post(`/column/${columnId}/tasks/`,
                     {

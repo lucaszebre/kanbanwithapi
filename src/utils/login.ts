@@ -10,7 +10,6 @@ export const login = async (email:string, password:string) => {
     
         if (response && response.data && response.data.access_token) {
             localStorage.setItem('key',response.data.access_token)
-            console.log(response.data.access_token)
             // Authentication successful
             return response.data;
         } else {
