@@ -1,78 +1,35 @@
+import {create} from 'zustand';
 
-
-
-import React, { createContext, useContext, useState } from 'react';
-
-// import { useData } from './boardcontext';
-export type contextopen = { // Type for context
-    isOpenModal: boolean; // Delete block state
-    setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    AddTask: boolean; // Delete block state
-    setAddTask: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    SubTasks: boolean; // Delete block state
-    setSubTasks: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    isChanged: boolean; // Delete block state
-    setIsChanged: React.Dispatch<React.SetStateAction<boolean>>; // Delete block state setter
-    EditTask:boolean;
-    setEditTask:React.Dispatch<React.SetStateAction<boolean>>;
-    DeleteTaskBlock:boolean,
-    setDeleteTaskBlock:React.Dispatch<React.SetStateAction<boolean>>;
-
-
+// Define your Zustand store
+type ContextStore = {
+    isOpenModal: boolean;
+    setIsOpenModal: (value: boolean) => void;
+    AddTask: boolean;
+    setAddTask: (value: boolean) => void;
+    SubTasks: boolean;
+    setSubTasks: (value: boolean) => void;
+    isChanged: boolean;
+    setIsChanged: (value: boolean) => void;
+    EditTask: boolean;
+    setEditTask: (value: boolean) => void;
+    DeleteTaskBlock: boolean;
+    setDeleteTaskBlock: (value: boolean) => void;
 };
 
-export const Opencontext = createContext<contextopen>({ // Create context
-    isOpenModal : false , setIsOpenModal: () => {},
+const useStore = create<ContextStore>((set) => ({
+    isOpenModal: false,
+    setIsOpenModal: (value) => set({ isOpenModal: value }),
     AddTask: false,
-    setAddTask: () => {},
+    setAddTask: (value) => set({ AddTask: value }),
     SubTasks: false,
-    setSubTasks: () => {},
+    setSubTasks: (value) => set({ SubTasks: value }),
     isChanged: false,
-    setIsChanged: () => {},
+    setIsChanged: (value) => set({ isChanged: value }),
     EditTask: false,
-    setEditTask:()=>{},
-    DeleteTaskBlock:false,
-    setDeleteTaskBlock:()=>{},
-
-    
-});
+    setEditTask: (value) => set({ EditTask: value }),
+    DeleteTaskBlock: false,
+    setDeleteTaskBlock: (value) => set({ DeleteTaskBlock: value }),
+}));
 
 
-export type BoardType = {
-    id: string;
-    name: string;
-    };
-
-
-
-
-
-
-const ContextOpen = (props: { children: React.ReactNode }) => { // Context provider
-    const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false)  // Set initial state for the Open Modal
-    const [AddTask, setAddTask] = useState<boolean>(false);  // Set initial state for Add Task
-    const [SubTasks, setSubTasks] = useState<boolean>(false);  // Set initial state for Sub Tasks
-    const [isChanged, setIsChanged] = useState<boolean>(false);  // Set initial state for Add Board
-    const [EditTask, setEditTask]= useState<boolean>(false);
-    const [DeleteTaskBlock, setDeleteTaskBlock]=useState<boolean>(false)
-
-    // const {BoardId, setBoardId} = useData();
-
-    return (
-        <Opencontext.Provider
-        value={{
-            isOpenModal, setIsOpenModal,
-            AddTask,setAddTask
-            ,SubTasks,setSubTasks
-            ,isChanged,setIsChanged,
-            EditTask, setEditTask,
-            DeleteTaskBlock, setDeleteTaskBlock,
-
-        }}
-        >
-        {props.children}
-        </Opencontext.Provider>
-    );
-    };
-
-export default ContextOpen;
+export default useStore;
