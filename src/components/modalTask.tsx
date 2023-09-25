@@ -2,20 +2,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styles from '../styles/ModalTask.module.css';
 import Image from 'next/image';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import ModalAboutTask from './modalAboutTask';
 import DeleteThisTask from './DeletethisTask';
 import EditTask from './editTask';
 import { changeColumn,Task } from '@/utils/changeColumn';
 import renderSelect from '@/utils/renderselect';
 import RenderSubTask from '@/utils/renderSubTaskModal';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { getTask } from '@/utils/getTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import {useStore}
- from '@/contexts/contextopen';
+ from '@/state/contextopen';
 
 const ModalTask = (props:{
     id: string;

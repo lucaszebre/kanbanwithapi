@@ -3,9 +3,9 @@ import ModalTask from './modalTask'
 import styles from '../styles/TaskCard.module.css';
 import { Subtask } from '@/types';
 import { useContext } from 'react';
-import { DataContext } from '@/contexts/datacontext';
-import { useTheme } from '@/contexts/themecontext';
-import {useStore} from '@/contexts/contextopen';
+import { DataContext } from '@/state/datacontext';
+import { useTheme } from '@/state/themecontext';
+import {useStore} from '@/state/contextopen';
 
 
 

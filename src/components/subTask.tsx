@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from '@/styles/Subtasks.module.css';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import { useContext } from 'react';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { toggleSubtaskCompletion } from '@/utils/ToggleSubtask';
 import { useMutation,useQueryClient } from 'react-query';
 const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,taskId:string ,subtaskId:string }) => {

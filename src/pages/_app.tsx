@@ -4,8 +4,8 @@ import 'tailwindcss/tailwind.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
 import { GlobalScrollbarStyle } from '@/utils/Scrollbar'
-import { DataProvider } from '@/contexts/datacontext'
-import { ThemeProvidered } from '@/contexts/themecontext'
+import { DataProvider } from '@/state/datacontext'
+import { ThemeProvidered } from '@/state/themecontext'
 import Layout from '@/components/Layout'
 import { ThemeProvider } from '@mui/material/styles';
 import { lightTheme, darkTheme } from '@/utils/theme';

@@ -1,11 +1,11 @@
 import { Key, useContext, useEffect, useState } from 'react';
-import { useSidebarStore } from '@/contexts/sidebarcontext';
+import { useSidebarStore } from '@/state/sidebarcontext';
 import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
 import { Switch as MuiSwitch } from '@mui/material';
 import BoardCart from './boardCart';
-import { DataContext } from '@/contexts/datacontext';
-import { useTheme } from '@/contexts/themecontext';
+import { DataContext } from '@/state/datacontext';
+import { useTheme } from '@/state/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';

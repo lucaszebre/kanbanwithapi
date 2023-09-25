@@ -3,12 +3,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import ListTask from './listTask';
 import Sidebar from './sideBar';
 import EmptyBoard from './emptyBoard';
-import { useSidebarStore } from '@/contexts/sidebarcontext';
+import { useSidebarStore } from '@/state/sidebarcontext';
 import Header from './header';
 import styles from '../styles/Board.module.css';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
 import { Task, Column } from '@/types';

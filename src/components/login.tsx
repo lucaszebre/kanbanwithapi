@@ -8,7 +8,7 @@ import { SchemaLogin } from '@/types';
 import Link from 'next/link';
 import { login } from '@/utils/login';
 import { useQueryClient } from 'react-query';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 
 const Login: React.FC = () => {
 

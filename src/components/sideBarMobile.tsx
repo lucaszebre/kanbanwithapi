@@ -1,11 +1,11 @@
 import { useState,useContext, useEffect } from 'react';
-import { useSidebarStore } from '@/contexts/sidebarcontext';
+import { useSidebarStore } from '@/state/sidebarcontext';
 import styles from '../styles/SidebarMobile.module.css';
 import Image from 'next/image';
 import BoardCart from './boardCart';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { Switch as MuiSwitch } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from 'react-query';

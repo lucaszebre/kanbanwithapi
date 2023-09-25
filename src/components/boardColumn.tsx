@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import styles from '../styles/BoardColumn.module.css';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 
 interface BoardColumnProps {
   title: string;

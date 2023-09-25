@@ -1,7 +1,7 @@
 import styles from '../styles/modalAbout.module.css';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import {useStore}
- from '@/contexts/contextopen';
+ from '@/state/contextopen';
 
 const ModalAbout = (props: {right: string;top: string;visible: boolean,editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
 

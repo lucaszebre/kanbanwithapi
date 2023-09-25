@@ -1,7 +1,7 @@
 import styles from '@/styles/Deletethisboard.module.css';
 import { useContext } from 'react';
-import { DataContext } from '@/contexts/datacontext';
-import { useTheme } from '@/contexts/themecontext';
+import { DataContext } from '@/state/datacontext';
+import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';

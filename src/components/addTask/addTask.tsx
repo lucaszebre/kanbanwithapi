@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useContext } from 'react';
 import styles from '@/styles/AddTask.module.css';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import renderSelect from '../../utils/renderselect';
 import SubTask from './SubTask';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';

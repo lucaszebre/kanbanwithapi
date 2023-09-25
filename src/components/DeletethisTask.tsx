@@ -1,11 +1,11 @@
 import styles from '../styles/DeleteThisTask.module.css';
 import { useContext } from 'react';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import { deleteTask } from '@/utils/deleteTask'; // import the function to delete the task in the firestore 
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import {useStore}
- from '@/contexts/contextopen';
+ from '@/state/contextopen';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {

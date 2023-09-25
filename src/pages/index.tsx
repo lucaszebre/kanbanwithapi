@@ -4,7 +4,7 @@ import Theme from '../components/theme';
 import Board from '../components/board';
 import Login from '@/components/login';
 import Hide from '@/components/hide';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import jwt, { JwtPayload } from 'jsonwebtoken'; // Import JwtPayload
 import ErrorBoundary from '@/components/errorPage'; // Import your ErrorBoundary component
 

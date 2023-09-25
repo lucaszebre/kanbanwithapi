@@ -1,10 +1,10 @@
 // Import necessary hooks and components from React and your own libraries
 import  { useContext, useState, useEffect } from "react";
 import styles from "../styles/EditTask.module.css";
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import renderSelect from "@/utils/renderselect";
 import { RenderSubTask } from "@/utils/renderSubTask";
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { Subtask } from "@/types/Zodtype";
 import { fetchBoards } from "@/utils/fetchBoard";
 // Main EditTask functional component
@@ -15,7 +15,7 @@ import { Task, changeColumn } from "@/utils/changeColumn";
 import Skeleton from "react-loading-skeleton";
 import { Subtasked } from "@/types";
 import {useStore}
- from "@/contexts/contextopen";
+ from "@/state/contextopen";
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,setIsLoggedIn} = useContext(DataContext);
 

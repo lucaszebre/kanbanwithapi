@@ -1,6 +1,6 @@
 // components/Layout.tsx
 import { useContext, useEffect, ReactNode } from "react";
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 
 interface LayoutProps {
   children: ReactNode;

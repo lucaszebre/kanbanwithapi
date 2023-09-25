@@ -1,7 +1,7 @@
 import {useStore}
- from '@/contexts/contextopen';
+ from '@/state/contextopen';
 import styles from '../styles/modalAboutTask.module.css';
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 
 const ModalAboutTask = (props: {visible: boolean;}) => {
 

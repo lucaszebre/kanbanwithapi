@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useContext } from 'react';
 import styles from '../styles/Hide.module.css';
-import { useSidebarStore } from '@/contexts/sidebarcontext';
+import { useSidebarStore } from '@/state/sidebarcontext';
 
 const Hide = () => {
 

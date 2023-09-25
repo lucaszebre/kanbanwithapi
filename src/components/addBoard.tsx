@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../styles/AddBoard.module.css';  // styles modules css 
 import { ColumnsRenderer } from './addTask/rendercolumn';  // get the render columns 
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient } from 'react-query';
 import { createBoard } from '@/utils/createBoard';
 

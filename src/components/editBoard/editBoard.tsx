@@ -1,10 +1,10 @@
 import styles from "../../styles/EditBoard.module.css";
 import { useState,useContext,useEffect } from "react";
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import BoardColumn from "../boardColumn";
 import { Column } from "@/types";
 import { handleSaveChanges } from "./handleSave";
-import { useTheme } from '@/contexts/themecontext';
+import { useTheme } from '@/state/themecontext';
 import { useQuery,useMutation,useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";

@@ -2,7 +2,7 @@ import React from 'react';
 import TaskCard from './taskCard';
 import styles from '../styles/ListTask.module.css';
 import { ListTaskProps, Subtask } from '@/types';
-import { DataContext } from '@/contexts/datacontext';
+import { DataContext } from '@/state/datacontext';
 import { useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'; // Import Draggable and Droppable
 import Skeleton from 'react-loading-skeleton';
