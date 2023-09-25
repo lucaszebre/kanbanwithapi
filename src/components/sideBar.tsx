@@ -1,24 +1,21 @@
 import { Key, useContext, useEffect, useState } from 'react';
-import { KanbanContext } from '@/contexts/sidebarcontext';
-import { Opencontext } from '@/contexts/contextopen';
+import { useSidebarStore } from '@/contexts/sidebarcontext';
 import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
 import { Switch as MuiSwitch } from '@mui/material';
 import BoardCart from './boardCart';
 import { DataContext } from '@/contexts/datacontext';
-import { Board } from '@/types';
 import { useTheme } from '@/contexts/themecontext';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Sidebar = (props:{boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
-  const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  // state to toggle the sidebar 
+  const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();  // state to toggle the sidebar 
   // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const [addBoard,setAddBoard] = useState(false)
   const {

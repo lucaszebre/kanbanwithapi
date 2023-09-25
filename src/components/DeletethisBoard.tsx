@@ -1,5 +1,4 @@
 import styles from '@/styles/Deletethisboard.module.css';
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
@@ -7,8 +6,6 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import { axiosInstance } from '@/utils/instance';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
-
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { currentBoardId,setCurrentBoardId,setIsLoggedIn,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();

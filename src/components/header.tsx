@@ -2,12 +2,10 @@
 
 import Image from 'next/image';
 import styles from '../styles/Header.module.css';
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext, useEffect, useState } from 'react';
 import ModalAbout from './modalAbout';
 import { DataContext } from '@/contexts/datacontext';
 import { useRouter } from 'next/router';
-import { KanbanContext } from '@/contexts/sidebarcontext';
 import { useTheme } from '@/contexts/themecontext';
 import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
@@ -16,15 +14,20 @@ import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
 import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
+import {useStore} from '@/contexts/contextopen';
+import { useSidebarStore } from '@/contexts/sidebarcontext';
 
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
-    const {  setIsOpenModal, isOpenModal, } = useContext(Opencontext);
+    const {
+        isOpenModal,
+        setIsOpenModal,
+        
+      } = useStore()
     // state to get the current headerTitle 
     const {currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
 
-    const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
+    const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();  // state to toggle the sidebar 
     const [editBoard,setEditBoard] = useState(false)
     const [addTask,setAddTask] = useState(false)
     const [DeleteBlock,setDeleteBlock] = useState(false)

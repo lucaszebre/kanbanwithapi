@@ -1,5 +1,4 @@
 import styles from "../../styles/EditBoard.module.css";
-import { Opencontext } from "@/contexts/contextopen";
 import { useState,useContext,useEffect } from "react";
 import { DataContext } from '@/contexts/datacontext';
 import BoardColumn from "../boardColumn";

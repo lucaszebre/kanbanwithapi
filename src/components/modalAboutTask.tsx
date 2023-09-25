@@ -1,13 +1,18 @@
+import {useStore}
+ from '@/contexts/contextopen';
 import styles from '../styles/modalAboutTask.module.css';
-import { useContext } from 'react';
-import { Opencontext } from '@/contexts/contextopen';
 import { useTheme } from '@/contexts/themecontext';
 
 const ModalAboutTask = (props: {visible: boolean;}) => {
 
     // state to toggle the display of the Delete task Block or the EditTask components 
-    const {setDeleteTaskBlock,setIsOpenModal,setEditTask,setSubTasks} = useContext(Opencontext);
-
+    const {
+        setIsOpenModal,
+        setSubTasks,
+        
+        setEditTask,
+        setDeleteTaskBlock,
+      } = useStore()
     const { theme, setTheme } = useTheme();
 
 

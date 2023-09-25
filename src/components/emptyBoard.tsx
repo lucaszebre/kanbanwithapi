@@ -1,4 +1,3 @@
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext, useState } from 'react';
 import styles from '../styles/EmptyBoard.module.css';
 import AddBoard from './addBoard';

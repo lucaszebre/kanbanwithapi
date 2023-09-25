@@ -1,24 +1,20 @@
 import { useState,useContext, useEffect } from 'react';
-import { KanbanContext } from '@/contexts/sidebarcontext';
-import { Opencontext } from '@/contexts/contextopen';
+import { useSidebarStore } from '@/contexts/sidebarcontext';
 import styles from '../styles/SidebarMobile.module.css';
 import Image from 'next/image';
-import { Switch } from '@chakra-ui/react';
 import BoardCart from './boardCart';
 import { DataContext } from '@/contexts/datacontext';
-import { Board } from '@/types';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/contexts/themecontext';
 import { Switch as MuiSwitch } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Sidebar = (props:{boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 
-const { isSidebarMobile, setIsSidebarMobile } = useContext(KanbanContext);  // state to toggle the sidebar 
+const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();  // state to toggle the sidebar 
 const { setIsLoggedIn } = useContext(DataContext);  // state to toggle the sidebar 
 const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
 const [addBoard,setAddBoard] = useState(false)

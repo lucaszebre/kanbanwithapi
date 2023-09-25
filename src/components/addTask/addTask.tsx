@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import styles from '@/styles/AddTask.module.css';
 import { DataContext } from '@/contexts/datacontext';
@@ -10,7 +9,6 @@ import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
-
 const AddTask = (props: {
   addTask: boolean;
   setAddTask: React.Dispatch<React.SetStateAction<boolean>>;

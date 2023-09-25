@@ -1,34 +1,16 @@
-import React, { createContext, useContext, useState } from 'react';
+    import {create} from 'zustand';
 
-export type IsBarOpenType = {
+    type SidebarStore = {
     isSidebarOpen: boolean;
-    setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    isSidebarMobile:boolean,
-    setIsSidebarMobile:React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export const KanbanContext = createContext<IsBarOpenType>({
-    isSidebarOpen: true,
-    setIsSidebarOpen: () => {},
-    isSidebarMobile:true,
-    setIsSidebarMobile:()=>{}
-});
-
-const ContextSidebar = (props: { children: React.ReactNode }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
-    const [isSidebarMobile, setIsSidebarMobile]= useState<boolean>(true)
-    return (
-        <KanbanContext.Provider
-        value={{
-            isSidebarOpen,
-            setIsSidebarOpen,
-            isSidebarMobile, setIsSidebarMobile
-            
-        }}
-        >
-        {props.children}
-        </KanbanContext.Provider>
-    );
+    setIsSidebarOpen: (isOpen: boolean) => void;
+    isSidebarMobile: boolean;
+    setIsSidebarMobile: (isMobile: boolean) => void;
     };
 
-export default ContextSidebar;
+    export const useSidebarStore = create<SidebarStore>((set) => ({
+    isSidebarOpen: true,
+    setIsSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+    isSidebarMobile: true,
+    setIsSidebarMobile: (isMobile) => set({ isSidebarMobile: isMobile }),
+    }));
+

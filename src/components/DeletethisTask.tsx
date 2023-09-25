@@ -1,15 +1,19 @@
 import styles from '../styles/DeleteThisTask.module.css';
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { deleteTask } from '@/utils/deleteTask'; // import the function to delete the task in the firestore 
 import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
+import {useStore}
+ from '@/contexts/contextopen';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
 const { theme } = useTheme();
-const { DeleteTaskBlock, setDeleteTaskBlock } = useContext(Opencontext); // state to toggle the display of the components 
+const {
+    DeleteTaskBlock,
+    setDeleteTaskBlock,
+  } = useStore()
 const {currentBoardId} = useContext(DataContext);  // state to manage the global data 
 const queryClient = useQueryClient()
     const mutation = useMutation(

@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import styles from '../styles/AddBoard.module.css';  // styles modules css 
-import { Opencontext } from '@/contexts/contextopen';  // get the context to toggle the board 
-import { DataContext } from '@/contexts/datacontext'; // get the context to manage the data
-import { useContext } from "react";
 import { ColumnsRenderer } from './addTask/rendercolumn';  // get the render columns 
 import { useTheme } from '@/contexts/themecontext';
 import { useMutation,useQueryClient } from 'react-query';

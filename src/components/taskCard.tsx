@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ModalTask from './modalTask'
 import styles from '../styles/TaskCard.module.css';
 import { Subtask } from '@/types';
-import { Opencontext } from '@/contexts/contextopen';
 import { useContext } from 'react';
 import { DataContext } from '@/contexts/datacontext';
 import { useTheme } from '@/contexts/themecontext';
+import {useStore} from '@/contexts/contextopen';
+
 
 
 const TaskCard = (props: {index:number,title: string;description: string;id: string;subtask: Subtask[];columnId:string,onClick:() => void,columnIndex:number}) => {
-
-  const { SubTasks, setSubTasks } = useContext(Opencontext); // state to be able to toggle the subTaskk
+  const {
+    setSubTasks,
+  } = useStore() 
   const {setIsCompleted,SetCurrentTaskId,setColId,openedTask,setCurrentColumnIndex,isMoving} = useContext(DataContext) // state to able to manage the Global Data 
   const { theme, setTheme } = useTheme();
   const [number,setNumber]=useState(0)

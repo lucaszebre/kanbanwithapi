@@ -1,14 +1,13 @@
 import Image from 'next/image';
 import React from 'react';
 import { useContext } from 'react';
-import { KanbanContext } from '@/contexts/sidebarcontext';
-
 import styles from '../styles/Hide.module.css';
+import { useSidebarStore } from '@/contexts/sidebarcontext';
 
 const Hide = () => {
 
     // state to toggle the sidebar 
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);  
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();  
 
     return (
         <div className={styles.HideContainer}

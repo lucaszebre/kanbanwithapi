@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ListTask from './listTask';
 import Sidebar from './sideBar';
 import EmptyBoard from './emptyBoard';
-import { KanbanContext } from '@/contexts/sidebarcontext';
+import { useSidebarStore } from '@/contexts/sidebarcontext';
 import Header from './header';
 import styles from '../styles/Board.module.css';
 import { DataContext } from '@/contexts/datacontext';
@@ -19,10 +19,9 @@ import {
     DropResult,
 } from 'react-beautiful-dnd';
 import { changeColumn } from '@/utils/changeColumn';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
 
 const Board = () => {
-    const { isSidebarOpen, setIsSidebarOpen } = useContext(KanbanContext);
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
     const { currentBoardIndex, Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const { theme } = useTheme();

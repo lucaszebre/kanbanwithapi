@@ -16,7 +16,7 @@ type ContextStore = {
     setDeleteTaskBlock: (value: boolean) => void;
 };
 
-const useStore = create<ContextStore>((set) => ({
+export const useStore = create<ContextStore>((set) => ({
     isOpenModal: false,
     setIsOpenModal: (value) => set({ isOpenModal: value }),
     AddTask: false,
@@ -32,4 +32,3 @@ const useStore = create<ContextStore>((set) => ({
 }));
 
 
-export default useStore;

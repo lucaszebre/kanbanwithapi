@@ -1,7 +1,6 @@
 // Import necessary hooks and components from React and your own libraries
 import  { useContext, useState, useEffect } from "react";
 import styles from "../styles/EditTask.module.css";
-import { Opencontext } from "@/contexts/contextopen";
 import { DataContext } from '@/contexts/datacontext';
 import renderSelect from "@/utils/renderselect";
 import { RenderSubTask } from "@/utils/renderSubTask";
@@ -15,8 +14,8 @@ import { getTask } from "@/utils/getTask";
 import { Task, changeColumn } from "@/utils/changeColumn";
 import Skeleton from "react-loading-skeleton";
 import { Subtasked } from "@/types";
-import { handleSessionExpiration } from "@/utils/handleSessionexpiration";
-
+import {useStore}
+ from "@/contexts/contextopen";
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,currentColumnIndex,setIsLoggedIn} = useContext(DataContext);
 
@@ -41,8 +40,11 @@ const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
       }else{
         setIsLoggedIn(true)
       }
-const { EditTask, setEditTask } = useContext(Opencontext);
-const [taskName, setTaskName] = useState<string>('');
+ const {
+    EditTask,
+    setEditTask,
+  } = useStore()
+  const [taskName, setTaskName] = useState<string>('');
 const [taskDescription, setTaskDescription] = useState<string>('');
 const [subTasked, setSubTasked] = useState<Subtasked[]>([]);
 const [subTasktoDelete, setSubTasktoDelete] = useState<string[]>([]);

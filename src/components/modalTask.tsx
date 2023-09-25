@@ -2,8 +2,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styles from '../styles/ModalTask.module.css';
 import Image from 'next/image';
-import { Opencontext } from '@/contexts/contextopen';
-import { Subtask } from '@/types';
 import { DataContext } from '@/contexts/datacontext';
 import ModalAboutTask from './modalAboutTask';
 import DeleteThisTask from './DeletethisTask';
@@ -16,7 +14,8 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { getTask } from '@/utils/getTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
-import { handleSessionExpiration } from '@/utils/handleSessionexpiration';
+import {useStore}
+ from '@/contexts/contextopen';
 
 const ModalTask = (props:{
     id: string;
@@ -45,7 +44,10 @@ const ModalTask = (props:{
         setIsLoggedIn(true)
       }
     // state 
-    const { SubTasks, setSubTasks } = useContext(Opencontext); // state to toggle the display of Subtasks
+    const {
+        SubTasks,
+        setSubTasks,
+      } = useStore()
     const [openModalAbout, setOpenModalAbout] = React.useState(false);// state to toggle th displat of the ModalAbout
 
     // state to manage the global Data 
