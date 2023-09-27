@@ -20,9 +20,6 @@ const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Upda
 const [addBoard,setAddBoard] = useState(false)
 
 const {
-    currentBoardId,
-    setCurrentBoardId,
-    setHeaderTitle,
     currentBoardIndex,
     setCurrentBoardIndex
     } = useContext(DataContext);
@@ -61,10 +58,8 @@ const {
         };
 
   // function to handle the click on a board cart 
-  const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
-    setHeaderTitle(boardName);
+  const handleBoardClick = (boardIndex: number,boardId:string) => {
     setCurrentBoardIndex(boardIndex);
-    setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
     queryClient.invalidateQueries(['Task','boards']);
@@ -148,7 +143,7 @@ const {
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, index,board.id) }}
+            onClick={() => { handleBoardClick( index,board.id) }}
             selected={currentBoardIndex === index}
             />
           ))}

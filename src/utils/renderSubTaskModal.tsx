@@ -4,12 +4,11 @@ import { Subtask } from '@/types';
 
 interface RenderSubTaskProps {
     subtasks: Subtask[];
-    currentBoardId: string;
     columnId: string;
     taskId: string;
 }
 
-const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId, columnId, taskId }) => {
+const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, columnId, taskId }) => {
     
     if (subtasks) {
         return (

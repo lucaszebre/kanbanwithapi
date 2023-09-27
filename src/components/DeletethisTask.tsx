@@ -6,6 +6,7 @@ import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import {useStore}
  from '@/state/contextopen';
+import { fetchBoards } from '@/utils/fetchBoard';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
@@ -14,7 +15,12 @@ const {
     DeleteTaskBlock,
     setDeleteTaskBlock,
   } = useStore()
-const {currentBoardId} = useContext(DataContext);  // state to manage the global data 
+  
+  const {data,isLoading,isError,error} = useQuery({
+    queryKey:['boards'],
+    queryFn:()=>fetchBoards(),
+  });
+const {currentBoardIndex} = useContext(DataContext);  // state to manage the global data 
 const queryClient = useQueryClient()
     const mutation = useMutation(
         (formData: {boardId:string,columnId:string,taskId:string}) =>
@@ -44,7 +50,7 @@ const queryClient = useQueryClient()
                 <div className={styles.DeleteThisTaskButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate({boardId:currentBoardId,columnId:props.columnId,taskId:props.TaskId})
+                            mutation.mutate({boardId:data.boards[currentBoardIndex].id,columnId:props.columnId,taskId:props.TaskId})
                             setDeleteTaskBlock(false);
                         }}
                         className={styles.DeleteButton}

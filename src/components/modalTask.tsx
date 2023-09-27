@@ -22,7 +22,7 @@ const ModalTask = (props:{
     columnId: string;
     index:number
 }) => {
-    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,ColId,setColId,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {isCompleted,currentBoardIndex,ColId,setColId,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -63,7 +63,6 @@ const ModalTask = (props:{
     React.useEffect(()=>{  // when the current board id change we set defaultly the col id to the first column 
         if(data.boards[currentBoardIndex].columns[0]){
             setColId(data.boards[currentBoardIndex].columns[0].id)
-            setCurrentBoardId(data.boards[currentBoardIndex].id)
         }
     },[currentBoardIndex])
 
@@ -170,7 +169,6 @@ const ModalTask = (props:{
                     <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {task.subtasks.length})</h2>
                     <RenderSubTask 
                         subtasks={task.subtasks} 
-                        currentBoardId={currentBoardId}
                         columnId={props.columnId}
                         taskId={props.id}
                         />

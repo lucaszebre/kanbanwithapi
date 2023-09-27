@@ -20,8 +20,6 @@ const Sidebar = (props:{boards:boolean}) => {
   const {
     currentBoardIndex,
     setCurrentBoardIndex,
-    setCurrentBoardId,
-    setHeaderTitle,
     setIsLoggedIn
     } = useContext(DataContext);
 
@@ -33,10 +31,8 @@ const Sidebar = (props:{boards:boolean}) => {
 
 
   // function to handle the click on a board cart 
-  const handleBoardClick = (boardName: string, boardIndex: number,boardId:string) => {
-    setHeaderTitle(boardName);
+  const handleBoardClick = ( boardIndex: number,boardId:string) => {
     setCurrentBoardIndex(boardIndex);
-    setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
     queryClient.invalidateQueries(['boards']);
@@ -115,7 +111,7 @@ const Sidebar = (props:{boards:boolean}) => {
             <BoardCart 
             text={board.name} 
             key={index} 
-            onClick={() => { handleBoardClick(board.name, index,board.id) }}
+            onClick={() => { handleBoardClick( index,board.id) }}
             selected={currentBoardIndex === index}
             />
           ))}

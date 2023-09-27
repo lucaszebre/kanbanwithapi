@@ -7,7 +7,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import { axiosInstance } from '@/utils/instance';
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const { currentBoardId,setCurrentBoardId,setIsLoggedIn,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
+    const { currentBoardIndex,setIsLoggedIn,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme, setTheme } = useTheme();
         
     const {data,isLoading,isError,error} = useQuery({
@@ -67,7 +67,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                     console.error('Error fetching boards');
                     }
                     localStorage.setItem('currentBoardIndex', '0');
-                    setCurrentBoardId(data.data.id)
+                    setCurrentBoardIndex(0)
             
         } catch (error) {
             console.error('Error while deleting the board:', error);
@@ -92,9 +92,8 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                 <div className={styles.DeleteThisBoardButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate(currentBoardId);
+                            mutation.mutate(data.boards[currentBoardIndex].id);
                             if(data.boards){
-                                setCurrentBoardId(data.boards[0].id);
                                 setCurrentBoardIndex(0)
                             }
                             props.setDeleteBlock(false);
