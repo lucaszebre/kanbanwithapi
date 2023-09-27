@@ -6,11 +6,10 @@ import { Switch as MuiSwitch } from '@mui/material';
 import BoardCart from './boardCart';
 import { DataContext } from '@/state/datacontext';
 import { useTheme } from '@/state/themecontext';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
-
 const Sidebar = (props:{boards:boolean}) => {
   
   
@@ -23,14 +22,14 @@ const Sidebar = (props:{boards:boolean}) => {
     setCurrentBoardIndex,
     setCurrentBoardId,
     setHeaderTitle,
-    SetIsMoving,
     setIsLoggedIn
     } = useContext(DataContext);
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
       setTheme(event.target.checked ? 'light' : 'dark');
     };
-    
+    const queryClient = useQueryClient()
+
 
 
   // function to handle the click on a board cart 
@@ -40,8 +39,8 @@ const Sidebar = (props:{boards:boolean}) => {
     setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
-    SetIsMoving(prev=>!prev)
-    };
+    queryClient.invalidateQueries(['boards']);
+  };
 
     const {data,isLoading,isError,error} = useQuery({
       queryKey:['boards'],

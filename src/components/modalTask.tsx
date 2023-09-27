@@ -22,7 +22,7 @@ const ModalTask = (props:{
     columnId: string;
     index:number
 }) => {
-    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,currentTaskId,ColId,setColId,setOpenedTask,SetIsMoving,isMoving,setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {isCompleted, setCurrentBoardId,currentBoardId,currentBoardIndex,ColId,setColId,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -136,8 +136,8 @@ const ModalTask = (props:{
                             subtasks: task.subtasks
                         }});
                         setInterval(1)
-                    SetIsMoving(prevIsmoving => !prevIsmoving)
-                        }}}}>
+                        queryClient.invalidateQueries(['boards']);
+                    }}}}>
             
                 <div 
                 className={`${styles.ModalTaskDiv} ${
@@ -173,8 +173,6 @@ const ModalTask = (props:{
                         currentBoardId={currentBoardId}
                         columnId={props.columnId}
                         taskId={props.id}
-                        setIsMoving={SetIsMoving}
-                        isMoving={isMoving}
                         />
                     <h2 className={`${styles.ModalTaskH2} ${
                         theme === 'light' ? styles.light : styles.dark

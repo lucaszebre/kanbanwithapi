@@ -9,7 +9,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken'; // Import JwtPayload
 import ErrorBoundary from '@/components/errorPage'; // Import your ErrorBoundary component
 
 function Home() {
-  const { setIsLoggedIn, isLoggedIn, setTokenExpiration, tokenExpiration } =
+  const { setIsLoggedIn, isLoggedIn,  } =
     useContext(DataContext);
 
   useEffect(() => {

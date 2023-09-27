@@ -5,7 +5,6 @@ import { ListTaskProps, Subtask } from '@/types';
 import { DataContext } from '@/state/datacontext';
 import { useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'; // Import Draggable and Droppable
-import Skeleton from 'react-loading-skeleton';
 
 const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList, columnId, columnIndex }) => {
     const { setOpenedTask, setCurrentColumnIndex, currentBoardIndex } = useContext(DataContext);

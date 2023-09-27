@@ -8,7 +8,7 @@ import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useTheme } from '@/state/themecontext';
 import { Switch as MuiSwitch } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 
 const Sidebar = (props:{boards:boolean}) => {
@@ -22,12 +22,12 @@ const [addBoard,setAddBoard] = useState(false)
 const {
     currentBoardId,
     setCurrentBoardId,
-    SetIsMoving,
     setHeaderTitle,
-    isMoving,
     currentBoardIndex,
     setCurrentBoardIndex
     } = useContext(DataContext);
+
+    const queryClient = useQueryClient()
 
     useEffect(() => {
         // Check if the window object is available
@@ -67,7 +67,7 @@ const {
     setCurrentBoardId(boardId)
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
-    SetIsMoving(prev=>!prev)
+    queryClient.invalidateQueries(['Task','boards']);
     };
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],

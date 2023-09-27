@@ -34,7 +34,6 @@ export default function Header(props:{boards:boolean}) {
 
     const { theme, setTheme } = useTheme();
 
-    const Router = useRouter()
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),

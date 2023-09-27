@@ -7,11 +7,9 @@ interface RenderSubTaskProps {
     currentBoardId: string;
     columnId: string;
     taskId: string;
-    setIsMoving: (moving: boolean) => void;
-    isMoving: boolean;
 }
 
-const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId, columnId, taskId, setIsMoving, isMoving }) => {
+const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, currentBoardId, columnId, taskId }) => {
     
     if (subtasks) {
         return (

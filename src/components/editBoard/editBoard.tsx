@@ -14,7 +14,7 @@ const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.Se
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database
 const [Header,setHeader]= useState<string>(''); // state to know the current boardname selected
 const [Save,SetSave]= useState<boolean>(false) // state to toggle the disabled thhe button save 
-const { currentBoardIndex,SetIsMoving,isMoving} = useContext(DataContext); // state to manage the global data
+const { currentBoardIndex} = useContext(DataContext); // state to manage the global data
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to handle if one input is empty 
 const [inputError, setInputError] = useState<boolean>(false); // state to handle if the boardname is empty 
 const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know the column to add in the database
@@ -41,7 +41,7 @@ useEffect(()=>{
             setHeader(data.boards[currentBoardIndex].name)
             const initialColumnErrors = data.boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
             setColumnErrors(initialColumnErrors);}
-    }, [currentBoardIndex, data, isMoving]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
+    }, [currentBoardIndex, data,]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
 
 
     const handleAddColumn = () => { // function to add column 
@@ -142,7 +142,7 @@ function renderColumns() {
                     className={styles.EditBoardWrapper}
                     onClick={(e) => {
                         if (e.target === e.currentTarget) {
-                            SetIsMoving(isMoving => !isMoving);
+                            queryClient.invalidateQueries(['boards']);
                             props.setEditBoard(false);
                         }
                     }}
@@ -174,8 +174,8 @@ function renderColumns() {
     <div className={styles.EditBoardWrapper}
         onClick={(e) => {
             if (e.target === e.currentTarget) {
-            SetIsMoving(isMoving => !isMoving);
-            mutationed.mutate();
+                queryClient.invalidateQueries(['boards']);
+                mutationed.mutate();
             props.setEditBoard(false);
             }}}
         style={{
@@ -202,7 +202,7 @@ function renderColumns() {
                         mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.boards[currentBoardIndex].id,Header,headerTitle:data.boards[currentBoardIndex].name})
                         props.setEditBoard(false);
                         SetSave(!Save);
-                        SetIsMoving(isMoving=>!isMoving)
+                        queryClient.invalidateQueries(['boards']);
                     }
                     
                     

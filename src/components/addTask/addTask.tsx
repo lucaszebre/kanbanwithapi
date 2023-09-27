@@ -20,7 +20,7 @@ const AddTask = (props: {
   const [taskTitle, setTaskTitle] = useState(''); // state for the task title
   const [taskDescription, setTaskDescription] = useState(''); // state for task description
   const [SubTaskCurrent, setSubTaskCurrent] = useState<string[]>([]); // states to save up the name of all the subtasks I add
-  const { currentBoardIndex, isMoving } = useContext(DataContext); // state to manage the global data
+  const { currentBoardIndex } = useContext(DataContext); // state to manage the global data
   const [SubTasksError, setSubTasksError] = useState<boolean[]>([]); // state to handle if one of the subtasks is empty
   const [taskTitleError, setTaskTitleError] = useState(false); // state to handle if the task title is empty
   const { theme, setTheme } = useTheme();
@@ -29,14 +29,14 @@ const AddTask = (props: {
     if (data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns[0]) {
       setSelectId(data.boards[currentBoardIndex].columns[0].id);
     }
-  }, [data, isMoving]);
+  }, [currentBoardIndex, data]);
   const queryClient = useQueryClient();
   const mutation = useMutation(
     (formData: { taskTitle: string; taskDescription: string; columnId: string; SubTaskCurrent: string[] }) =>
       createTask(formData.taskTitle, formData.taskDescription, formData.columnId, formData.SubTaskCurrent),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['boards']);
+        queryClient.invalidateQueries(['boards','Task']);
       },
     }
   );

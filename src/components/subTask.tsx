@@ -9,7 +9,7 @@ const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,ta
 
   const { theme, setTheme } = useTheme();
 
-  const {SetIsMoving,isMoving,currentBoardId } = useContext(DataContext); // state to update the whole data of the app
+  const {currentBoardId } = useContext(DataContext); // state to update the whole data of the app
   const [isChecked, setIsChecked] = React.useState<boolean>(props.checked); // state to able to toggle the checkbox
 
   React.useEffect(() => {  // everytime we check the checkbox we change the value of IsChecked
@@ -38,7 +38,8 @@ const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,ta
             mutation.mutate({isCompleted:!isChecked,subtaskId:props.subtaskId});
             setIsChecked(!isChecked);
 
-            SetIsMoving(!isMoving)}} />
+            queryClient.invalidateQueries(['boards']);
+          }} />
         <p
           className={styles.SubtaskTitle}
           style={{

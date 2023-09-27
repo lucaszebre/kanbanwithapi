@@ -19,11 +19,7 @@ type DataContextType = {
     setCurrentBoardId: (boardId:string) => void;
     headerTitle: string;
     setHeaderTitle: (title: string) => void;
-    isMoving:boolean;
-    SetIsMoving:React.Dispatch<React.SetStateAction<boolean>>;
-    currentTaskId:string;
     Interval:number;
-    SetCurrentTaskId:React.Dispatch<React.SetStateAction<string>>;
     setInterval:React.Dispatch<React.SetStateAction<number>>;
     ColId:string;
     setColId:React.Dispatch<React.SetStateAction<string>>;
@@ -32,7 +28,6 @@ type DataContextType = {
     isCompleted:number;
     setIsCompleted:React.Dispatch<React.SetStateAction<number>>;
     isLoggedIn:boolean, setIsLoggedIn:React.Dispatch<React.SetStateAction<boolean>>;
-    tokenExpiration:any, setTokenExpiration:React.Dispatch<React.SetStateAction<any>>
 };
 
 
@@ -55,10 +50,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             const [currentBoardId, setCurrentBoardId] = useState<string>('');
         const [headerTitle, setHeaderTitle] = useState<string>('');
         const [Interval,setInterval] = useState<number>(100000);
-        const [tokenExpiration, setTokenExpiration] = useState(null);
-        const [isMoving,SetIsMoving] = useState(false)
         const [isCompleted,setIsCompleted] = useState(0)
-        const [currentTaskId,SetCurrentTaskId]=React.useState<string>('')
         const [ColId,setColId] = React.useState<string>('')
         const [openedTask, setOpenedTask] = useState<{
             id: string;title: string;
@@ -82,12 +74,10 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         setCurrentBoardId,
         headerTitle,
         setHeaderTitle,
-        isMoving,SetIsMoving,
-        SetCurrentTaskId,currentTaskId,
         ColId,setColId,
         openedTask, setOpenedTask,
         Interval,setInterval,isCompleted,setIsCompleted,
-        isLoggedIn, setIsLoggedIn,tokenExpiration, setTokenExpiration
+        isLoggedIn, setIsLoggedIn
         }}>{props.children}</DataContext.Provider>
     );
     };
