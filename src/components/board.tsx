@@ -24,7 +24,6 @@ const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
     const { currentBoardIndex, Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
-    const { theme } = useTheme();
     const [editBoard, setEditBoard] = useState(false);
     const queryClient = useQueryClient();
     const column = useMutation(

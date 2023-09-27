@@ -13,7 +13,7 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
   const {
     setSubTasks,
   } = useStore() 
-  const {setIsCompleted,setColId,openedTask,setCurrentColumnIndex} = useContext(DataContext) // state to able to manage the Global Data 
+  const {setIsCompleted,openedTask} = useContext(DataContext) // state to able to manage the Global Data 
   const { theme, setTheme } = useTheme();
   const [number,setNumber]=useState(0)
   function Iscompleted(){  // function to get the amout of subtask completed 
@@ -49,8 +49,6 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
       ()=>{
         setSubTasks(true)
         props.onClick();
-        setColId(props.columnId)
-        setCurrentColumnIndex(props.columnIndex)
       }
     }
     >

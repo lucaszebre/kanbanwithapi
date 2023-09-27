@@ -1,17 +1,15 @@
-import React from 'react';
+import React, {useEffect}from 'react';
 import styles from '@/styles/Subtasks.module.css';
-import { DataContext } from '@/state/datacontext';
-import { useContext } from 'react';
 import { useTheme } from '@/state/themecontext';
 import { toggleSubtaskCompletion } from '@/utils/ToggleSubtask';
 import { useMutation,useQueryClient } from 'react-query';
 const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,taskId:string ,subtaskId:string }) => {
 
-  const { theme, setTheme } = useTheme();
+  const { theme} = useTheme();
 
   const [isChecked, setIsChecked] = React.useState<boolean>(props.checked); // state to able to toggle the checkbox
 
-  React.useEffect(() => {  // everytime we check the checkbox we change the value of IsChecked
+  useEffect(() => {  // everytime we check the checkbox we change the value of IsChecked
     setIsChecked(props.checked);
   }, [props.checked]);
   const queryClient = useQueryClient()

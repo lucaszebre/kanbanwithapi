@@ -17,7 +17,7 @@ import { Subtasked } from "@/types";
 import {useStore}
  from "@/state/contextopen";
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
-    const { currentBoardIndex,currentColumnIndex,setIsLoggedIn} = useContext(DataContext);
+    const { currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
 
     const { data: task, isLoading, isError,error } = useQuery(
         ['Task', props.taskId], // Use these parameters as the query key
@@ -155,7 +155,7 @@ const handleAddSubtask = () => {
             setSubTasktoDelete([])
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
-            column.mutate({newColumnId:selectedColumnId,columnId:data.boards[currentBoardIndex].columns[currentColumnIndex].id,newtask:{
+            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
                 id:props.taskId,
                 title: taskName,
                 status: "Todo",

@@ -22,7 +22,7 @@ const ModalTask = (props:{
     columnId: string;
     index:number
 }) => {
-    const {isCompleted,currentBoardIndex,ColId,setColId,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {isCompleted,currentBoardIndex,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -60,11 +60,6 @@ const ModalTask = (props:{
         setOpenModalAbout(false)
     },[])
 
-    React.useEffect(()=>{  // when the current board id change we set defaultly the col id to the first column 
-        if(data.boards[currentBoardIndex].columns[0]){
-            setColId(data.boards[currentBoardIndex].columns[0].id)
-        }
-    },[currentBoardIndex])
 
     React.useEffect(() => {  // when the column id change we change also the selectedColumnid 
         setSelectedColumnId(props.columnId);
@@ -81,14 +76,6 @@ const ModalTask = (props:{
             }
         );
             
-        function Iscompleted(){  // function to get the amout of subtask completed 
-            var i:number=0;
-            if (task){
-                for(const sub of task.subtasks){
-                if( sub.isCompleted){
-                    i++
-                }}}
-            return i }
     if (isLoading) {
         // Return loading skeletons
         return (
@@ -116,7 +103,7 @@ const ModalTask = (props:{
     return (
         <>
         <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
-        <DeleteThisTask columnId={ColId} TaskTitle={task.title}  TaskId={props.id} />
+        <DeleteThisTask columnId={props.columnId} TaskTitle={task.title}  TaskId={props.id} />
             <div
                 className={styles.ModalTaskWrapper}
                 style={{

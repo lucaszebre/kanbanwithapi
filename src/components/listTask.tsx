@@ -6,8 +6,8 @@ import { DataContext } from '@/state/datacontext';
 import { useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'; // Import Draggable and Droppable
 
-const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList, columnId, columnIndex }) => {
-    const { setOpenedTask, setCurrentColumnIndex, currentBoardIndex } = useContext(DataContext);
+const ListTask: React.FC<ListTaskProps> = ({ tasks, title, columnId, columnIndex }) => {
+    const { setOpenedTask } = useContext(DataContext);
 
     const RenderTask = (): React.ReactNode[] => {
         return tasks.map((task: { title: string; description: string; id: string; subtasks: Subtask[] }, index: number) => (
@@ -34,7 +34,6 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, NbList, columnId, col
                                     columnId: columnId,
                                     subTask: task.subtasks,
                                 });
-                                setCurrentColumnIndex(columnIndex);
                             }}
                         />
                     </div>

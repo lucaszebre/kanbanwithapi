@@ -12,13 +12,9 @@ type openedTaskType= {
 } | null 
 type DataContextType = {
     currentBoardIndex: number;
-    currentColumnIndex: number;
-    setCurrentColumnIndex: (boardId: number) => void;
     setCurrentBoardIndex: (boardId: number) => void;
     Interval:number;
     setInterval:React.Dispatch<React.SetStateAction<number>>;
-    ColId:string;
-    setColId:React.Dispatch<React.SetStateAction<string>>;
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
     isCompleted:number;
@@ -61,10 +57,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
     return (
         <DataContext.Provider value={{
         currentBoardIndex,
-        currentColumnIndex,
         setCurrentBoardIndex,
-        setCurrentColumnIndex,
-        ColId,setColId,
         openedTask, setOpenedTask,
         Interval,setInterval,isCompleted,setIsCompleted,
         isLoggedIn, setIsLoggedIn
