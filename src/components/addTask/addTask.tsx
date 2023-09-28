@@ -144,7 +144,7 @@ const AddTask = (props: {
             onClick={() => { console.log(SelectId) }}
             className={`${styles.SelectAddTask} ${theme === 'light' ? styles.light : styles.dark}`}
           >
-            {data.boards[currentBoardIndex] &&data.boards[currentBoardIndex].columns && renderSelect(data.boards[currentBoardIndex].columns)}
+            {data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns && renderSelect(data.boards[currentBoardIndex].columns)}
           </select>
           <button className={styles.AddTaskSaveButton} type="submit">
             Create Task

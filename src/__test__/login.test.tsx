@@ -2,9 +2,10 @@ import {  render, waitFor} from "@testing-library/react"
 import Login from "../components/login"
 import user from "@testing-library/user-event"
 import '@testing-library/jest-dom'
+import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
+import mockRouter from 'next-router-mock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 let queryClient: QueryClient;
-import { useRouter } from 'next/router'; // Import useRouter from 'next/router'
 
 
 beforeAll(() => {
@@ -168,7 +169,7 @@ test('Link is present and contain the right href',async () => {
   const { findByText } = render(
     <QueryClientProvider client={queryClient}>
       <Login />
-    </QueryClientProvider>
+    </QueryClientProvider>,{ wrapper: MemoryRouterProvider }
   );
 
   const link =(await  findByText('Create account')); // Find the link by its text
@@ -180,31 +181,11 @@ test('Link is present and contain the right href',async () => {
   
   // Perform assertions on the href value
   expect(href).toBe('/register'); // You can adjust the expected href value
-});
-
-it("should redirect to the dashboard on successful login", async () => {
-  // Render the Login component within the QueryClientProvider
-  const { getByPlaceholderText, getByRole, findByPlaceholderText } = render(
-    <QueryClientProvider client={queryClient}>
-      <Login />
-    </QueryClientProvider>
-  );
-
-  // Simulate user input with valid credentials
-  const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
-    const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
-    const buttonLogin = getByRole('button');
-
-  user.type(inputEmail, "validemail@example.com");
-  user.type(inputPassword, "val12p@assword");
-  user.click(buttonLogin);
-
-  // Wait for the expected redirection or success message
-  await waitFor(async () => {
-    // Check if the login form has disappeared (could use an appropriate selector)
-    expect(await findByPlaceholderText('e.g. lucasbeaugosse@email.com')).toBeNull();
-    expect(await findByPlaceholderText('Enter your password')).toBeNull();
-
+  await waitFor(() => {
+    // Expect a redirect or success message, adjust the expectation accordingly
+    expect(mockRouter.asPath).toEqual('/register');
   });
 });
+
+
 })

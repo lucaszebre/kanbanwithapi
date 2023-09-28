@@ -76,7 +76,7 @@ const Register: React.FC = () => {
                 <p className={styles.RegisterDescription}>
                 Let’s get you started sharing your links!
                 </p>
-                <label className={styles.RegisterLabel} htmlFor="">
+                <label className={styles.RegisterLabel} htmlFor="username">
                     Username
                 </label>
                 
@@ -86,8 +86,8 @@ const Register: React.FC = () => {
                     {errors.username && <p className={styles.RegisterError}>{errors.username.message?.toString()}</p>}
                 </div>
 
-                <label  className={styles.RegisterLabel} htmlFor="">
-                    Email adress
+                <label  className={styles.RegisterLabel} htmlFor="email">
+                    Email
                 </label>
                 <div className={styles.RegisterInputWrapper}>
                     <Image className={styles.RegisterImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
@@ -95,7 +95,7 @@ const Register: React.FC = () => {
                     {errors.email && <p className={styles.RegisterError}>{errors.email.message?.toString()}</p>}
                 </div>
                 
-                <label className={styles.RegisterLabel} htmlFor="">
+                <label className={styles.RegisterLabel} htmlFor="password">
                     Confirm password
                 </label>
                 
