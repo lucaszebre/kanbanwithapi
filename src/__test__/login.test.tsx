@@ -1,18 +1,20 @@
-import {  render} from "@testing-library/react"
+import {  render, waitFor} from "@testing-library/react"
 import Login from "../components/login"
 import user from "@testing-library/user-event"
 import '@testing-library/jest-dom'
-import { createMemoryHistory } from 'history'; // Use createMemoryHistory for Next.js
-import { Router } from 'next/router'; // Import Router from next/router
 import { QueryClient, QueryClientProvider } from 'react-query';
-
 let queryClient: QueryClient;
+import { useRouter } from 'next/router'; // Import useRouter from 'next/router'
 
-beforeEach(() => {
+
+beforeAll(() => {
   queryClient = new QueryClient();
-});
 
-afterEach(() => {
+   
+ });
+
+
+afterAll(() => {
   // Clean up queryClient or any other resources as needed
   queryClient.clear();
 });
@@ -160,28 +162,49 @@ it("if the password is not in the goodformat error should show P3",async ()=>{
     expect(ErrorPassword).toBeInTheDocument()
 })
 
-// Mock Next.js router events
-jest.mock('next/router', () => ({
-    useRouter: () => ({
-      push: jest.fn(),
-    }),
-  }));
 
-//   it('clicking on the link redirects to the register page',async () => {
-//     const history = createMemoryHistory(); // Create a history object
-//     const {  getByText } = render(
-//         <Router router={history}>
-//         <QueryClientProvider client={queryClient}>
-//         <Login />
-//         </QueryClientProvider>
-//         </Router>
-//     );
-   
-//     const link = getByText('Create account'); // Find the link by its text
-//     user.click(link); // Simulate a click on the link
+
+test('Link is present and contain the right href',async () => {
+  const { findByText } = render(
+    <QueryClientProvider client={queryClient}>
+      <Login />
+    </QueryClientProvider>
+  );
+
+  const link =(await  findByText('Create account')); // Find the link by its text
+  user.click(link); // Simulate a click on the link
   
-//     // Assert that the router's push function was called with the expected URL
-//     expect(Router.useRouter().push).toHaveBeenCalledWith('/register');
-//   });
+  expect(link).toBeInTheDocument()
+  // Access the href attribute of the link
+  const href = link.getAttribute('href');
+  
+  // Perform assertions on the href value
+  expect(href).toBe('/register'); // You can adjust the expected href value
+});
 
+it("should redirect to the dashboard on successful login", async () => {
+  // Render the Login component within the QueryClientProvider
+  const { getByPlaceholderText, getByRole, findByPlaceholderText } = render(
+    <QueryClientProvider client={queryClient}>
+      <Login />
+    </QueryClientProvider>
+  );
+
+  // Simulate user input with valid credentials
+  const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
+    const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
+    const buttonLogin = getByRole('button');
+
+  user.type(inputEmail, "validemail@example.com");
+  user.type(inputPassword, "val12p@assword");
+  user.click(buttonLogin);
+
+  // Wait for the expected redirection or success message
+  await waitFor(async () => {
+    // Check if the login form has disappeared (could use an appropriate selector)
+    expect(await findByPlaceholderText('e.g. lucasbeaugosse@email.com')).toBeNull();
+    expect(await findByPlaceholderText('Enter your password')).toBeNull();
+
+  });
+});
 })
