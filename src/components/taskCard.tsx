@@ -14,7 +14,7 @@ const TaskCard = (props: {index:number,title: string;description: string;id: str
     setSubTasks,
   } = useStore() 
   const {setIsCompleted,openedTask} = useContext(DataContext) // state to able to manage the Global Data 
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const [number,setNumber]=useState(0)
   function Iscompleted(){  // function to get the amout of subtask completed 
     var i:number=0;

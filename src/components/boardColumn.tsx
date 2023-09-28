@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import React, {useEffect} from 'react';
 import styles from '../styles/BoardColumn.module.css';
 import { useTheme } from '@/state/themecontext';
 
@@ -15,7 +15,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, rese
   const [inputValue, setInputValue] = React.useState<string>(title);
   const { theme, setTheme } = useTheme();
 
-    React.useEffect(() => {  // every time the value of resetkey change we reset the value inside the input 
+    useEffect(() => {  // every time the value of resetkey change we reset the value inside the input 
       if(resetKey){
         setInputValue('');
       }else{

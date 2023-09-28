@@ -1,5 +1,5 @@
 // components/Layout.tsx
-import { useContext, useEffect, ReactNode } from "react";
+import {  useEffect, ReactNode } from "react";
 import { useTheme } from '@/state/themecontext';
 
 interface LayoutProps {
@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-    const { theme, setTheme } = useTheme();
+    const { theme} = useTheme();
 
     useEffect(() => {
         if (typeof window !== "undefined") {

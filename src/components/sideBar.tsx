@@ -1,4 +1,4 @@
-import { Key, useContext, useEffect, useState } from 'react';
+import {  useContext, useState } from 'react';
 import { useSidebarStore } from '@/state/sidebarcontext';
 import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
@@ -10,18 +10,22 @@ import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
+import { useStore } from '@/state/contextopen';
+
 const Sidebar = (props:{boards:boolean}) => {
   
   
   const { theme, setTheme } = useTheme();
-  const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();  // state to toggle the sidebar 
+  const {  setIsSidebarOpen } = useSidebarStore();  // state to toggle the sidebar 
   // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const [addBoard,setAddBoard] = useState(false)
   const {
-    currentBoardIndex,
-    setCurrentBoardIndex,
+    
     setIsLoggedIn
     } = useContext(DataContext);
+
+    const {currentBoardIndex,
+      setCurrentBoardIndex} = useStore()
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
       setTheme(event.target.checked ? 'light' : 'dark');

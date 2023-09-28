@@ -6,10 +6,13 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import { axiosInstance } from '@/utils/instance';
+import { useStore } from '@/state/contextopen';
+
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const { currentBoardIndex,setIsLoggedIn,setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
-        const { theme, setTheme } = useTheme();
-        
+    const { setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
+        const { theme } = useTheme();
+        const {currentBoardIndex}=useStore()
+
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),

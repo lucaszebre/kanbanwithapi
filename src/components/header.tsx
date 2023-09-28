@@ -1,11 +1,8 @@
-// Import necessary hooks and components from React and your own libraries
-
 import Image from 'next/image';
 import styles from '../styles/Header.module.css';
 import { useContext, useEffect, useState } from 'react';
 import ModalAbout from './modalAbout';
 import { DataContext } from '@/state/datacontext';
-import { useRouter } from 'next/router';
 import { useTheme } from '@/state/themecontext';
 import { Logout } from '@/utils/logout';
 import { useQuery } from 'react-query';
@@ -22,17 +19,17 @@ export default function Header(props:{boards:boolean}) {
     const {
         isOpenModal,
         setIsOpenModal,
-        
+        currentBoardIndex
       } = useStore()
     // state to get the current headerTitle 
-    const {currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
+    const {setIsLoggedIn} = useContext(DataContext);
 
     const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();  // state to toggle the sidebar 
     const [editBoard,setEditBoard] = useState(false)
     const [addTask,setAddTask] = useState(false)
     const [DeleteBlock,setDeleteBlock] = useState(false)
 
-    const { theme, setTheme } = useTheme();
+    const { theme } = useTheme();
 
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],

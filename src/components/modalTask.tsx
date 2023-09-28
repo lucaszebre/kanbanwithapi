@@ -54,7 +54,7 @@ const ModalTask = (props:{
     // state to know wich column id we are currently 
     const [selectedColumnId, setSelectedColumnId] = React.useState(props.columnId);
 
-    const { theme, setTheme } = useTheme();
+    const { theme } = useTheme();
 
     React.useEffect(()=>{ // every mount we need to display none the ModalAbout 
         setOpenModalAbout(false)

@@ -1,7 +1,6 @@
 import React, { useContext,useState } from 'react';
 import styles from '@/styles/Login.module.css';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SchemaLogin } from '@/types';
@@ -12,7 +11,6 @@ import { DataContext } from '@/state/datacontext';
 
 const Login: React.FC = () => {
 
-    const Router = useRouter();
     const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
     const queryClient = useQueryClient(); // Get the query client instance
     const {setInterval,setIsLoggedIn } = useContext(DataContext); // state to manage the global data 

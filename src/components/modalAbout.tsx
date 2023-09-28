@@ -9,7 +9,7 @@ const ModalAbout = (props: {right: string;top: string;visible: boolean,editBoard
   const {
     setIsOpenModal,
   } = useStore()
-  const { theme, setTheme } = useTheme();
+  const { theme} = useTheme();
 
 
   function HandleClickDelete() {  // function display the delete block 

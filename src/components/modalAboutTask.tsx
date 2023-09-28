@@ -13,7 +13,7 @@ const ModalAboutTask = (props: {visible: boolean;}) => {
         setEditTask,
         setDeleteTaskBlock,
       } = useStore()
-    const { theme, setTheme } = useTheme();
+    const { theme } = useTheme();
 
 
     function HandleClickDelete() {  // function to display the DeleteTask Block 

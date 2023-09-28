@@ -10,8 +10,7 @@ type OpenedTaskType = {
 } | null;
 
 type DataStore = {
-  currentBoardIndex: number;
-  setCurrentBoardIndex: (boardId: number) => void;
+  
   interval: number;
   setInterval: (interval: number) => void;
   openedTask: OpenedTaskType;
@@ -23,15 +22,11 @@ type DataStore = {
 };
 
 export const useDataStore = create<DataStore>((set) => ({
-  currentBoardIndex:
-    typeof window !== 'undefined'
-      ? parseInt(localStorage.getItem('currentBoardIndex') || '0', 10)
-      : 0,
+  
   interval: 100000,
   openedTask: null,
   isCompleted: 0,
   isLoggedIn: false,
-  setCurrentBoardIndex: (boardId) => set({ currentBoardIndex: boardId }),
   setInterval: (newInterval) => set({ interval: newInterval }),
   setOpenedTask: (task) => set({ openedTask: task }),
   setIsCompleted: (newCompleted) => set({ isCompleted: newCompleted }),

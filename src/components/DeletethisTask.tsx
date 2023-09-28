@@ -20,7 +20,8 @@ const {
     queryKey:['boards'],
     queryFn:()=>fetchBoards(),
   });
-const {currentBoardIndex} = useContext(DataContext);  // state to manage the global data 
+  const {currentBoardIndex}=useStore()
+
 const queryClient = useQueryClient()
     const mutation = useMutation(
         (formData: {boardId:string,columnId:string,taskId:string}) =>

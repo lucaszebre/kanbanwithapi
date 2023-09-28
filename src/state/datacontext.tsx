@@ -41,7 +41,6 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
         
         const [Interval,setInterval] = useState<number>(100000);
         const [isCompleted,setIsCompleted] = useState(0)
-        const [ColId,setColId] = React.useState<string>('')
         const [openedTask, setOpenedTask] = useState<{
             id: string;title: string;
             description: string;

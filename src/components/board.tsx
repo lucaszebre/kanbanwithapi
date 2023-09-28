@@ -8,21 +8,23 @@ import Header from './header';
 import styles from '../styles/Board.module.css';
 import { DataContext } from '@/state/datacontext';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
-import { useTheme } from '@/state/themecontext';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
 import { Task, Column } from '@/types';
 import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
+
 import {
     DragDropContext,
     DropResult,
 } from 'react-beautiful-dnd';
 import { changeColumn } from '@/utils/changeColumn';
+import { useStore } from '@/state/contextopen';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
-    const { currentBoardIndex, Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {currentBoardIndex}=useStore()
+    const {  Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const [editBoard, setEditBoard] = useState(false);
     const queryClient = useQueryClient();
