@@ -11,7 +11,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
 import { useStore } from '@/state/contextopen';
-
+import React from 'react'
 const Sidebar = (props:{boards:boolean}) => {
   
   

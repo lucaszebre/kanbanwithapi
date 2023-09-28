@@ -13,7 +13,7 @@ import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
 import {useStore} from '@/state/contextopen';
 import { useSidebarStore } from '@/state/sidebarcontext';
-
+import React from 'react'
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {

@@ -1,4 +1,5 @@
 import { css, Global } from '@emotion/react';
+import React from 'react'
 
 const scrollbarStyle = css`
     ::-webkit-scrollbar {

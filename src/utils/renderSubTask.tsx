@@ -1,6 +1,6 @@
 
 import BoardColumn from "@/components/boardColumn";
-
+import React from 'react'
 
 type NewSubtask = {
     id: string;

@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import styles from '../styles/EmptyBoard.module.css';
 import AddBoard from './addBoard';
 import EditBoard from './editBoard/editBoard';
-
+import React from 'react'
 const EmptyBoard = (props:{boards:boolean}) => {
   
   const [addBoard,setAddBoard] = useState(false)

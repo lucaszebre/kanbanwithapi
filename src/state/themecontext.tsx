@@ -1,5 +1,6 @@
 // themeContext.tsx
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React from 'react'
 
 interface ThemeContextType {
     theme: string;

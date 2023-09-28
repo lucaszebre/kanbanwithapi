@@ -2,7 +2,7 @@ import styles from '../styles/modalAbout.module.css';
 import { useTheme } from '@/state/themecontext';
 import {useStore}
  from '@/state/contextopen';
-
+ import React from 'react'
 const ModalAbout = (props: {right: string;top: string;visible: boolean,editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
   // state to toggle the display of the Delete Components or the EditBoard 

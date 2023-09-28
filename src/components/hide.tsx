@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import styles from '../styles/Hide.module.css';
 import { useSidebarStore } from '@/state/sidebarcontext';
+import React from 'react'
 
 const Hide = () => {
 

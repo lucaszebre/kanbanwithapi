@@ -2,7 +2,7 @@ import {useStore}
  from '@/state/contextopen';
 import styles from '../styles/modalAboutTask.module.css';
 import { useTheme } from '@/state/themecontext';
-
+import React from 'react'
 const ModalAboutTask = (props: {visible: boolean;}) => {
 
     // state to toggle the display of the Delete task Block or the EditTask components 

@@ -10,7 +10,7 @@ import { Switch as MuiSwitch } from '@mui/material';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
-
+import React from 'react'
 const Sidebar = (props:{boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 

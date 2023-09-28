@@ -7,7 +7,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import { axiosInstance } from '@/utils/instance';
 import { useStore } from '@/state/contextopen';
-
+import React from 'react'
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme } = useTheme();

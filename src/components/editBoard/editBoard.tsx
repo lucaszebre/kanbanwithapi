@@ -9,6 +9,7 @@ import { useQuery,useMutation,useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
 import Skeleton from "react-loading-skeleton";
+import React from 'react'
 const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database

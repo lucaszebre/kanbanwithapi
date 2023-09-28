@@ -16,6 +16,7 @@ import Skeleton from "react-loading-skeleton";
 import { Subtasked } from "@/types";
 import {useStore}
  from "@/state/contextopen";
+ import React from 'react'
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
 

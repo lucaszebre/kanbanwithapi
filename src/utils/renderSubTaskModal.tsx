@@ -1,7 +1,6 @@
 import React from 'react';
 import Subtasks from '@/components/subTask';
 import { Subtask } from '@/types';
-
 interface RenderSubTaskProps {
     subtasks: Subtask[];
     columnId: string;

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import React,{ useContext, useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import Theme from '../components/theme';
 import Board from '../components/board';
