@@ -159,9 +159,7 @@ describe("Register Component Tests", () => {
 
     // Check if the form has been submitted successfully
     await waitFor(() => {
-      // Expect a redirect or success message, adjust the expectation accordingly
-      // For example, you can expect a "Redirecting..." message
-      expect(mockRouter.asPath).toEqual('/');
+        expect(mockRouter.asPath).toEqual('/');
     });
   });
 });
