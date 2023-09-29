@@ -3,7 +3,7 @@ import styles from '@/styles/Subtasks.module.css';
 import { useTheme } from '@/state/themecontext';
 import { toggleSubtaskCompletion } from '@/utils/ToggleSubtask';
 import { useMutation,useQueryClient } from 'react-query';
-const Subtasks = (props: { title: string , checked: boolean  ,colunmId:string,taskId:string ,subtaskId:string }) => {
+const Subtasks = (props: { title: string , checked: boolean  ,subtaskId:string }) => {
 
   const { theme} = useTheme();
 

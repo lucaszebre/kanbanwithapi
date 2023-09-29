@@ -10,7 +10,7 @@ type openedTaskType= {
     columnId: string;
     subTask: Subtask[];
 } | null 
-export type DataContextType = {
+type DataContextType = {
     currentBoardIndex: number;
     setCurrentBoardIndex: (boardId: number) => void;
     Interval:number;
@@ -23,7 +23,7 @@ export type DataContextType = {
 };
 
 
-export const DataContext = createContext<DataContextType>({} as DataContextType);
+export const MockDataContext = createContext<DataContextType>({} as DataContextType);
 
 
 
@@ -54,12 +54,12 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             
 
     return (
-        <DataContext.Provider value={{
+        <MockDataContext.Provider value={{
         currentBoardIndex,
         setCurrentBoardIndex,
         openedTask, setOpenedTask,
         Interval,setInterval,isCompleted,setIsCompleted,
         isLoggedIn, setIsLoggedIn
-        }}>{props.children}</DataContext.Provider>
+        }}>{props.children}</MockDataContext.Provider>
     );
     };

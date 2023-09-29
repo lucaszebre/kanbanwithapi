@@ -3,11 +3,9 @@ import Subtasks from '@/components/subTask';
 import { Subtask } from '@/types';
 interface RenderSubTaskProps {
     subtasks: Subtask[];
-    columnId: string;
-    taskId: string;
 }
 
-const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, columnId, taskId }) => {
+const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks}) => {
     
     if (subtasks) {
         return (
@@ -18,8 +16,6 @@ const RenderSubTask: React.FC<RenderSubTaskProps> = ({ subtasks, columnId, taskI
                         key={index}
                         title={sub.title}
                         checked={sub.isCompleted}
-                        colunmId={columnId}
-                        taskId={taskId}
                         subtaskId={sub.id}
                     />
                 ))}

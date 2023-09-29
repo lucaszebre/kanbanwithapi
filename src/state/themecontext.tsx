@@ -26,7 +26,7 @@ export const ThemeProvidered = (props: ThemeProviderProps) => {
 
 useEffect(() => {
     // Check if the window object is available and if the user has set a preferred theme in their browser
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.matchMedia) {
         const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         setTheme(preferredTheme);
     }

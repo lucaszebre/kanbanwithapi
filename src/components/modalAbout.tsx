@@ -39,9 +39,7 @@ const ModalAbout = (props: {right: string;top: string;visible: boolean,editBoard
         <p
           className={styles.EditModalAbout}
           onClick={() => HandleClickEdit()}
-        >
-          Edit Board
-        </p>
+        >Edit Board</p>
         <p
           className={styles.DeleteModalAbout}
           onClick={() => HandleClickDelete()}
