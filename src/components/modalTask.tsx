@@ -156,8 +156,6 @@ const ModalTask = (props:{
                     <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {task.subtasks.length})</h2>
                     <RenderSubTask 
                         subtasks={task.subtasks} 
-                        columnId={props.columnId}
-                        taskId={props.id}
                         />
                     <h2 className={`${styles.ModalTaskH2} ${
                         theme === 'light' ? styles.light : styles.dark
