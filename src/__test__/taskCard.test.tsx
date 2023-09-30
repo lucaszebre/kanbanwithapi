@@ -3,25 +3,40 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import TaskCard from '@/components/taskCard';
 import { ThemeProvidered } from '@/state/themecontext';
 import '@testing-library/jest-dom'
+import { DataContext } from '@/state/datacontext';
 
+const mockDataContext = {
+  currentBoardIndex: 0,
+  setCurrentBoardIndex: jest.fn(),
+  Interval: 0,
+  setInterval: jest.fn(),
+  openedTask: null,
+  setOpenedTask: jest.fn(),
+  isCompleted: 0,
+  setIsCompleted: jest.fn(),
+  isLoggedIn: false,
+  setIsLoggedIn: jest.fn(),
+};
 
 describe('TaskCard Component Tests', () => {
   it('should render the TaskCard component with title and subtask count', () => {
     render(
         <ThemeProvidered >
-      <TaskCard
-        index={0}
-        title="Task 1"
-        description="Description 1"
-        id="1"
-        subtask={[
-          { id: 'subtask1', title: 'Subtask 1', isCompleted: true, taskId: "22" },
-          { id: 'subtask2', title: 'Subtask 2', isCompleted: false, taskId: "223" },
-        ]}
-        columnId="column1"
-        onClick={() => { }}
-        columnIndex={0}
-      />
+          <DataContext.Provider value={mockDataContext}>
+                <TaskCard
+                  index={0}
+                  title="Task 1"
+                  description="Description 1"
+                  id="1"
+                  subtask={[
+                    { id: 'subtask1', title: 'Subtask 1', isCompleted: true, taskId: "22" },
+                    { id: 'subtask2', title: 'Subtask 2', isCompleted: false, taskId: "223" },
+                  ]}
+                  columnId="column1"
+                  onClick={() => { }}
+                  columnIndex={0}
+                />
+          </DataContext.Provider>
       </ThemeProvidered>
     );
 
