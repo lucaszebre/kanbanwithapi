@@ -2,7 +2,6 @@ import Image from 'next/image';
 import React, {useEffect} from 'react';
 import styles from '../styles/BoardColumn.module.css';
 import { useTheme } from '@/state/themecontext';
-
 interface BoardColumnProps {
   title: string;
   onChange: (value: string) => void;
@@ -36,6 +35,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, rese
     <>
     <div className={styles.BoardColumnDiv}>
       <input
+      placeholder='eg Column Name'
         className={`${styles.BoardColumnImput} ${
           theme === 'light' ? styles.light : styles.dark
           } ${error ? styles.InputError : ''}`}
@@ -45,6 +45,7 @@ const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, rese
       />
 
       <Image
+        
         onClick={() => Remove()}
         className={styles.BoardColumnDelete}
         src="/assets/icon-cross.svg"

@@ -120,8 +120,7 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
                             removeColumn={removeColumn} 
                             columnErrors={columnErrors} />
                 <button disabled={inputError} type="button"  className={`${styles.AddBoardButton} ${
-                    theme === 'light' ? styles.light : styles.dark }`}  onClick={addColumn}>
-                + Add Column </button>
+                    theme === 'light' ? styles.light : styles.dark }`}  onClick={addColumn}>+ Add Column</button>
                 <button className={styles.AddBoardSaveButton} type="submit">Create Board</button>
             </form>
         </div>

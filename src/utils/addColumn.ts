@@ -1,6 +1,6 @@
 import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
-export const addColumn = async (boardId:string,Columnname:string) =>{
+export const addColumn = async (boardId:string,Columnname:string) : Promise<any> =>{
     try{
 
         const response = await axiosInstance.post(`/boards/${boardId}/columns`,{

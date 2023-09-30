@@ -1,7 +1,7 @@
 import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 
-export const deleteColumn = async (columnId:string) =>{
+export const deleteColumn = async (columnId:string) : Promise<any> =>{
     try{
         const response = await axiosInstance.delete(`/column/${columnId}`);
         if(response){

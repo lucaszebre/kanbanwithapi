@@ -1,6 +1,6 @@
 import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
-export const changeColumnName = async (columnId:string,name:string) =>{
+export const changeColumnName = async (columnId:string,name:string) : Promise<any> =>{
     try{
         const response = await axiosInstance.put(`/column/${columnId}`,{
             name:name
