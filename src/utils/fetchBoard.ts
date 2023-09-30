@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { axiosInstance } from './instance';
 import { handleSessionExpiration } from './handleSessionexpiration';
 
-export const fetchBoards = async () => {
+export const fetchBoards = async ():Promise<any> => {
   try {
     // Check if localStorage is available (client-side)
     if (typeof window !== 'undefined') {      

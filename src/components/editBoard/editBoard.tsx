@@ -137,35 +137,7 @@ function renderColumns() {
             }
         );
 
-        if (isLoading) {
-            return (
-                <div
-                    className={styles.EditBoardWrapper}
-                    onClick={(e) => {
-                        if (e.target === e.currentTarget) {
-                            queryClient.invalidateQueries(['boards']);
-                            props.setEditBoard(false);
-                        }
-                    }}
-                    style={{ display: props.editBoard ? "flex" : "none" }}
-                >
-                    <div
-                        className={`${styles.EditBoardBlock} ${
-                            theme === "light" ? styles.light : styles.dark
-                        }`}
-                    >
-                        <Skeleton height={30} width={200} style={{ marginBottom: "10px" }} />
-                        <div className={styles.SkeletonBoardColumn}>
-                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
-                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
-                            <Skeleton height={30} width={100} style={{ marginBottom: "10px" }} />
-                            {/* Add more skeletons for each column */}
-                        </div>
-                        <Skeleton height={40} width={100} style={{ marginBottom: "10px" }} />
-                    </div>
-                </div>
-            );
-        }
+        
     if(isError){
         return <p>
         Something went wrongs
@@ -217,6 +189,7 @@ function renderColumns() {
                 <input
                     type="text"
                     name="boardName"
+                    placeholder="Board Name"
                     className={`${styles.EditBoardInput} ${
                         theme === 'light' ? styles.light : styles.dark
                         } ${inputError ? styles.InputError : ''}`}
@@ -242,16 +215,12 @@ function renderColumns() {
                     e.preventDefault();
                     handleAddColumn();
                     }}
-                >
-                    + Add Column
-                </button>
+                >+ Add Column</button>
                 <button
                     className={styles.EditBoardSaveButton}
                     type='submit'
                     
-                >
-                    Save Changes
-                </button>
+                >Save Changes</button>
             </form>
         </div>
     </div>
