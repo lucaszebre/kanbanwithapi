@@ -5,9 +5,9 @@ import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
-import { axiosInstance } from '@/utils/instance';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
+import useDeleteBoardMutation from '@/utils/useDeleteBoardMutation';
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
         const { theme } = useTheme();
@@ -19,16 +19,8 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
         });
     
 
-    const queryClient = useQueryClient()
-    const mutation = useMutation(
-        ( boardId: string) =>
-        deleteBoard(boardId),
-        {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['boards']);
-        },
-        }
-    );
+    const mutation = useDeleteBoardMutation(); // Use the custom hook here
+
 
     
     if (isLoading) {
@@ -57,25 +49,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
             </p>
         );
     }
-      const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
-        try {
-                const response = await axiosInstance.delete(
-                    `/boards/${boardId}`,
-                    );
-            
-                    if (response.data) {
-                    // Assuming the response data is an array of boards
-                    console.log('The boards has been deleted');
-                    } else {
-                    console.error('Error fetching boards');
-                    }
-                    localStorage.setItem('currentBoardIndex', '0');
-                    setCurrentBoardIndex(0)
-            
-        } catch (error) {
-            console.error('Error while deleting the board:', error);
-        }
-    };
+    
     return (
         <div className={styles.DeleteThisBoardWrapper} style={{ display: props.DeleteBlock ? 'flex' : 'none' }}
             onClick={(e) => {
@@ -94,17 +68,22 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                 </p>
                 <div className={styles.DeleteThisBoardButtons}>
                     <button
-                        onClick={() => {
-                            mutation.mutate(data.boards[currentBoardIndex].id);
-                            if(data.boards){
-                                setCurrentBoardIndex(0)
+                        onClick={async () => {
+                            try {
+                                await mutation.mutateAsync(data.boards[currentBoardIndex]?.id);
+                                if(data.boards){
+                                    setCurrentBoardIndex(0)
+                                }
+                                
+                            } catch (error) {
+                                console.error('Error while deleting the board:', error);
                             }
                             props.setDeleteBlock(false);
-                        }}
+                        }
+                        
+                    }
                         className={styles.DeleteButton}
-                    >
-                        Delete
-                    </button>
+                    >Delete</button>
                     <button className={styles.CancelButton} onClick={() => props.setDeleteBlock(false)}>
                         Cancel
                     </button>
