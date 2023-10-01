@@ -26,7 +26,7 @@ const AddTask = (props: {
   const { theme, setTheme } = useTheme();
   const [SelectId, setSelectId] = useState(''); // state to know which column is selected
   useEffect(() => {
-    if (data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns[0]) {
+    if (data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns) {
       setSelectId(data.boards[currentBoardIndex].columns[0].id);
     }
   }, [currentBoardIndex, data]);

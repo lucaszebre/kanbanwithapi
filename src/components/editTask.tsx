@@ -9,14 +9,14 @@ import { Subtask } from "@/types/Zodtype";
 import { fetchBoards } from "@/utils/fetchBoard";
 // Main EditTask functional component
 import { useMutation,useQueryClient,useQuery } from 'react-query';
-import { editTask } from "@/utils/editTask";
 import { getTask } from "@/utils/getTask";
-import { Task, changeColumn } from "@/utils/changeColumn";
-import Skeleton from "react-loading-skeleton";
 import { Subtasked } from "@/types";
 import {useStore}
  from "@/state/contextopen";
  import React from 'react'
+import useEditTaskMutation from "@/utils/useEditTaskMutation";
+import useChangeColumnMutation from "@/utils/useChangeColumnMutation";
+
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
 
@@ -127,24 +127,8 @@ const handleAddSubtask = () => {
 
 
     const queryClient = useQueryClient()
-    const mutation = useMutation(
-        (formData: {taskId:string,taskName:string,taskDescription:string,subTasktoAdd:string[],subTasktoDelete:string[],subTask:Subtasked[]}) =>
-        editTask(formData.taskId,formData.taskName,formData.taskDescription,formData.subTasktoAdd,formData.subTasktoDelete,formData.subTask),
-        {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['boards','Task']);
-        },
-        }
-    );
-        const column = useMutation(
-            (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
-            changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
-            {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['boards','Task']);
-            },
-            }
-        );
+    const mutation = useEditTaskMutation()
+    const column = useChangeColumnMutation()
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
@@ -168,28 +152,7 @@ const handleAddSubtask = () => {
         }        
 
 
-            if (isLoading) {
-                return (
-                    <div className={styles.EditTaskWrapper}>
-                        <div className={`${styles.EditTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
-                            <Skeleton height={30} width={150} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={20} width={200} style={{ marginBottom: '10px' }} />
-                            <div style={{ marginBottom: '10px' }}>
-                                <Skeleton height={20} width={100} style={{ marginRight: '10px' }} />
-                                <Skeleton height={20} width={100} />
-                            </div>
-                            <Skeleton height={30} width={100} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={20} width={150} style={{ marginBottom: '10px' }} />
-                            <div style={{ marginBottom: '10px' }}>
-                                <Skeleton height={20} width={150} style={{ marginRight: '10px' }} />
-                                <Skeleton height={20} width={150} />
-                            </div>
-                            <Skeleton height={20} width={100} style={{ marginBottom: '10px' }} />
-                            <Skeleton height={30} width={100} style={{ marginBottom: '10px' }} />
-                        </div>
-                    </div>
-                );
-            }
+            
         
             if (isError) {
                 return (
@@ -241,6 +204,7 @@ const handleAddSubtask = () => {
             </label>
                 <input
                     type="text"
+                    placeholder="task name"
                     className={`${styles.EditTaskInputHeader} ${
                         theme === 'light' ? styles.light : styles.dark
                     } ${inputError ? styles.InputError : ''}`}

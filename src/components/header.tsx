@@ -110,9 +110,7 @@ export default function Header(props:{boards:boolean}) {
                         setAddTask(true);
                         }}
                         className={styles.HeaderButton}
-                    >
-                        + Add New Task
-                    </button>}
+                    >+ Add New Task</button>}
                     <button
                             onClick={()=>{
                                 Logout()
@@ -128,7 +126,7 @@ export default function Header(props:{boards:boolean}) {
                         }}
                         className={styles.HeaderEllipsis}
                         src="/assets/icon-vertical-ellipsis.svg"
-                        alt="vertical-ellipsis"
+                        alt="vertical-ellipsis-pc"
                         width={100}
                         height={100}
                     />}
