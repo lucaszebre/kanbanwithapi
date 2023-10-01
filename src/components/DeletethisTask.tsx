@@ -1,13 +1,12 @@
 import styles from '../styles/DeleteThisTask.module.css';
-import { useContext } from 'react';
-import { DataContext } from '@/state/datacontext';
-import { deleteTask } from '@/utils/deleteTask'; // import the function to delete the task in the firestore 
 import { useTheme } from '@/state/themecontext';
-import { useMutation,useQueryClient,useQuery } from 'react-query';
+import { useQueryClient,useQuery } from 'react-query';
 import {useStore}
  from '@/state/contextopen';
 import { fetchBoards } from '@/utils/fetchBoard';
 import React from 'react'
+import useDeleteTaskMutation from '@/utils/useDeleteTaskMutation';
+
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
 const { theme } = useTheme();
@@ -22,16 +21,8 @@ const {
   });
   const {currentBoardIndex}=useStore()
 
-const queryClient = useQueryClient()
-    const mutation = useMutation(
-        (formData: {boardId:string,columnId:string,taskId:string}) =>
-        deleteTask(formData.taskId),
-        {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['boards']);
-        },
-        }
-    );
+  const mutation = useDeleteTaskMutation()
+   
     return (
         <div className={styles.DeleteThisTaskWrapper} style={{ display: DeleteTaskBlock ? 'flex' : 'none' }}
             onClick={(e) => {
@@ -55,9 +46,7 @@ const queryClient = useQueryClient()
                             setDeleteTaskBlock(false);
                         }}
                         className={styles.DeleteButton}
-                    >
-                        Delete
-                    </button>
+                    >Delete</button>
                     <button className={styles.CancelButton} onClick={() => setDeleteTaskBlock(false)}>
                         Cancel
                     </button>
