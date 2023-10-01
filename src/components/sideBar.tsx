@@ -20,7 +20,6 @@ const Sidebar = (props:{boards:boolean}) => {
   // const { setAddBoard } = useContext(Opencontext);  // state to toggle the display of the Add Board components
   const [addBoard,setAddBoard] = useState(false)
   const {
-    
     setIsLoggedIn
     } = useContext(DataContext);
 
