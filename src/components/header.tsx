@@ -37,6 +37,7 @@ export default function Header(props:{boards:boolean}) {
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
+
       if ( data === undefined) {
         // If there's an error or data is undefined, display the custom error page
         
@@ -67,7 +68,7 @@ export default function Header(props:{boards:boolean}) {
           sx: {
             bgcolor: stringToColor(name),
           },
-          children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+          children: `${name.split(' ')[0][0]}`,
         };
       }
 
@@ -153,7 +154,7 @@ export default function Header(props:{boards:boolean}) {
                     
                     {props.boards && <div onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }}> <Avatar {...stringAvatar('Kent Dodds')} /> </div>}
+                        }}> <Avatar {...stringAvatar(data.name)} /> </div>}
                     </div>
                 </div>
             </div>
