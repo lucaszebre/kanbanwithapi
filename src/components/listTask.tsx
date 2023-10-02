@@ -52,9 +52,7 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, columnId, columnIndex
                 >
                     <div className={styles.ListTaskRow}>
                         <div className={styles.CircleListTask}>.</div>
-                        <h1 className={styles.ListTaskTitle}>
-                            {title} ({tasks.length})
-                        </h1>
+                        <h1 className={styles.ListTaskTitle}>{title}({tasks.length})</h1>
                     </div>
                     <div className={styles.ListTaskCols}>
                         {RenderTask()}
