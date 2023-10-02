@@ -26,9 +26,11 @@ const Sidebar = (props:{boards:boolean}) => {
     const {currentBoardIndex,
       setCurrentBoardIndex} = useStore()
 
-    const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setTheme(event.target.checked ? 'light' : 'dark');
-    };
+      const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newTheme = event.target.checked ? 'light' : 'dark';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme); // Update localStorage with the new theme
+      };
     const queryClient = useQueryClient()
 
 

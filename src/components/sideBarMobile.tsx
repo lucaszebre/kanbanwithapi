@@ -54,8 +54,10 @@ const {
     }, []);
 
     const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTheme(event.target.checked ? 'light' : 'dark');
-        };
+        const newTheme = event.target.checked ? 'light' : 'dark';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme); // Update localStorage with the new theme
+      };
 
   // function to handle the click on a board cart 
   const handleBoardClick = (boardIndex: number,boardId:string) => {

@@ -55,7 +55,7 @@ const [save, setSave] = useState<boolean>(false);
 const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
 const [inputError, setInputError] = useState<boolean>(false);
-const { theme, setTheme } = useTheme();
+const { theme } = useTheme();
 
 useEffect(()=>{
     if(task){

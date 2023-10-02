@@ -10,7 +10,7 @@ const AddBoard = (props:{addBoard:boolean,setAddBoard:React.Dispatch<React.SetSt
     const [columnNames, setColumnNames] = useState<string[]>(['', '']); // COlumns Names state 
     const [inputError, setInputError] = useState<boolean>(false);   // state to manage is the input of board name is empty 
     const [columnErrors, setColumnErrors] = useState<boolean[]>([]);  // state to manage is one of the column name input is empty 
-    const { theme, setTheme } = useTheme();
+    const { theme } = useTheme();
 
     React.useEffect(()=>{    // when we add a board we use ismoving to update the data and then here we set the current state to the             // the iniatial value 
         setBoardName('');

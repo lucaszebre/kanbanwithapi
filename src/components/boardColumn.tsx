@@ -12,7 +12,7 @@ interface BoardColumnProps {
 
 const BoardColumn: React.FC<BoardColumnProps> = ({ title, onChange, Remove, resetKey,error }) => {
   const [inputValue, setInputValue] = React.useState<string>(title);
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
 
     useEffect(() => {  // every time the value of resetkey change we reset the value inside the input 
       if(resetKey){

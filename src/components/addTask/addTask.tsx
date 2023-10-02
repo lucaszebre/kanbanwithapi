@@ -23,7 +23,7 @@ const AddTask = (props: {
   const { currentBoardIndex } = useContext(DataContext); // state to manage the global data
   const [SubTasksError, setSubTasksError] = useState<boolean[]>([]); // state to handle if one of the subtasks is empty
   const [taskTitleError, setTaskTitleError] = useState(false); // state to handle if the task title is empty
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const [SelectId, setSelectId] = useState(''); // state to know which column is selected
   useEffect(() => {
     if (data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns) {
