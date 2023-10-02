@@ -13,6 +13,8 @@ import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
 import {useStore} from '@/state/contextopen';
 import { useSidebarStore } from '@/state/sidebarcontext';
+import Avatar from '@mui/material/Avatar';
+
 import React from 'react'
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
@@ -40,6 +42,33 @@ export default function Header(props:{boards:boolean}) {
         
       }else{
         setIsLoggedIn(true)
+      }
+      function stringToColor(string: string) {
+        let hash = 0;
+        let i;
+      
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+          hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+      
+        let color = '#';
+      
+        for (i = 0; i < 3; i += 1) {
+          const value = (hash >> (i * 8)) & 0xff;
+          color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+      
+        return color;
+      }
+      function stringAvatar(name: string) {
+        return {
+          sx: {
+            bgcolor: stringToColor(name),
+          },
+          children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+        };
       }
 
       if (isLoading) {
@@ -120,16 +149,11 @@ export default function Header(props:{boards:boolean}) {
                     >
                         Logout
                     </button>
-                    {props.boards && <Image
-                        onClick={() => {
+                    
+                    
+                    {props.boards && <div onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }}
-                        className={styles.HeaderEllipsis}
-                        src="/assets/icon-vertical-ellipsis.svg"
-                        alt="vertical-ellipsis-pc"
-                        width={100}
-                        height={100}
-                    />}
+                        }}> <Avatar {...stringAvatar('Kent Dodds')} /> </div>}
                     </div>
                 </div>
             </div>
