@@ -13,6 +13,7 @@ import AddBoard from './addBoard';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
 import Cookies from 'js-cookie';
+import { ScrollArea } from './ui/scroll-area';
 const Sidebar = (props:{boards:boolean}) => {
   
   
@@ -120,14 +121,17 @@ const Sidebar = (props:{boards:boolean}) => {
             theme === 'light' ? styles.light : styles.dark
           }`}>ALL boards({data.boards.length})</h1>}
         
-          {data.boards.map((board: { name: string; id: string; },index: number) => (
-            <BoardCart 
-            text={board.name} 
-            key={index} 
-            onClick={() => { handleBoardClick( index,board.id) }}
-            selected={currentBoardIndex === index}
-            />
-          ))}
+          <ScrollArea className="h-[150px] w-full">
+
+              {data.boards.map((board: { name: string; id: string; },index: number) => (
+                <BoardCart 
+                text={board.name} 
+                key={index} 
+                onClick={() => { handleBoardClick( index,board.id) }}
+                selected={currentBoardIndex === index}
+                />
+              ))}
+              </ScrollArea>
           
             <div
               className={styles.CreateBoard}
