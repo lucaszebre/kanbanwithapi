@@ -13,7 +13,7 @@ import AddBoard from './addBoard';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
 import Cookies from 'js-cookie';
-import { Card, CardTitle } from './ui/card';
+import { Card, CardFooter, CardTitle } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 
 const Sidebar = (props:{boards:boolean}) => {
@@ -114,10 +114,9 @@ const Sidebar = (props:{boards:boolean}) => {
     <>
     <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
     <Card className='rounded-none left-0 fixed w-[250px] h-full top-[96px] flex-col z-20 justify-between '>
-        <div className={styles.DropDown}>
           {props.boards && <CardTitle className={styles.SideBarTitle}
           >ALL boards({data.boards.length})</CardTitle>}
-        <ScrollArea className='h-full max-h-[200px]'>
+        <ScrollArea className=' max-h-[100px]'>
         {data.boards.map((board: { name: string; id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
@@ -138,9 +137,8 @@ const Sidebar = (props:{boards:boolean}) => {
               <Image className={styles.BoardImage} src="/assets/icon-board2.svg" alt="plus" width={10} height={13} />
               <p className={styles.CreateBoardText}>+ Create New Board</p>
               </div>
-            </div>
         
-          <div className={styles.SideBarBottom}>
+          <CardFooter className={styles.SideBarBottom}>
             <div className={styles.ToggleBlock}>
               <Image src="/assets/icon-dark-theme.svg" alt="icon-dark-theme" width={18.33} height={18.33} />
               <MuiSwitch
@@ -164,7 +162,7 @@ const Sidebar = (props:{boards:boolean}) => {
             <Image className={styles.HideItems} src="/assets/icon-hide-sidebar.svg" width={18} height={16} alt="hide-sidebar" />
             <p>Hide Sidebar</p>
           </div>
-        </div>
+        </CardFooter>
     </Card>
     </>
   );
