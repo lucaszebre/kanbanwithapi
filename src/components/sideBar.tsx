@@ -46,7 +46,7 @@ const Sidebar = (props:{boards:boolean}) => {
   Cookies.set('currentBoardIndex', boardIndex.toString());
   Cookies.set('currentBoardId', boardId);
 
-  // Invalidate queries to refetch the data, assuming you are using React Query.
+  // * Invalidate queries to refetch the data, assuming you are using React Query.
   // If not, you can remove this part.
   queryClient.invalidateQueries(['boards']);
 };
