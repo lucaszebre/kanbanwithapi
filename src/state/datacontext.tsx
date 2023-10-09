@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Column, Subtask ,Board} from '@/types/index';
+import Cookies from 'js-cookie';
 
 
 type openedTaskType= {
@@ -11,8 +12,6 @@ type openedTaskType= {
     subTask: Subtask[];
 } | null 
 export type DataContextType = {
-    currentBoardIndex: number;
-    setCurrentBoardIndex: (boardId: number) => void;
     Interval:number;
     setInterval:React.Dispatch<React.SetStateAction<number>>;
     openedTask:openedTaskType;
@@ -28,16 +27,7 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 
 
 export const DataProvider = (props: { children: React.ReactNode }) => {
-        const [currentBoardIndex, setCurrentBoardIndex] = useState<number>(
-            typeof window !== 'undefined'
-            ? parseInt(localStorage.getItem('currentBoardIndex') || '0', 10)
-            : 0
-        );
-        const [currentColumnIndex, setCurrentColumnIndex] = useState<number>(
-            typeof window !== 'undefined'
-            ? parseInt(localStorage.getItem('currentColumnIndex') || '0', 10)
-            : 0
-        );
+
         
         const [Interval,setInterval] = useState<number>(100000);
         const [isCompleted,setIsCompleted] = useState(0)
@@ -55,8 +45,6 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
 
     return (
         <DataContext.Provider value={{
-        currentBoardIndex,
-        setCurrentBoardIndex,
         openedTask, setOpenedTask,
         Interval,setInterval,isCompleted,setIsCompleted,
         isLoggedIn, setIsLoggedIn

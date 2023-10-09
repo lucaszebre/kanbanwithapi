@@ -1,101 +1,95 @@
-import React, { useContext,useState } from 'react';
-import styles from '@/styles/Login.module.css';
-import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SchemaLogin } from '@/types';
-import Link from 'next/link';
-import { login } from '@/utils/login';
-import { useQueryClient } from 'react-query';
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { SchemaLogin } from "@/types"
+import { login } from "@/utils/login"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Icons } from "./icons"
+import React, { useContext, useState } from "react"
 import { DataContext } from '@/state/datacontext';
 
-const Login: React.FC = () => {
+export function Login() {
+  const [isLoading,setIsLoading] = useState(false)
+  const { setIsLoggedIn, isLoggedIn,  } =
+  useContext(DataContext);
+  const form = useForm<z.infer<typeof SchemaLogin>>({
+    resolver: zodResolver(SchemaLogin),
+    defaultValues: {
+      email: "",
+      password:""
+      
+    },
+  })
 
-    const {register,handleSubmit,watch,formState: { errors },} = useForm({resolver: zodResolver(SchemaLogin),});
-    const queryClient = useQueryClient(); // Get the query client instance
-    const {setInterval,setIsLoggedIn } = useContext(DataContext); // state to manage the global data 
+  async function  onSubmit(values: z.infer<typeof SchemaLogin>) {
+        await login(values.email, values.password,setIsLoading);
+        setIsLoggedIn(true)
+        setIsLoading(isLoading)
 
+  }
 
-    const onSubmit = async (email:string,password:string) => {
-        queryClient.invalidateQueries(['boards','Task']);
-        try {
-
-        const response = await login(email,password)
-        if(!response){
-            console.error('Error login ')
-        }else{
-            queryClient.invalidateQueries(['boards']);
-            setInterval(0)
-            localStorage.setItem('isLoggedIn', 'true')
-            setIsLoggedIn(true)
-            window.location.reload();
-            
-
-        }
-        } catch (error) {
-        console.error('Login error:', error);
-        // Handle registration error (display error message, etc.)
-        }
-    };
-
-
-        
-
-    return (
-        <>
-        <div className={styles.LoginContainer}>
-            <div className={styles.LoginWrapper}>
-                <div className={styles.LoginImageWrapper}>
-                    <div className={styles.LoginImage}>
-                        
-                    </div>
-                </div>
-                
-                <form onSubmit={handleSubmit(()=>{
-                    const watched=watch()
-                    onSubmit(watched.email,watched.password)
-                })} className={styles.LoginForm} action="">
-                    <h1 className={styles.LoginH1}>
-                        Login
-                    </h1>
-                    
-                    <p className={styles.LoginDescription}>
-                    Add your details below to get back into the app
-                    </p>
-                    <label style={errors.email ? { color: '#EC5757' } : {}} className={styles.LoginLabel} htmlFor="">
-                        Email
-                    </label>
-                    <div  className={styles.LoginInputWrapper}>
-                        <Image className={styles.LoginImageInput} src='/assets/images/icon-email.svg' alt='icon-email' height={16} width={16} />
-                        <input  style={errors.email ? { border: '#EC5757 1px solid' } : {}}   {...register('email')} className={styles.LoginInput} type="text" placeholder='e.g. lucasbeaugosse@email.com' />
-                        {errors && errors.email && <p className={styles.LoginError}>{errors.email.message?.toString()}</p>}
-                    </div>
-                    
-                    <label style={errors.password ? { color: '#EC5757' } : {}}  className={styles.LoginLabel} htmlFor="">
-                        Password
-                    </label>
-            
-                    <div className={styles.LoginInputWrapper}>
-                        <Image  className={styles.LoginImageInput} src='/assets/images/icon-password.svg' alt='icon-password' height={16} width={16} />
-                        <input   style={errors.password ? { border: '#EC5757 1px solid' } : {}}    {...register('password')} className={styles.LoginInput}  placeholder='Enter your password' type = "password" />
-                        {(errors && errors.password && <p className={styles.LoginError}>{errors.password.message?.toString()}</p>) || (errors && errors.message && <p className={styles.LoginError}>Invalid password</p>) }
-                    </div>
-                    <button type='submit' className={styles.LoginButton}>Login</button>
-                    <div className={styles.LoginDiv}>
-                        Dont have a account
-                        <Link  href='/register'className={styles.LoginNoAccount}>
-                            Create account
-                        </Link>
-                    </div>
-                    <div>
-                    
-                    </div>
-                    
-                </form>
-            </div>
-        </div>
-    </>
-    );
-};
-
-export default Login;
+  return (
+    <>
+    <Card className="p-4">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl ">Login an account</CardTitle>
+        <CardDescription >
+          Enter your email below to login your account
+        </CardDescription>
+      </CardHeader>
+    <Form {...form} >
+      <form  onSubmit={form.handleSubmit(onSubmit)} className="p-3 content-start items-start flex-col space-y-8">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem className="flex-col items-start content-start w-full">
+              <FormLabel className="text-start w-full" >Email</FormLabel>
+              <FormControl>
+                <Input placeholder="lucas1@gmail.com" {...field} />
+              </FormControl>
+              
+              <FormMessage />
+            </FormItem>
+          )}
+        /> 
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel className="text-start items-start w-full" >Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="shadcn@dd11" {...field} />
+              </FormControl>
+              
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button  type="submit" className="w-full">{isLoading && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}Login</Button>
+      </form>
+    </Form>
+    </Card>
+    
+</>
+    
+  )
+}

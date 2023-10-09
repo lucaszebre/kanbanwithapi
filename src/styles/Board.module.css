@@ -11,6 +11,8 @@
     gap: 10px;
     overflow: scroll;
     min-height: 100vh;
+    background: 224 71.4% 4.1%;
+
 }
 
 .BoardDiv{
@@ -46,7 +48,6 @@
 }
 
 .dark{ 
-    background: linear-gradient(180deg,rgba(43,44,55,.25),rgba(43,44,55,.125));
 }
 
 .light{

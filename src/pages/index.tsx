@@ -2,18 +2,19 @@ import React,{ useContext, useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import Theme from '../components/theme';
 import Board from '../components/board';
-import Login from '@/components/login';
 import Hide from '@/components/hide';
 import { DataContext } from '@/state/datacontext';
 import jwt, { JwtPayload } from 'jsonwebtoken'; // Import JwtPayload
 import ErrorBoundary from '@/components/errorPage'; // Import your ErrorBoundary component
+import Auth from '@/components/auth';
+import Cookies from 'js-cookie';
 
 function Home() {
   const { setIsLoggedIn, isLoggedIn,  } =
     useContext(DataContext);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('key');
+    const storedToken = Cookies.get('key');
 
     if (storedToken) {
       // Attempt to decode the stored token
@@ -46,7 +47,7 @@ function Home() {
         ) : (
           // Wrap your Login component with ErrorBoundary
           <ErrorBoundary>
-            <Login />
+            <Auth />
           </ErrorBoundary>
         )}
       </ChakraProvider>
@@ -55,6 +56,3 @@ function Home() {
 }
 
 export default Home;
-
-
-

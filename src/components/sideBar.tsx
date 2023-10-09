@@ -12,6 +12,7 @@ import Skeleton from 'react-loading-skeleton';
 import AddBoard from './addBoard';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
+import Cookies from 'js-cookie';
 const Sidebar = (props:{boards:boolean}) => {
   
   
@@ -36,12 +37,19 @@ const Sidebar = (props:{boards:boolean}) => {
 
 
   // function to handle the click on a board cart 
-  const handleBoardClick = ( boardIndex: number,boardId:string) => {
-    setCurrentBoardIndex(boardIndex);
-    localStorage.setItem('currentBoardIndex', boardIndex.toString());
-    localStorage.setItem('currentBoardId', boardId);
-    queryClient.invalidateQueries(['boards']);
-  };
+ const handleBoardClick = (boardIndex: number, boardId: string) => {
+  // Update the state for the currentBoardIndex
+  setCurrentBoardIndex(boardIndex);
+  console.log('Board Index:', boardIndex);
+
+  // Update cookies with the new boardIndex and boardId
+  Cookies.set('currentBoardIndex', boardIndex.toString());
+  Cookies.set('currentBoardId', boardId);
+
+  // Invalidate queries to refetch the data, assuming you are using React Query.
+  // If not, you can remove this part.
+  queryClient.invalidateQueries(['boards']);
+};
 
     const {data,isLoading,isError,error} = useQuery({
       queryKey:['boards'],

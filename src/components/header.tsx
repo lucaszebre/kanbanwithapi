@@ -152,7 +152,7 @@ export default function Header(props:{boards:boolean}) {
                     </button>
                     
                     
-                    {props.boards && <div onClick={() => {
+                    {props.boards && <div style={{'cursor':'po'}} onClick={() => {
                         setIsOpenModal(!isOpenModal);
                         }}> <Avatar {...stringAvatar(data.name)} /> </div>}
                     </div>

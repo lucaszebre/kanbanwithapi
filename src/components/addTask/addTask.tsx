@@ -9,6 +9,7 @@ import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
+import Cookies from 'js-cookie';
 const AddTask = (props: {
   addTask: boolean;
   setAddTask: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,16 +21,18 @@ const AddTask = (props: {
   const [taskTitle, setTaskTitle] = useState(''); // state for the task title
   const [taskDescription, setTaskDescription] = useState(''); // state for task description
   const [SubTaskCurrent, setSubTaskCurrent] = useState<string[]>([]); // states to save up the name of all the subtasks I add
-  const { currentBoardIndex } = useContext(DataContext); // state to manage the global data
   const [SubTasksError, setSubTasksError] = useState<boolean[]>([]); // state to handle if one of the subtasks is empty
   const [taskTitleError, setTaskTitleError] = useState(false); // state to handle if the task title is empty
   const { theme } = useTheme();
   const [SelectId, setSelectId] = useState(''); // state to know which column is selected
   useEffect(() => {
-    if (data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns) {
-      setSelectId(data.boards[currentBoardIndex].columns[0].id);
+    const index = parseInt(Cookies.get('currentBoardIndex')||'0') 
+    if (data && data.boards[index] && data.boards[index].columns) {
+      setSelectId(data.boards[index].columns[0].id);
+      console.log(index)
     }
-  }, [currentBoardIndex, data]);
+  }, [parseInt(Cookies.get('currentBoardIndex')||'0') ]);
+  
   const queryClient = useQueryClient();
   const mutation = useMutation(
     (formData: { taskTitle: string; taskDescription: string; columnId: string; SubTaskCurrent: string[] }) =>
@@ -82,7 +85,9 @@ const AddTask = (props: {
     );
   }
   return (
-    <div className={styles.AddTaskWrapper} style={{ display: props.addTask ? 'flex' : 'none' }}>
+    <div onClick={(e)=>{if(e.currentTarget==e.target){
+      props.setAddTask(false)
+    }}} className={styles.AddTaskWrapper} style={{ display: props.addTask ? 'flex' : 'none' }}>
       <div className={`${styles.AddTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
         <h2 className={`${styles.AddTaskTitle} ${theme === 'light' ? styles.light : styles.dark}`}>Add Task</h2>
         <form
@@ -144,7 +149,7 @@ const AddTask = (props: {
             onClick={() => { console.log(SelectId) }}
             className={`${styles.SelectAddTask} ${theme === 'light' ? styles.light : styles.dark}`}
           >
-            {data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns && renderSelect(data.boards[currentBoardIndex].columns)}
+            {data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ] && data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns && renderSelect(data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns)}
           </select>
           <button className={styles.AddTaskSaveButton} type="submit">
             Create Task

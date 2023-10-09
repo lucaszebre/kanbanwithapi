@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { axiosInstance } from './instance';
+import Cookies from 'js-cookie';
 const deleteBoard = async (boardId: string) => {  // function to delete the baord in the firestore 
     try {
             const response = await axiosInstance.delete(
@@ -12,7 +13,7 @@ const deleteBoard = async (boardId: string) => {  // function to delete the baor
                 } else {
                 console.error('Error fetching boards');
                 }
-                localStorage.setItem('currentBoardIndex', '0');
+                Cookies.set('currentBoardIndex', '0');
         
     } catch (error) {
         console.error('Error while deleting the board:', error);
