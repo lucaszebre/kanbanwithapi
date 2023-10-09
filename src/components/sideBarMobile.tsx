@@ -11,6 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import React from 'react'
+import { useStore } from '@/state/contextopen';
 const Sidebar = (props:{boards:boolean}) => {
 const { theme, setTheme } = useTheme();
 
@@ -22,7 +23,7 @@ const [addBoard,setAddBoard] = useState(false)
 const {
     currentBoardIndex,
     setCurrentBoardIndex
-    } = useContext(DataContext);
+    } = useStore();
 
     const queryClient = useQueryClient()
 

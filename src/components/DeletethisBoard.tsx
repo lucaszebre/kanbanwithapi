@@ -1,6 +1,4 @@
 import styles from '@/styles/Deletethisboard.module.css';
-import { useContext } from 'react';
-import { DataContext } from '@/state/datacontext';
 import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
@@ -9,7 +7,7 @@ import { useStore } from '@/state/contextopen';
 import React from 'react'
 import useDeleteBoardMutation from '@/utils/useDeleteBoardMutation';
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const { setCurrentBoardIndex} = useContext(DataContext);  // state to manage the global data 
+    const { setCurrentBoardIndex} = useStore();  // state to manage the global data 
         const { theme } = useTheme();
         const {currentBoardIndex}=useStore()
 

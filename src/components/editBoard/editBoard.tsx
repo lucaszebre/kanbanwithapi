@@ -10,12 +10,13 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
 import Skeleton from "react-loading-skeleton";
 import React from 'react'
+import { useStore } from "@/state/contextopen";
 const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database
 const [Header,setHeader]= useState<string>(''); // state to know the current boardname selected
 const [Save,SetSave]= useState<boolean>(false) // state to toggle the disabled thhe button save 
-const { currentBoardIndex} = useContext(DataContext); // state to manage the global data
+const { currentBoardIndex} = useStore(); // state to manage the global data
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to handle if one input is empty 
 const [inputError, setInputError] = useState<boolean>(false); // state to handle if the boardname is empty 
 const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know the column to add in the database

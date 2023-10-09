@@ -22,7 +22,8 @@ const ModalTask = (props:{
     columnId: string;
     index:number
 }) => {
-    const {isCompleted,currentBoardIndex,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {currentBoardIndex} = useStore()
+    const {isCompleted,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)

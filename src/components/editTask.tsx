@@ -18,29 +18,18 @@ import useEditTaskMutation from "@/utils/useEditTaskMutation";
 import useChangeColumnMutation from "@/utils/useChangeColumnMutation";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
-    const { currentBoardIndex,setIsLoggedIn} = useContext(DataContext);
+    const { currentBoardIndex} = useStore();
 
     const { data: task, isLoading, isError,error } = useQuery(
         ['Task', props.taskId], // Use these parameters as the query key
         () => getTask( props.taskId)
     );
-    if ( task === undefined) {
-        // If there's an error or data is undefined, display the custom error page
-        
-      }else{
-        setIsLoggedIn(true)
-      }
-        
+   
     const {data} = useQuery({
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });   // State hooks for managing subtasks and input errors
-      if ( data === undefined) {
-        // If there's an error or data is undefined, display the custom error page
-        
-      }else{
-        setIsLoggedIn(true)
-      }
+     
  const {
     EditTask,
     setEditTask,
