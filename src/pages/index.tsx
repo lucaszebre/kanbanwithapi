@@ -8,6 +8,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken'; // Import JwtPayload
 import ErrorBoundary from '@/components/errorPage'; // Import your ErrorBoundary component
 import Auth from '@/components/auth';
 import Cookies from 'js-cookie';
+import Layout from '@/components/Layout'
 
 function Home() {
   const { setIsLoggedIn, isLoggedIn,  } =
@@ -38,11 +39,12 @@ function Home() {
   return (
     <>
       <Hide />
-      <ChakraProvider theme={Theme}>
         {isLoggedIn ? (
           // Wrap your Board component with ErrorBoundary
           <ErrorBoundary>
+            <Layout>
             <Board />
+            </Layout>
           </ErrorBoundary>
         ) : (
           // Wrap your Login component with ErrorBoundary
@@ -50,7 +52,6 @@ function Home() {
             <Auth />
           </ErrorBoundary>
         )}
-      </ChakraProvider>
     </>
   );
 }

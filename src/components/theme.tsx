@@ -6,7 +6,7 @@ import { extendTheme } from "@chakra-ui/react";
         global: {
         // styles for the `body`
         body: {
-            bg: "#20212C", // Replace with your desired color, e.g., "gray.100".
+            bg: "white", // Replace with your desired color, e.g., "gray.100".
         },
         },
     },

@@ -1,7 +1,6 @@
 // _app.tsx
 import '@/styles/globals.css'
 import 'tailwindcss/tailwind.css'
-import { ChakraProvider } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
 import { GlobalScrollbarStyle } from '@/utils/Scrollbar'
 import { DataProvider } from '@/state/datacontext'
@@ -24,12 +23,8 @@ function App({ Component, pageProps }: AppProps) {
     <ThemeProvidered>
     <ThemeProvider theme={ lightTheme}>
       <DataProvider>
-            <ChakraProvider>
               <GlobalScrollbarStyle />
-              <Layout>
                 <Component {...pageProps} />
-              </Layout>
-            </ChakraProvider>
       </DataProvider>
     </ThemeProvider>
     </ThemeProvidered>

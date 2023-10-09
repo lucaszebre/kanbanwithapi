@@ -12,7 +12,7 @@ export default function Document() {
   >
     <Html lang="en">
       <Head />
-      <body>
+      <body style={{background:'white'}}>
         <Main />
         <NextScript />
       </body>
