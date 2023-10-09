@@ -20,8 +20,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Icons } from "./icons"
 import { useRegister } from "@/utils/useRegister"
-import { SetStateAction, useState } from "react"
-
+import React, { SetStateAction, useState } from "react"
 
 
 export function Register() {

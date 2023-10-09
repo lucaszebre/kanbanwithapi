@@ -16,7 +16,12 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import {useStore}
  from '@/state/contextopen';
-
+ import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
+  
 const ModalTask = (props:{
     id: string;
     columnId: string;
@@ -150,6 +155,7 @@ const ModalTask = (props:{
                             alt="vertical-ellipsis"
                             width={4.62}
                             height={20}/>
+                            
                     </div>
                     <p className={styles.TaskDescription}>
                         {task.description}

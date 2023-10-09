@@ -13,15 +13,41 @@ import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
 import {useStore} from '@/state/contextopen';
 import { useSidebarStore } from '@/state/sidebarcontext';
-import Avatar from '@mui/material/Avatar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+  import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
+  
 
 import React from 'react'
+import { Button } from './ui/button';
+import { Avatar,AvatarFallback } from './ui/avatar';
+import useDeleteBoardMutation from '@/utils/useDeleteBoardMutation';
+import { Card, CardTitle } from './ui/card';
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {
         isOpenModal,
         setIsOpenModal,
-        currentBoardIndex
+        currentBoardIndex,
+        setCurrentBoardIndex
       } = useStore()
     // state to get the current headerTitle 
     const {setIsLoggedIn} = useContext(DataContext);
@@ -32,6 +58,7 @@ export default function Header(props:{boards:boolean}) {
     const [DeleteBlock,setDeleteBlock] = useState(false)
 
     const { theme } = useTheme();
+    const mutation = useDeleteBoardMutation(); // Use the custom hook here
 
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],
@@ -64,12 +91,7 @@ export default function Header(props:{boards:boolean}) {
             return color;
         }
         function stringAvatar(name: string) {
-            return {
-            sx: {
-                bgcolor: stringToColor(name),
-            },
-            children: `${name.split(' ')[0][0]}`,
-            };
+            return `${name.split(' ')[0][0]}`;
         }
 
       if (isLoading) {
@@ -113,14 +135,9 @@ export default function Header(props:{boards:boolean}) {
         <DeleteThisBoard  DeleteBlock={DeleteBlock} setDeleteBlock={setDeleteBlock} />
         <AddTask addTask={addTask} setAddTask={setAddTask} />
         <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
-        {isOpenModal && (
-            <ModalAbout right={'2rem'} top={'7rem'} visible={isOpenModal} editBoard={editBoard} setEditBoard={setEditBoard} setDeleteBlock={setDeleteBlock} />
-        )}
-        <div className={styles.HeaderContainer}>
-            <div 
-            className={`${styles.HeaderWrapperDesktop} ${
-                theme === 'light' ? styles.light : styles.dark
-                }`}>
+        
+    <div className={styles.HeaderContainer}>
+        <Card className="p-4 h-[96px] flex row w-full rounded-none border-none conten-center justify-between">
                 <div className={styles.HeaderLeft}>
                     <Image
                     className={styles.HeaderLogo}
@@ -130,35 +147,105 @@ export default function Header(props:{boards:boolean}) {
                     />
                 </div>
                 <div className={styles.HeaderRight}>
-                    <h1 
-                    className={`${styles.HeaderTitle} ${
-                        theme === 'light' ? styles.light : styles.dark
-                        }`}>{ data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
+                    <CardTitle className='font-bold text-3xl'>{ data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</CardTitle>
                     <div className={styles.HeaderBlock1}>
-                    {props.boards && <button
+                    {props.boards && <Button
                         onClick={() => {
                         setAddTask(true);
                         }}
                         className={styles.HeaderButton}
-                    >+ Add New Task</button>}
-                    <button
-                            onClick={()=>{
-                                Logout()
-                                setIsLoggedIn(false)
-                                window.location.reload}}
-                        className={styles.LogoutButton}
-                    >
-                        Logout
-                    </button>
+                    >+ Add New Task</Button>}
+                    
                     
                     
                     {props.boards && <div style={{'cursor':'po'}} onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }}> <Avatar {...stringAvatar(data.name)} /> </div>}
-                    </div>
+                        }}> 
+                         
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                                    <Avatar>
+                                        <AvatarFallback>{stringAvatar(data.name)}</AvatarFallback>
+                                    </Avatar>
+                                    </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 mt-4" align="end" forceMount>
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-sm font-medium leading-none">{data.name}</p>
+                                        <p className="text-xs leading-none text-muted-foreground">
+                                        {data.email}
+                                        </p>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <div  onClick={()=>{setEditBoard(true)}} className='flex-row w-full justify-between text-start content-start'>
+                                    <Button variant={'ghost'}  className='text-start flex w-full row justify-start '>
+                                        Edit Board
+                                        </Button>   
+                                    </div>
+                                    
+                                
+                                            
+                                <AlertDialog>
+                        <AlertDialogTrigger asChild > 
+                        <Button variant={'ghost'} className='text-start flex-row w-full row justify-start '>
+                                    Delete Board
+                            </Button>  
+                        
+
+                                    </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your board
+                                and remove your data from our servers.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={async () => {
+                                                    try {
+                                                        await mutation.mutateAsync(data.boards[currentBoardIndex]?.id);
+                                                        if(data.boards){
+                                                            setCurrentBoardIndex(0)
+                                                        }
+                                                        
+                                                    } catch (error) {
+                                                        console.error('Error while deleting the board:', error);
+                                                    }
+                                                }
+                                                
+                                            }>Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                        </AlertDialog>
+
+
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className='cursor-pointer' onClick={()=>{
+                                                        Logout()
+                                                        setIsLoggedIn(false)
+                                                        window.location.reload}}>
+                                Log out
+                                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+
+
+                    </div>}
                 </div>
-            </div>
-            <div className={styles.HeaderWrapperMobile}>
+                </div>
+            </Card>
+        </div>
+
+
+        <div className={styles.HeaderWrapperMobile}>
                 <div className={styles.HeaderMobileLeft}
                 onClick={()=>{
                     setIsSidebarMobile(!isSidebarMobile)
@@ -180,13 +267,12 @@ export default function Header(props:{boards:boolean}) {
                     />
                 </div>
             <div className={styles.HeaderMobileRight}>
-                <button className={styles.AddStaskMobile}>+</button>
+                <Button className={styles.AddStaskMobile}>+</Button>
                 <Image className={styles.HeaderMobileEllipsis} onClick={() => {
                         setIsOpenModal(!isOpenModal);
                         }} src="/assets/icon-vertical-ellipsis.svg" alt="vertical-ellipsis"  width={3.69} height={16}/>
             </div>
         </div>
-    </div>
         </>
     );
 };

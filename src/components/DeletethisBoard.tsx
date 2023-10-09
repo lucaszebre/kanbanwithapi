@@ -64,28 +64,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                     </a>’ board? This action will remove all columns and tasks
                     and cannot be reversed.
                 </p>
-                <div className={styles.DeleteThisBoardButtons}>
-                    <button
-                        onClick={async () => {
-                            try {
-                                await mutation.mutateAsync(data.boards[currentBoardIndex]?.id);
-                                if(data.boards){
-                                    setCurrentBoardIndex(0)
-                                }
-                                
-                            } catch (error) {
-                                console.error('Error while deleting the board:', error);
-                            }
-                            props.setDeleteBlock(false);
-                        }
-                        
-                    }
-                        className={styles.DeleteButton}
-                    >Delete</button>
-                    <button className={styles.CancelButton} onClick={() => props.setDeleteBlock(false)}>
-                        Cancel
-                    </button>
-                </div>
+                
             </div>
         </div>
     );

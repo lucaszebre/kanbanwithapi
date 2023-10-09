@@ -13,6 +13,9 @@ import AddBoard from './addBoard';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
 import Cookies from 'js-cookie';
+import { Card, CardTitle } from './ui/card';
+import { ScrollArea } from './ui/scroll-area';
+
 const Sidebar = (props:{boards:boolean}) => {
   
   
@@ -110,17 +113,12 @@ const Sidebar = (props:{boards:boolean}) => {
   return (
     <>
     <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
-    <div className={`${styles.SidebarContainer} ${
-      theme === 'light' ? styles.light : styles.dark
-    }`}>
-      <div className={styles.SibebarWrapper}>
+    <Card className='rounded-none left-0 fixed w-[250px] h-full top-[96px] flex-col z-20 justify-between '>
         <div className={styles.DropDown}>
-          {props.boards && <h1 
-          className={`${styles.SideBarTitle} ${
-            theme === 'light' ? styles.light : styles.dark
-          }`}>ALL boards({data.boards.length})</h1>}
-        
-          {data.boards.map((board: { name: string; id: string; },index: number) => (
+          {props.boards && <CardTitle className={styles.SideBarTitle}
+          >ALL boards({data.boards.length})</CardTitle>}
+        <ScrollArea className='h-full max-h-[200px]'>
+        {data.boards.map((board: { name: string; id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
             key={index} 
@@ -128,6 +126,8 @@ const Sidebar = (props:{boards:boolean}) => {
             selected={currentBoardIndex === index}
             />
           ))}
+        </ScrollArea>
+         
           
             <div
               className={styles.CreateBoard}
@@ -165,8 +165,7 @@ const Sidebar = (props:{boards:boolean}) => {
             <p>Hide Sidebar</p>
           </div>
         </div>
-      </div>
-    </div>
+    </Card>
     </>
   );
 };
