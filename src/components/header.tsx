@@ -5,7 +5,7 @@ import ModalAbout from './modalAbout';
 import { DataContext } from '@/state/datacontext';
 import { useTheme } from '@/state/themecontext';
 import { Logout } from '@/utils/logout';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
@@ -14,14 +14,24 @@ import DeleteThisBoard from './DeletethisBoard';
 import {useStore} from '@/state/contextopen';
 import { useSidebarStore } from '@/state/sidebarcontext';
 import Avatar from '@mui/material/Avatar';
-
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+  
 import React from 'react'
+import Cookies from 'js-cookie';
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {
         isOpenModal,
         setIsOpenModal,
-        currentBoardIndex
+        currentBoardIndex,
+        setCurrentBoardIndex
       } = useStore()
     // state to get the current headerTitle 
     const {setIsLoggedIn} = useContext(DataContext);
@@ -71,6 +81,23 @@ export default function Header(props:{boards:boolean}) {
             children: `${name.split(' ')[0][0]}`,
             };
         }
+     
+
+        const queryClient = useQueryClient()
+
+        const handleBoardClick = (boardIndex: number, boardId: string) => {
+            // Update the state for the currentBoardIndex
+            setCurrentBoardIndex(boardIndex);
+            console.log('Board Index:', boardIndex);
+          
+            // Update cookies with the new boardIndex and boardId
+            Cookies.set('currentBoardIndex', boardIndex.toString());
+            Cookies.set('currentBoardId', boardId);
+          
+            // * Invalidate queries to refetch the data, assuming you are using React Query.
+            // If not, you can remove this part.
+            queryClient.invalidateQueries(['boards']);
+          };
 
       if (isLoading) {
         // Return loading skeletons
@@ -158,6 +185,7 @@ export default function Header(props:{boards:boolean}) {
                     </div>
                 </div>
             </div>
+            {/* Mobile Section */}
             <div className={styles.HeaderWrapperMobile}>
                 <div className={styles.HeaderMobileLeft}
                 onClick={()=>{
@@ -172,18 +200,43 @@ export default function Header(props:{boards:boolean}) {
                     height={56}
                     />
                     <h1 className={styles.HeaderMobileTitle}>{data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
-                    <Image
+                    
+                    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+      <Image
                     src="/assets/icon-chevron-down.svg"
                     alt="chevron-up"
                     width={15}
                     height={15}
+                    style={{'cursor':'pointer'}}
                     />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="mt-4 w-56">
+        <DropdownMenuLabel className='cursor-pointer' >ALL boards({data.boards.length})</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
+        {data.boards.map((board: { name: string; id: string; },index: number) => (
+                // eslint-disable-next-line react/jsx-key
+                <DropdownMenuLabel className='cursor-pointer' onClick={() => { handleBoardClick( index,board.id) }}>
+                {board.name} 
+                </DropdownMenuLabel>
+              ))}
+        <DropdownMenuSeparator />
+
+        <DropdownMenuLabel className='cursor-pointer'>Add a board</DropdownMenuLabel>
+        
+    
+        
+      </DropdownMenuContent>
+    </DropdownMenu>
                 </div>
             <div className={styles.HeaderMobileRight}>
-                <button className={styles.AddStaskMobile}>+</button>
+                <button onClick={() => {
+                        setAddTask(true);
+                        }} className={styles.AddStaskMobile}>+</button>
                 <Image className={styles.HeaderMobileEllipsis} onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }} src="/assets/icon-vertical-ellipsis.svg" alt="vertical-ellipsis"  width={3.69} height={16}/>
+                        }} src="/assets/icon-vertical-ellipsis.svg" alt="vertical-ellipsis"  width={8} height={16}/>
             </div>
         </div>
     </div>
