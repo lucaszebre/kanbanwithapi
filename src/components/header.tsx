@@ -22,9 +22,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-  
 import React from 'react'
 import Cookies from 'js-cookie';
+import AddBoard from './addBoard';
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {
@@ -39,6 +39,7 @@ export default function Header(props:{boards:boolean}) {
     const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();  // state to toggle the sidebar 
     const [editBoard,setEditBoard] = useState(false)
     const [addTask,setAddTask] = useState(false)
+    const [addBoard,setAddBoard] = useState(false)
     const [DeleteBlock,setDeleteBlock] = useState(false)
 
     const { theme } = useTheme();
@@ -140,6 +141,7 @@ export default function Header(props:{boards:boolean}) {
         <DeleteThisBoard  DeleteBlock={DeleteBlock} setDeleteBlock={setDeleteBlock} />
         <AddTask addTask={addTask} setAddTask={setAddTask} />
         <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
+        <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
         {isOpenModal && (
             <ModalAbout right={'2rem'} top={'7rem'} visible={isOpenModal} editBoard={editBoard} setEditBoard={setEditBoard} setDeleteBlock={setDeleteBlock} />
         )}
@@ -223,7 +225,7 @@ export default function Header(props:{boards:boolean}) {
               ))}
         <DropdownMenuSeparator />
 
-        <DropdownMenuLabel className='cursor-pointer'>Add a board</DropdownMenuLabel>
+        <DropdownMenuLabel onClick={()=>{setAddBoard(true)}} className='cursor-pointer'>Add a board</DropdownMenuLabel>
         
     
         
