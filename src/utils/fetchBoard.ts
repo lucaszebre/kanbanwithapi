@@ -1,15 +1,10 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { axiosInstance } from './instance';
 import { handleSessionExpiration } from './handleSessionexpiration';
 
 export const fetchBoards = async ():Promise<any> => {
   try {
-    // Check if localStorage is available (client-side)
-    if (typeof window !== 'undefined') {      
-
-      const data = await axiosInstance.get(`/auth/profile`);
-      const response = await axiosInstance.get(`/users/${data.data.id}`);
+    
+    const response = await axiosInstance.get(`/boards`);
       if (response) {
         return response.data;
       } else {
@@ -17,7 +12,7 @@ export const fetchBoards = async ():Promise<any> => {
         console.error('Error fetching boards');
       }
     }
-  } catch (error) {
+   catch (error) {
     handleSessionExpiration()
     console.error(error);
   }

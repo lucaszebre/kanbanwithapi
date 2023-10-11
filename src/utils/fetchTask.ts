@@ -6,7 +6,6 @@ import { handleSessionExpiration } from './handleSessionexpiration';
 export const fetchTask = async (taskId:string) => {
     try {
         // Check if localStorage is available (client-side)
-        if (typeof window !== 'undefined') {      
 
         const response = await axiosInstance.get(`/tasks/${taskId}`);
         if (response) {
@@ -14,7 +13,7 @@ export const fetchTask = async (taskId:string) => {
         } else {
             console.error('Error fetching boards');
         }
-        }
+        
     } catch (error) {
         console.error(error);
     }

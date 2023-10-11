@@ -59,17 +59,18 @@ const ModalTask = (props:{
 
     React.useEffect(()=>{ // every mount we need to display none the ModalAbout 
         setOpenModalAbout(false)
+        
     },[])
 
-
+    console.log('is',isCompleted)
     React.useEffect(() => {  // when the column id change we change also the selectedColumnid 
         setSelectedColumnId(props.columnId);
     }, [props.columnId]);
 
     const queryClient = useQueryClient()
         const column = useMutation(
-            (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
-            changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
+            (formData: {newColumnId:string,columnId:string,taskId:string }) =>
+            changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['boards','Task']);
@@ -115,13 +116,8 @@ const ModalTask = (props:{
                     setOpenedTask(null);
                     setSubTasks(false)
                     if (selectedColumnId && selectedColumnId !== props.columnId) {
-                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
-                            id:props.id,
-                            status:"to do",
-                            title: task.title,
-                            description: task.description,
-                            subtasks: task.subtasks
-                        }});
+                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.id
+                            });
                         setInterval(1)
                         queryClient.invalidateQueries(['boards']);
                     }}}}>
@@ -171,7 +167,7 @@ const ModalTask = (props:{
                             theme === 'light' ? styles.light : styles.dark
                             }`}
                     >
-                        {renderSelect(data.boards[currentBoardIndex].columns)}
+                        {renderSelect(data[0].boards[currentBoardIndex].columns)}
                     </select>
                 </div>
             </div>

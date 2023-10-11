@@ -119,11 +119,11 @@ const Sidebar = (props:{boards:boolean}) => {
           {props.boards && <h1 
           className={`${styles.SideBarTitle} ${
             theme === 'light' ? styles.light : styles.dark
-          }`}>ALL boards({data.boards.length})</h1>}
+          }`}>ALL boards({data[0].boards.length})</h1>}
         
           <ScrollArea className="h-[150px] w-full">
 
-              {data.boards.map((board: { name: string; id: string; },index: number) => (
+              {data[0].boards.map((board: { name: string; id: string; },index: number) => (
                 <BoardCart 
                 text={board.name} 
                 key={index} 

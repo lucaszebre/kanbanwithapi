@@ -13,12 +13,12 @@ export const editTask = async (
   try {
     // Prepare the request body
     const requestBody = {
-      Task: {
+      updatedTask: {
         title: taskName,
         description: taskDescription,
       },
-      subtasksToAdd: subTasksToAdd,
-      subtasksToChange: subTasksToChange,
+      subtasksAdd: subTasksToAdd,
+      subtasksChangeName: subTasksToChange,
       subtasksToDelete: subTasksToDelete,
     };
 

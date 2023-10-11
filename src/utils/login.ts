@@ -11,13 +11,14 @@ export const login = async (
   try {
     setIsLoading(true);  // Set loading to true when starting to try to login
     
-    const response = await axiosInstance.post('/auth/login', {
+    const response = await axiosInstance.post('/login', {
       email,
       password,
     });
     
-    if (response && response.data && response.data.access_token) {
-      Cookies.set('key', response.data.access_token);
+    if (response && response.data && response.data.token) {
+      console.log(response)
+      Cookies.set('key', response.data.token);
       // Authentication successful
       setIsLoading(false);  // Reset loading when login is successful
       return response.data;

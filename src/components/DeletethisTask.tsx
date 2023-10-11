@@ -42,7 +42,7 @@ const {
                 <div className={styles.DeleteThisTaskButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate({boardId:data.boards[currentBoardIndex].id,columnId:props.columnId,taskId:props.TaskId})
+                            mutation.mutate({boardId:data[0].boards[currentBoardIndex].id,columnId:props.columnId,taskId:props.TaskId})
                             setDeleteTaskBlock(false);
                         }}
                         className={styles.DeleteButton}

@@ -5,8 +5,8 @@ function useChangeColumnMutation() {
     const queryClient = useQueryClient();
 
     const column = useMutation(
-        (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
-        changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
+        (formData: {newColumnId:string,columnId:string,taskId:string }) =>
+        changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
         {
         onSuccess: () => {
             queryClient.invalidateQueries(['boards','Task']);

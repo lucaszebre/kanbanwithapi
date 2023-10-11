@@ -47,7 +47,7 @@ export default function Header(props:{boards:boolean}) {
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
       });
-
+      
       if ( data === undefined) {
         // If there's an error or data is undefined, display the custom error page
         
@@ -160,7 +160,7 @@ export default function Header(props:{boards:boolean}) {
                     <h1 
                     className={`${styles.HeaderTitle} ${
                         theme === 'light' ? styles.light : styles.dark
-                        }`}>{ data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
+                        }`}>{ data[0].boards[currentBoardIndex]? data[0].boards[currentBoardIndex].name : ''}</h1>
                     <div className={styles.HeaderBlock1}>
                     {props.boards && <button
                         onClick={() => {
@@ -181,7 +181,7 @@ export default function Header(props:{boards:boolean}) {
                     
                     {props.boards && <div style={{'cursor':'po'}} onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }}> <Avatar {...stringAvatar(data.name)} /> </div>}
+                        }}> <Avatar {...stringAvatar(data[0].name)} /> </div>}
                     </div>
                 </div>
             </div>
@@ -199,7 +199,7 @@ export default function Header(props:{boards:boolean}) {
                     width={56}
                     height={56}
                     />
-                    <h1 className={styles.HeaderMobileTitle}>{data.boards[currentBoardIndex]? data.boards[currentBoardIndex].name : ''}</h1>
+                    <h1 className={styles.HeaderMobileTitle}>{data[0].boards[currentBoardIndex]? data[0].boards[currentBoardIndex].name : ''}</h1>
                     
                     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -212,10 +212,10 @@ export default function Header(props:{boards:boolean}) {
                     />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mt-4 w-56">
-        <DropdownMenuLabel className='cursor-pointer' >ALL boards({data.boards.length})</DropdownMenuLabel>
+        <DropdownMenuLabel className='cursor-pointer' >ALL boards({data[0].boards.length})</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {data.boards.map((board: { name: string; id: string; },index: number) => (
+        {data[0].boards.map((board: { name: string; id: string; },index: number) => (
                 // eslint-disable-next-line react/jsx-key
                 <DropdownMenuLabel className='cursor-pointer' onClick={() => { handleBoardClick( index,board.id) }}>
                 {board.name} 

@@ -121,7 +121,7 @@ const handleAddSubtask = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
-        if(data && data.boards[currentBoardIndex].id){
+        if(data && data[0].boards[currentBoardIndex].id){
             mutation.mutate({taskId:props.taskId,taskName,taskDescription,subTasktoAdd:subTasked
                 .filter((sub) => sub.add)
                 .map((sub) => sub.title),subTasktoDelete,subTask})
@@ -129,13 +129,7 @@ const handleAddSubtask = () => {
             setSubTasktoDelete([])
         }
         if (selectedColumnId && selectedColumnId !== props.columnId) {
-            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,newtask:{
-                id:props.taskId,
-                title: taskName,
-                status: "Todo",
-                description: taskDescription,
-                subtasks: subTasked
-            }});
+            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.taskId});
             }
         queryClient.invalidateQueries(['Task','boards'])
         }        
@@ -239,7 +233,7 @@ const handleAddSubtask = () => {
                             theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        {data && renderSelect (data.boards[currentBoardIndex].columns)}
+                        {data && renderSelect (data[0].boards[currentBoardIndex].columns)}
                     </select>
             <button className={styles.EditTaskSaveButton}  
             type='submit'

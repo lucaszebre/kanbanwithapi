@@ -29,8 +29,8 @@ const Board = () => {
     const [editBoard, setEditBoard] = useState(false);
     const queryClient = useQueryClient();
     const column = useMutation(
-        (formData: {newColumnId:string,columnId:string,newtask:Task }) =>
-        changeColumn(formData.newColumnId,formData.columnId,formData.newtask),
+        (formData: {newColumnId:string,columnId:string,taskId:string}) =>
+        changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
         {
         onSuccess: () => {
             queryClient.invalidateQueries(['boards','Task']);
@@ -66,6 +66,7 @@ const Board = () => {
 
 
 
+
     if (isLoading) {
         return (
             <div className={styles.AppContainer}>
@@ -91,7 +92,6 @@ const Board = () => {
     }
    
 
-
     // Define the onDragEnd function
     const onDragEnd = (result: DropResult) => {
         // Check if the task was dropped into a different column
@@ -101,7 +101,7 @@ const Board = () => {
     
         // Find the source column based on the source droppableId
         const sourceColumnId = result.source.droppableId;
-        const sourceColumn = data.boards[currentBoardIndex].columns.find((column: { id: string; }) => column.id === sourceColumnId);
+        const sourceColumn = data[0].boards[currentBoardIndex].columns.find((column: { id: string; }) => column.id === sourceColumnId);
     
         // Check if the source column was found
         if (!sourceColumn) {
@@ -109,7 +109,7 @@ const Board = () => {
         }
     
         // Find the task that was dragged based on its index in the source column
-        const draggedTask = sourceColumn.tasks[result.source.index];
+        const draggedTask = sourceColumn.tasks[result.source.index].id;
     
         // Find the destination column's ID
         const destinationColumnId = result.destination.droppableId;
@@ -118,7 +118,7 @@ const Board = () => {
         column.mutate({
           newColumnId: destinationColumnId,
           columnId: sourceColumnId,
-          newtask: draggedTask,
+          taskId: draggedTask,
         });
     
         // Invalidate queries to trigger a refetch
@@ -128,12 +128,12 @@ const Board = () => {
     // function to render data 
     function renderListTask() {
         if (
-            data.boards[currentBoardIndex].columns &&
-            data.boards[currentBoardIndex].columns.length > 0
+            data[0].boards[currentBoardIndex].columns &&
+            data[0].boards[currentBoardIndex].columns.length > 0
         ) {
             return (
                 <DragDropContext onDragEnd={onDragEnd}>
-                    {data.boards[currentBoardIndex].columns.map(
+                    {data[0].boards[currentBoardIndex].columns.map(
                         (column: Column, columnIndex: number) => (
                             <ListTask
                                 key={column.id}
@@ -152,7 +152,8 @@ const Board = () => {
         }
     }
 
-    if (data.boards[currentBoardIndex]) {
+
+    if (data[0].boards[currentBoardIndex]) {
         return (
             <>
                 <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />

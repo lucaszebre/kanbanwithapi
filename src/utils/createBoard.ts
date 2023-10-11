@@ -16,11 +16,8 @@ import { handleSessionExpiration } from "./handleSessionexpiration";
 //   }
 export const createBoard = async (boardName:string,columnsName:string[]) =>{
     try{
-        const data = await axiosInstance.get(`/auth/profile`);
-
-                // User is authenticated, check if a row exists in the "User" table
                 const response = await axiosInstance.post(
-                    `/users/${data.data.id}/boards`,
+                    `/boards`,
                     {
                         name:boardName,
                         columns:columnsName

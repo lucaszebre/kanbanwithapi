@@ -60,7 +60,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                 <h1 className={styles.DeleteThisBoardTitle}>Delete this board?</h1>
                 <p className={styles.DeleteThisBoardText}>
                     Are you sure you want to delete the ‘<a >
-                        {/* {data.boards.find? data.boards[currentBoardIndex].name : ''} */}
+                        {/* {data.find? data[currentBoardIndex].name : ''} */}
                     </a>’ board? This action will remove all columns and tasks
                     and cannot be reversed.
                 </p>
@@ -68,8 +68,8 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
                     <button
                         onClick={async () => {
                             try {
-                                await mutation.mutateAsync(data.boards[currentBoardIndex]?.id);
-                                if(data.boards){
+                                await mutation.mutateAsync(data[0].boards[currentBoardIndex]?.id);
+                                if(data){
                                     setCurrentBoardIndex(0)
                                 }
                                 

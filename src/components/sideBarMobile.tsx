@@ -139,10 +139,10 @@ const {
                     <h1 className={`${styles.SideBarTitle} ${
                         theme === 'light' ? styles.light : styles.dark
                         }`}
-                    >ALL boards({data.boards.length})</h1>
+                    >ALL boards({data.length})</h1>
                 
                     
-          {data.boards.map((board: { name: string; id: string; },index: number) => (
+          {data.map((board: { name: string; id: string; },index: number) => (
             <BoardCart 
             text={board.name} 
             key={index} 

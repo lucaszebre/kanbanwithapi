@@ -21,11 +21,11 @@ export const createTask = async (taskTitle:string,taskDescription:string,columnI
         
                 // User is authenticated, check if a row exists in the "User" table
                 
-                    const response = await axiosInstance.post(`/column/${columnId}/tasks/`,
+                    const response = await axiosInstance.post(`/columns/${columnId}/tasks`,
                     {
                         title:taskTitle,
                         description:taskDescription,
-                        subtasks:createSubTaskArray(SubTaskCurrent||[])
+                        subtasks:SubTaskCurrent
                     });
                     if(response.data){
                         console.log('Task add')

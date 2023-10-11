@@ -10,12 +10,10 @@ export  interface Task {
     description:string
     subtasks:Subtask[]
   }
-export const changeColumn = async (newColumnId: string,columnId:string,newtask?:Task) => {
+export const changeColumn = async (newColumnId: string,columnId:string,taskId:string) => {
     if (newColumnId !== columnId) {
         try{
-            const response = await axiosInstance.post(`/column/${newColumnId}/tasks/`,
-            newtask
-            );
+            const response = await axiosInstance.put(`/tasks/${taskId}/column/${newColumnId}`);
             if(response){
                 return response
             }else{

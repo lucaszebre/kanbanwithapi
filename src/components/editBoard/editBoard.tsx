@@ -38,10 +38,10 @@ useEffect(()=>{
 },[Save])
 
     useEffect(() => {
-        if(data && data.boards[currentBoardIndex] && data.boards[currentBoardIndex].columns){
-            setCopyBoardColumns(data.boards[currentBoardIndex].columns);
-            setHeader(data.boards[currentBoardIndex].name)
-            const initialColumnErrors = data.boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
+        if(data && data[0].boards[currentBoardIndex] && data[0].boards[currentBoardIndex].columns){
+            setCopyBoardColumns(data[0].boards[currentBoardIndex].columns);
+            setHeader(data[0].boards[currentBoardIndex].name)
+            const initialColumnErrors = data[0].boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
             setColumnErrors(initialColumnErrors);}
     }, [currentBoardIndex, data,]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
 
@@ -173,7 +173,7 @@ function renderColumns() {
                     }else if (newColumnErrors.some((error) => error)) {
                         return;
                     }else{
-                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data.boards[currentBoardIndex].id,Header,headerTitle:data.boards[currentBoardIndex].name})
+                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data[0].boards[currentBoardIndex].id,Header,headerTitle:data[0].boards[currentBoardIndex].name})
                         props.setEditBoard(false);
                         SetSave(!Save);
                         queryClient.invalidateQueries(['boards']);

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useContext } from 'react';
 import styles from '@/styles/AddTask.module.css';
-import { DataContext } from '@/state/datacontext';
 import renderSelect from '../../utils/renderselect';
 import SubTask from './SubTask';
 import { useTheme } from '@/state/themecontext';
@@ -27,8 +25,8 @@ const AddTask = (props: {
   const [SelectId, setSelectId] = useState(''); // state to know which column is selected
   useEffect(() => {
     const index = parseInt(Cookies.get('currentBoardIndex')||'0') 
-    if (data && data.boards[index] && data.boards[index].columns) {
-      setSelectId(data.boards[index].columns[0].id);
+    if (data && data[0].boards[index] && data[0].boards[index].columns) {
+      setSelectId(data[0].boards[index].columns[0].id);
       console.log(index)
     }
   }, [parseInt(Cookies.get('currentBoardIndex')||'0') ]);
@@ -149,7 +147,7 @@ const AddTask = (props: {
             onClick={() => { console.log(SelectId) }}
             className={`${styles.SelectAddTask} ${theme === 'light' ? styles.light : styles.dark}`}
           >
-            {data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ] && data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns && renderSelect(data.boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns)}
+            {data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ] && data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns && renderSelect(data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns)}
           </select>
           <button className={styles.AddTaskSaveButton} type="submit">
             Create Task
