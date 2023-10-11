@@ -16,6 +16,8 @@ type ContextStore = {
     setDeleteTaskBlock: (value: boolean) => void;
     currentBoardIndex: number;
   setCurrentBoardIndex: (boardId: number) => void;
+  completed: number;
+  setCompleted: (boardId: number) => void;
 };
 
 export const useStore = create<ContextStore>((set) => ({
@@ -24,7 +26,8 @@ export const useStore = create<ContextStore>((set) => ({
       ? parseInt(localStorage.getItem('currentBoardIndex') || '0', 10)
       : 0,
       setCurrentBoardIndex: (boardId) => set({ currentBoardIndex: boardId }),
-
+      setCompleted: (boardId) => set({ completed: boardId }),
+      completed:0,
     isOpenModal: false,
     setIsOpenModal: (value) => set({ isOpenModal: value }),
     AddTask: false,

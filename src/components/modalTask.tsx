@@ -20,10 +20,10 @@ import {useStore}
 const ModalTask = (props:{
     id: string;
     columnId: string;
-    index:number
+    index:number;
 }) => {
-    const {currentBoardIndex} = useStore()
-    const {isCompleted,setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {currentBoardIndex,completed} = useStore()
+    const {setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
     const { data: task, isLoading, isError } = useQuery(
         ['Task', props.id], // Use these parameters as the query key
         () => getTask( props.id)
@@ -57,13 +57,13 @@ const ModalTask = (props:{
 
     const { theme } = useTheme();
 
-    React.useEffect(()=>{ // every mount we need to display none the ModalAbout 
+    useEffect(()=>{ // every mount we need to display none the ModalAbout 
         setOpenModalAbout(false)
         
     },[])
-
-    console.log('is',isCompleted)
-    React.useEffect(() => {  // when the column id change we change also the selectedColumnid 
+  
+    
+    useEffect(() => {  // when the column id change we change also the selectedColumnid 
         setSelectedColumnId(props.columnId);
     }, [props.columnId]);
 
@@ -150,7 +150,7 @@ const ModalTask = (props:{
                     <p className={styles.TaskDescription}>
                         {task.description}
                     </p>
-                    <h2 className={styles.ModalTaskH2}>Subtasks ({isCompleted} of {task.subtasks.length})</h2>
+                    <h2 className={styles.ModalTaskH2}>Subtasks     </h2>
                     <RenderSubTask 
                         subtasks={task.subtasks} 
                         />
