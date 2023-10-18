@@ -8,6 +8,8 @@ import { createTask } from '@/utils/createTask';
 import { fetchBoards } from '@/utils/fetchBoard';
 import Skeleton from 'react-loading-skeleton';
 import Cookies from 'js-cookie';
+import { useToast } from "@/components/ui/use-toast"
+
 const AddTask = (props: {
   addTask: boolean;
   setAddTask: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,14 +32,20 @@ const AddTask = (props: {
       console.log(index)
     }
   }, [parseInt(Cookies.get('currentBoardIndex')||'0') ]);
-  
+  const { toast } = useToast()
+
   const queryClient = useQueryClient();
   const mutation = useMutation(
     (formData: { taskTitle: string; taskDescription: string; columnId: string; SubTaskCurrent: string[] }) =>
       createTask(formData.taskTitle, formData.taskDescription, formData.columnId, formData.SubTaskCurrent),
     {
       onSuccess: () => {
+        
         queryClient.invalidateQueries(['boards','Task']);
+        toast({
+          title: "Task add sucessfully",
+          
+        })
       },
     }
   );
@@ -84,6 +92,7 @@ const AddTask = (props: {
   }
   return (
     <div onClick={(e)=>{if(e.currentTarget==e.target){
+      
       props.setAddTask(false)
     }}} className={styles.AddTaskWrapper} style={{ display: props.addTask ? 'flex' : 'none' }}>
       <div className={`${styles.AddTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>

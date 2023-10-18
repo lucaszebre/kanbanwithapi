@@ -13,6 +13,7 @@ import {
   QueryClientProvider,
 } from 'react-query'
 import React from 'react'
+import { Toaster } from '@/components/ui/toaster'
 
 function App({ Component, pageProps }: AppProps) {
 
@@ -25,6 +26,7 @@ function App({ Component, pageProps }: AppProps) {
       <DataProvider>
               <GlobalScrollbarStyle />
                 <Component {...pageProps} />
+                <Toaster />
       </DataProvider>
     </ThemeProvider>
     </ThemeProvidered>
