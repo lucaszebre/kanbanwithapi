@@ -35,7 +35,7 @@ To get started with the Kanban Task Manager, follow these steps:
 
     npm run dev
 
-4. **Acces the App** Open your web browser and access the app at http://localhost:3000.
+4. **Acces the App*** Open your web browser and access the app at http://localhost:3000.
 
 ### Technologies Used
 
