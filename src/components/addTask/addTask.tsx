@@ -47,6 +47,12 @@ const AddTask = (props: {
           
         })
       },
+      onError:()=>{
+        toast({
+          title: "Error to add a task",
+          
+        })
+      }
     }
   );
   function addSubTask() {

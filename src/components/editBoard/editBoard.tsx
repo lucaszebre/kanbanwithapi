@@ -11,6 +11,8 @@ import {  ColumnData } from "@/types";
 import Skeleton from "react-loading-skeleton";
 import React from 'react'
 import { useStore } from "@/state/contextopen";
+import { useToast } from "@/components/ui/use-toast"
+
 const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
 const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]);// state to know the current present in the database
@@ -23,6 +25,7 @@ const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know
 const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]);  // state to know the column to delete in the database
 const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]);// state to know the column to rename in the database
 const { theme } = useTheme();
+const { toast } = useToast()
 
 
 
@@ -124,19 +127,21 @@ function renderColumns() {
             {
             onSuccess: () => {
                 queryClient.invalidateQueries(['boards']);
+                toast({
+                    title: "Edit board  sucessfully",
+                    
+                  })
             },
+            onError:()=>{
+                toast({
+                    title: "Error to edit the board",
+                    
+                  })
+            }
             }
         );
         
-        const mutationed = useMutation(
-            () =>
-            fetchBoards(),
-            {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['boards']);
-            },
-            }
-        );
+     
 
         
     if(isError){
@@ -149,8 +154,7 @@ function renderColumns() {
         onClick={(e) => {
             if (e.target === e.currentTarget) {
                 queryClient.invalidateQueries(['boards']);
-                mutationed.mutate();
-            props.setEditBoard(false);
+                props.setEditBoard(false);
             }}}
         style={{
             display: props.editBoard ? "flex" : "none", // toggle the display 
