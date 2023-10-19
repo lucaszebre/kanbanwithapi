@@ -6,6 +6,9 @@ import Skeleton from 'react-loading-skeleton';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
 import useDeleteBoardMutation from '@/utils/useDeleteBoardMutation';
+import { deleteBoard } from '@/utils/deleteBoard';
+import { useToast } from "@/components/ui/use-toast"
+
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { setCurrentBoardIndex} = useStore();  // state to manage the global data 
         const { theme } = useTheme();
@@ -15,10 +18,30 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
         queryKey:['boards'],
         queryFn:()=>fetchBoards(),
         });
+        const { toast } = useToast()
+
+    const queryClient = useQueryClient();
+
     
 
-    const mutation = useDeleteBoardMutation(); // Use the custom hook here
-
+        const mutation = useMutation(
+            (boardId:string) => deleteBoard(boardId),
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries(['boards']);
+                toast({
+                    title: "Delete the board sucessfully!",
+                    
+                  })
+              },
+              onError:()=>{
+                toast({
+                    title: "Error to delete the board",
+                    
+                  })
+              }
+            }
+          );
 
     
     if (isLoading) {

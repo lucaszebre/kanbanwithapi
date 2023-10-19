@@ -1,11 +1,12 @@
 import styles from '../styles/DeleteThisTask.module.css';
 import { useTheme } from '@/state/themecontext';
-import { useQueryClient,useQuery } from 'react-query';
+import { useQueryClient,useQuery, useMutation } from 'react-query';
 import {useStore}
  from '@/state/contextopen';
 import { fetchBoards } from '@/utils/fetchBoard';
 import React from 'react'
-import useDeleteTaskMutation from '@/utils/useDeleteTaskMutation';
+import { deleteTask } from '@/utils/deleteTask';
+import { useToast } from "@/components/ui/use-toast"
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
@@ -14,15 +15,34 @@ const {
     DeleteTaskBlock,
     setDeleteTaskBlock,
   } = useStore()
-  
+  const { toast } = useToast()
+
   const {data,isLoading,isError,error} = useQuery({
     queryKey:['boards'],
     queryFn:()=>fetchBoards(),
   });
   const {currentBoardIndex}=useStore()
+  const queryClient = useQueryClient();
 
-  const mutation = useDeleteTaskMutation()
-   
+  const mutation = useMutation(
+    (formData: {boardId:string,columnId:string,taskId:string}) =>
+    deleteTask(formData.taskId),
+    {
+    onSuccess: () => {
+        queryClient.invalidateQueries(['boards']);
+        toast({
+            title: "Task delete sucessfully!",
+            
+          })
+    },
+    onError: ()=>{
+        toast({
+            title: "Error to delete the task!",
+            
+          })
+    }
+    }
+);   
     return (
         <div className={styles.DeleteThisTaskWrapper} style={{ display: DeleteTaskBlock ? 'flex' : 'none' }}
             onClick={(e) => {

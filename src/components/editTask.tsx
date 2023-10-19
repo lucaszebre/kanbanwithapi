@@ -16,6 +16,8 @@ import {useStore}
  import React from 'react'
 import useEditTaskMutation from "@/utils/useEditTaskMutation";
 import useChangeColumnMutation from "@/utils/useChangeColumnMutation";
+import { editTask } from "@/utils/editTask";
+import { useToast } from "@/components/ui/use-toast"
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex} = useStore();
@@ -45,6 +47,7 @@ const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
 const [inputError, setInputError] = useState<boolean>(false);
 const { theme } = useTheme();
+const { toast } = useToast()
 
 useEffect(()=>{
     if(task){
@@ -116,8 +119,25 @@ const handleAddSubtask = () => {
 
 
     const queryClient = useQueryClient()
-    const mutation = useEditTaskMutation()
-    const column = useChangeColumnMutation()
+    const mutation = useMutation(
+        (formData: {taskId:string,taskName:string,taskDescription:string,subTasktoAdd:string[],subTasktoDelete:string[],subTask:Subtasked[]}) =>
+        editTask(formData.taskId,formData.taskName,formData.taskDescription,formData.subTasktoAdd,formData.subTasktoDelete,formData.subTask),
+        {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['boards','Task']);
+            toast({
+                title: "Task edit sucessfully",
+                
+              })
+        },
+        onError:()=>{
+            toast({
+                title: "Error to edit the task!",
+                
+              })
+        }
+        }
+    );    const column = useChangeColumnMutation()
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
