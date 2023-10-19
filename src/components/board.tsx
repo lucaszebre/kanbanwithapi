@@ -11,7 +11,6 @@ import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
 import { Task, Column } from '@/types';
-import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
 
 import {
@@ -67,25 +66,7 @@ const Board = () => {
 
 
 
-    if (isLoading) {
-        return (
-            <div className={styles.AppContainer}>
-                <div className={styles.HeaderBoard}>
-                    <Skeleton height={30} width={150} />
-                </div>
-                <div className={styles.BoardDiv}>
-                    <div className={styles.SideContainer}>
-                        <Skeleton height={500} width={70} />
-                    </div>
-                    <div className={styles.BoardWrapper}>
-                        <div className={styles.AddColumn}>
-                            <Skeleton height={30} width={100} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    
 
     if (isError) {
         return <p>Something went wrong.</p>;
