@@ -14,6 +14,7 @@ import { useStore } from '@/state/contextopen';
 import React from 'react'
 import Cookies from 'js-cookie';
 import { ScrollArea } from './ui/scroll-area';
+import { useTaskManagerStore } from '@/state/taskManager';
 const Sidebar = (props:{boards:boolean}) => {
   
   
@@ -52,62 +53,13 @@ const Sidebar = (props:{boards:boolean}) => {
   queryClient.invalidateQueries(['boards']);
 };
 
-    const {data,isLoading,isError,error} = useQuery({
-      queryKey:['boards'],
-      queryFn:()=>fetchBoards(),
-    });
-    if ( data === undefined) {
-      // If there's an error or data is undefined, display the custom error page
-      
-    }else{
-      setIsLoggedIn(true)
-    }
+   
+   
+    const taskManager = useTaskManagerStore((state)=>state.taskManager)
 
-    if (isLoading) {
-      // Return loading skeletons
-      return (
-          <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
-              <div className={styles.SibebarWrapper}>
-                  <div className={styles.DropDown}>
-                      {props.boards && (
-                          <Skeleton height={30} width={200} className={`${styles.SideBarTitle} ${theme === 'light' ? styles.light : styles.dark}`} />
-                      )}
 
-                      {/* Display multiple skeletons for board carts */}
-                      {[...Array(3)].map((_, index) => (
-                          <Skeleton
-                              key={index}
-                              height={50}
-                              style={{ marginTop: '10px' }}
-                              className={currentBoardIndex === index ? styles.selected : ''}
-                          />
-                      ))}
+    
 
-                      <div
-                          className={styles.CreateBoard}
-                          onClick={() => {
-                              setAddBoard(true);
-                          }}
-                      >
-                          <Skeleton height={13} width={10} className={styles.BoardImage} />
-                          <Skeleton height={16} width={100} className={styles.CreateBoardText} />
-                      </div>
-                  </div>
-
-                  {/* ... (existing theme toggle and hide sidebar code) */}
-              </div>
-          </div>
-      );
-  }
-
-  if (isError) {
-      return (
-          <div className={`${styles.SidebarContainer} ${theme === 'light' ? styles.light : styles.dark}`}>
-              <p>Something went wrong</p>
-          </div>
-      );
-  }
- 
   return (
     <>
     <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
@@ -119,11 +71,11 @@ const Sidebar = (props:{boards:boolean}) => {
           {props.boards && <h1 
           className={`${styles.SideBarTitle} ${
             theme === 'light' ? styles.light : styles.dark
-          }`}>ALL boards({data[0].boards.length})</h1>}
+          }`}>ALL boards({taskManager[0].boards.length})</h1>}
         
           <ScrollArea className="h-[150px] w-full">
 
-              {data[0].boards.map((board: { name: string; id: string; },index: number) => (
+              {taskManager[0].boards.map((board: { name: string; id: string; },index: number) => (
                 <BoardCart 
                 text={board.name} 
                 key={index} 

@@ -12,7 +12,6 @@ if (typeof window !== "undefined") {
   token = Cookies.get("key") || "";
 }
 
-console.log('key',token)
 
 export const axiosInstance = axios.create({
   baseURL: 'https://kanbanexpress.onrender.com', // Replace with your API's base URL
@@ -23,5 +22,4 @@ export const axiosInstance = axios.create({
   },
 });
 
-console.log(token)
 

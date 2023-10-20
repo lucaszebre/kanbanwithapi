@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect, useState } from 'react';
 import styles from '../styles/ModalTask.module.css';
 import Image from 'next/image';
@@ -11,11 +10,9 @@ import renderSelect from '@/utils/renderselect';
 import RenderSubTask from '@/utils/renderSubTaskModal';
 import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient,useQuery } from 'react-query';
-import { getTask } from '@/utils/getTask';
-import { fetchBoards } from '@/utils/fetchBoard';
-import Skeleton from 'react-loading-skeleton';
 import {useStore}
  from '@/state/contextopen';
+import { useTaskManagerStore } from '@/state/taskManager';
 
 const ModalTask = (props:{
     id: string;
@@ -23,27 +20,12 @@ const ModalTask = (props:{
     index:number;
 }) => {
     const {currentBoardIndex,completed} = useStore()
-    const {setOpenedTask,setInterval,setIsLoggedIn } = useContext(DataContext);
-    const { data: task, isLoading, isError } = useQuery(
-        ['Task', props.id], // Use these parameters as the query key
-        () => getTask( props.id)
-    );
-    if ( task === undefined) {
-        // If there's an error or data is undefined, display the custom error page
-        
-      }else{
-        setIsLoggedIn(true)
-      }
-    const {data,error} = useQuery({
-        queryKey:['boards'],
-        queryFn:()=>fetchBoards(),
-      });
-      if ( data === undefined) {
-        // If there's an error or data is undefined, display the custom error page
-        
-      }else{
-        setIsLoggedIn(true)
-      }
+    const {setOpenedTask,setIsLoggedIn } = useContext(DataContext);
+  
+    const taskManager = useTaskManagerStore((state)=>state.taskManager)
+    
+    const task =  taskManager[0].boards[currentBoardIndex].columns.find((col)=>col.id === props.columnId)?.tasks.find((task)=>task.id==props.id)
+
     // state 
     const {
         SubTasks,
@@ -78,101 +60,86 @@ const ModalTask = (props:{
             }
         );
             
-    if (isLoading) {
-        // Return loading skeletons
+    if(task){
         return (
             <>
-                <Skeleton height={30} width={300} />
-                <Skeleton height={20} width={200} />
-                {/* Display multiple skeletons for subtasks */}
-                {[...Array(3)].map((_, index) => (
-                    <Skeleton key={index} height={15} width={150} style={{ marginTop: '10px' }} />
-                ))}
-                <Skeleton height={20} width={150} style={{ marginTop: '20px' }} />
-                {/* Display skeleton for select */}
-                <Skeleton height={30} width={150} style={{ marginTop: '10px' }} />
-            </>
-        );
-    }
-
-    if (isError) {
-        return (
-            <p>
-                Something went wrong
-            </p>
-        );
-    } 
-    return (
-        <>
-        <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
-        <DeleteThisTask columnId={props.columnId} TaskTitle={task.title}  TaskId={props.id} />
-            <div
-                className={styles.ModalTaskWrapper}
-                style={{
-                    display: SubTasks ? 'flex' : 'none',
-                }}
-                onClick={async (e) => {
-                if (e.target === e.currentTarget) {
-                    setOpenedTask(null);
-                    setSubTasks(false)
-                    if (selectedColumnId && selectedColumnId !== props.columnId) {
-                        column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.id
-                            });
-                        setInterval(1)
-                        queryClient.invalidateQueries(['boards']);
-                    }}}}>
-            
-                <div 
-                className={`${styles.ModalTaskDiv} ${
-                    theme === 'light' ? styles.light : styles.dark
-                    }`}
-                >
-
-                <ModalAboutTask
-                visible={openModalAbout}
-                />
+            <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
+            <DeleteThisTask columnId={props.columnId} TaskTitle={task.title}  TaskId={props.id} />
+                <div
+                    className={styles.ModalTaskWrapper}
+                    style={{
+                        display: SubTasks ? 'flex' : 'none',
+                    }}
+                    onClick={async (e) => {
+                    if (e.target === e.currentTarget) {
+                        setOpenedTask(null);
+                        setSubTasks(false)
+                        if (selectedColumnId && selectedColumnId !== props.columnId) {
+                            column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.id
+                                });
+                            queryClient.invalidateQueries(['boards']);
+                        }}}}>
+                
                     <div 
-                    className={`${styles.ModalTaskHeader} ${
+                    className={`${styles.ModalTaskDiv} ${
                         theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        <h1>{task.title}</h1>
-                        <Image
-                            onClick={() => {
-                                setOpenModalAbout(!openModalAbout);
-                            }}
-                            className={styles.ModalTaskEllipsis}
-                            src="/assets/icon-vertical-ellipsis.svg"
-                            alt="vertical-ellipsis"
-                            width={4.62}
-                            height={20}/>
-                    </div>
-                    <p className={styles.TaskDescription}>
-                        {task.description}
-                    </p>
-                    <h2 className={styles.ModalTaskH2}>Subtasks     </h2>
-                    <RenderSubTask 
-                        subtasks={task.subtasks} 
-                        />
-                    <h2 className={`${styles.ModalTaskH2} ${
-                        theme === 'light' ? styles.light : styles.dark
-                        }`}
-                    >Current Status</h2>
-                    <select
-                        value={selectedColumnId}
-                        onChange={(e) => {
-                            setSelectedColumnId(e.target.value);
-                        }}
-                        className={`${styles.SelectState} ${
+    
+                    <ModalAboutTask
+                    visible={openModalAbout}
+                    />
+                        <div 
+                        className={`${styles.ModalTaskHeader} ${
                             theme === 'light' ? styles.light : styles.dark
                             }`}
-                    >
-                        {renderSelect(data[0].boards[currentBoardIndex].columns)}
-                    </select>
+                        >
+                            <h1>{task.title}</h1>
+                            <Image
+                                onClick={() => {
+                                    setOpenModalAbout(!openModalAbout);
+                                }}
+                                className={styles.ModalTaskEllipsis}
+                                src="/assets/icon-vertical-ellipsis.svg"
+                                alt="vertical-ellipsis"
+                                width={4.62}
+                                height={20}/>
+                        </div>
+                        <p className={styles.TaskDescription}>
+                            {task.description}
+                        </p>
+                        <h2 className={styles.ModalTaskH2}>Subtasks     </h2>
+                        <RenderSubTask 
+                            boardId={taskManager[0].boards[currentBoardIndex].id}
+                            columnId={props.columnId}
+                            subtasks={task.subtasks} 
+                            />
+                        <h2 className={`${styles.ModalTaskH2} ${
+                            theme === 'light' ? styles.light : styles.dark
+                            }`}
+                        >Current Status</h2>
+                        <select
+                            value={selectedColumnId}
+                            onChange={(e) => {
+                                setSelectedColumnId(e.target.value);
+                            }}
+                            className={`${styles.SelectState} ${
+                                theme === 'light' ? styles.light : styles.dark
+                                }`}
+                        >
+                            {renderSelect(taskManager[0].boards[currentBoardIndex].columns)}
+                        </select>
+                    </div>
                 </div>
-            </div>
-        </>
-    );
+            </>
+        );
+    }else{
+        return (
+            <>
+            </>
+        )
+    }
+    
 };
 
 export default ModalTask;

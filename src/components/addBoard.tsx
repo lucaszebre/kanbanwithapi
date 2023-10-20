@@ -5,6 +5,7 @@ import { useTheme } from '@/state/themecontext';
 import { useMutation,useQueryClient } from 'react-query';
 import { createBoard } from '@/utils/createBoard';
 import { useToast } from "@/components/ui/use-toast"
+import { useTaskManagerStore } from '@/state/taskManager';
 
 const AddBoard = (props:{addBoard:boolean,setAddBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const [boardName, setBoardName] = useState<string>('');   // Boardname state 
@@ -13,6 +14,8 @@ const AddBoard = (props:{addBoard:boolean,setAddBoard:React.Dispatch<React.SetSt
     const [columnErrors, setColumnErrors] = useState<boolean[]>([]);  // state to manage is one of the column name input is empty 
     const { theme } = useTheme();
     const { toast } = useToast()
+
+    const addBoard = useTaskManagerStore(state=> state.addBoard)
 
     React.useEffect(()=>{    // when we add a board we use ismoving to update the data and then here we set the current state to the             // the iniatial value 
         setBoardName('');
@@ -61,6 +64,7 @@ const handleSubmit = async (e: React.FormEvent) => {  // function to handle the 
         } else if (newColumnErrors.some(error => error)) {
         return;
     }
+    addBoard(boardName,columnNames)
     mutation.mutate({boardName,columns:columnNames})
     resetForm();
     };

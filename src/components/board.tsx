@@ -12,18 +12,18 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
 import { Task, Column } from '@/types';
 import EditBoard from './editBoard/editBoard';
-
 import {
     DragDropContext,
     DropResult,
 } from 'react-beautiful-dnd';
 import { changeColumn } from '@/utils/changeColumn';
 import { useStore } from '@/state/contextopen';
+import { useTaskManagerStore } from '@/state/taskManager';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
     const {currentBoardIndex}=useStore()
-    const {  Interval, setInterval,setIsLoggedIn } = useContext(DataContext);
+    const {  setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const [editBoard, setEditBoard] = useState(false);
     const queryClient = useQueryClient();
@@ -37,7 +37,6 @@ const Board = () => {
         }
     );
     useEffect(() => {
-        setInterval(1000);
 
         if (typeof window !== 'undefined') {
             const handleResize = () => {
@@ -59,19 +58,27 @@ const Board = () => {
 
     const { data, isLoading,isError } = useQuery({
         queryKey: ['boards'],
-        queryFn: () => fetchBoards(),
-        refetchInterval: Interval,
-    });
+        queryFn: () => fetchBoards()
+        });
 
+    const setTaskManagerData = useTaskManagerStore((state) => state.setTaskManagerData);
 
+    const taskManager = useTaskManagerStore((state)=>state.taskManager)
 
-
+    useEffect(() => {
+        if (!isLoading && data && !isError) {
+          setTaskManagerData(data);
+        }
+      }, [data, isLoading, isError, setTaskManagerData]);
     
+if(data){
+    console.log(data)
+    console.log('taskManager',taskManager)
 
-    if (isError) {
-        return <p>Something went wrong.</p>;
-    }
-   
+}
+
+
+
 
     // Define the onDragEnd function
     const onDragEnd = (result: DropResult) => {
@@ -82,7 +89,7 @@ const Board = () => {
     
         // Find the source column based on the source droppableId
         const sourceColumnId = result.source.droppableId;
-        const sourceColumn = data[0].boards[currentBoardIndex].columns.find((column: { id: string; }) => column.id === sourceColumnId);
+        const sourceColumn = taskManager[0].boards[currentBoardIndex].columns.find((column: { id: string; }) => column.id === sourceColumnId);
     
         // Check if the source column was found
         if (!sourceColumn) {
@@ -109,12 +116,12 @@ const Board = () => {
     // function to render data 
     function renderListTask() {
         if (
-            data[0].boards[currentBoardIndex].columns &&
-            data[0].boards[currentBoardIndex].columns.length > 0
+            taskManager[0].boards[currentBoardIndex].columns &&
+            taskManager[0].boards[currentBoardIndex].columns.length > 0
         ) {
             return (
                 <DragDropContext onDragEnd={onDragEnd}>
-                    {data[0].boards[currentBoardIndex].columns.map(
+                    {taskManager[0].boards[currentBoardIndex].columns.map(
                         (column: Column, columnIndex: number) => (
                             <ListTask
                                 key={column.id}
@@ -134,7 +141,7 @@ const Board = () => {
     }
 
 
-    if (data[0].boards[currentBoardIndex]) {
+    if (taskManager && taskManager[0].boards[currentBoardIndex]) {
         return (
             <>
                 <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />

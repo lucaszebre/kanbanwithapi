@@ -12,8 +12,6 @@ type openedTaskType= {
     subTask: Subtask[];
 } | null 
 export type DataContextType = {
-    Interval:number;
-    setInterval:React.Dispatch<React.SetStateAction<number>>;
     openedTask:openedTaskType;
     setOpenedTask:React.Dispatch<React.SetStateAction<openedTaskType>>;
     isCompleted:number;
@@ -29,7 +27,6 @@ export const DataContext = createContext<DataContextType>({} as DataContextType)
 export const DataProvider = (props: { children: React.ReactNode }) => {
 
         
-        const [Interval,setInterval] = useState<number>(100000);
         const [isCompleted,setIsCompleted] = useState(0)
         const [openedTask, setOpenedTask] = useState<{
             id: string;title: string;
@@ -46,7 +43,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
     return (
         <DataContext.Provider value={{
         openedTask, setOpenedTask,
-        Interval,setInterval,isCompleted,setIsCompleted,
+        isCompleted,setIsCompleted,
         isLoggedIn, setIsLoggedIn
         }}>{props.children}</DataContext.Provider>
     );

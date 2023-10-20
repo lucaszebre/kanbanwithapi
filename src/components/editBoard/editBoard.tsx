@@ -8,10 +8,10 @@ import { useTheme } from '@/state/themecontext';
 import { useQuery,useMutation,useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
-import Skeleton from "react-loading-skeleton";
 import React from 'react'
 import { useStore } from "@/state/contextopen";
 import { useToast } from "@/components/ui/use-toast"
+import { useTaskManagerStore } from "@/state/taskManager";
 
 const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
@@ -27,12 +27,10 @@ const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]);// stat
 const { theme } = useTheme();
 const { toast } = useToast()
 
+const taskManager = useTaskManagerStore((state)=>state.taskManager)
+const updateBoard = useTaskManagerStore((state)=>state.updateBoard)
 
 
-const {data,isLoading,isError} = useQuery({
-    queryKey:['boards'],
-    queryFn:()=>fetchBoards(),
-    });
     
 useEffect(()=>{
     setColumnstoAdd([])
@@ -41,12 +39,12 @@ useEffect(()=>{
 },[Save])
 
     useEffect(() => {
-        if(data && data[0].boards[currentBoardIndex] && data[0].boards[currentBoardIndex].columns){
-            setCopyBoardColumns(data[0].boards[currentBoardIndex].columns);
-            setHeader(data[0].boards[currentBoardIndex].name)
-            const initialColumnErrors = data[0].boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
+        if(taskManager && taskManager[0].boards[currentBoardIndex] && taskManager[0].boards[currentBoardIndex].columns){
+            setCopyBoardColumns(taskManager[0].boards[currentBoardIndex].columns);
+            setHeader(taskManager[0].boards[currentBoardIndex].name)
+            const initialColumnErrors = taskManager[0].boards[currentBoardIndex].columns.map((column: { name: string; }) => column.name.trim() === "");
             setColumnErrors(initialColumnErrors);}
-    }, [currentBoardIndex, data,]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
+    }, [currentBoardIndex, taskManager,]);  // every some thing is moving in the data we get the new headertiltle and columns of the currentboard 
 
 
     const handleAddColumn = () => { // function to add column 
@@ -143,12 +141,7 @@ function renderColumns() {
         
      
 
-        
-    if(isError){
-        return <p>
-        Something went wrongs
-        </p>
-    }
+    
     return (
     <div className={styles.EditBoardWrapper}
         onClick={(e) => {
@@ -177,7 +170,8 @@ function renderColumns() {
                     }else if (newColumnErrors.some((error) => error)) {
                         return;
                     }else{
-                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:data[0].boards[currentBoardIndex].id,Header,headerTitle:data[0].boards[currentBoardIndex].name})
+                        updateBoard(columnsToDelete,columnsToRename,columnstoAdd,taskManager[0].boards[currentBoardIndex].id,Header,taskManager[0].boards[currentBoardIndex].name)
+                        mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:taskManager[0].boards[currentBoardIndex].id,Header,headerTitle:taskManager[0].boards[currentBoardIndex].name})
                         props.setEditBoard(false);
                         SetSave(!Save);
                         queryClient.invalidateQueries(['boards']);

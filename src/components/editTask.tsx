@@ -18,19 +18,19 @@ import useEditTaskMutation from "@/utils/useEditTaskMutation";
 import useChangeColumnMutation from "@/utils/useChangeColumnMutation";
 import { editTask } from "@/utils/editTask";
 import { useToast } from "@/components/ui/use-toast"
+import { useTaskManagerStore } from "@/state/taskManager";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex} = useStore();
 
-    const { data: task, isLoading, isError,error } = useQuery(
-        ['Task', props.taskId], // Use these parameters as the query key
-        () => getTask( props.taskId)
-    );
-   
-    const {data} = useQuery({
-        queryKey:['boards'],
-        queryFn:()=>fetchBoards(),
-      });   // State hooks for managing subtasks and input errors
+    
+
+    const taskManager = useTaskManagerStore((state)=>state.taskManager)
+    const updateTask = useTaskManagerStore((state)=>state.updateTask)
+    
+    const task =  taskManager[0].boards[currentBoardIndex].columns.find((col)=>col.id === props.columnId)?.tasks.find((task)=>task.id==props.taskId)
+
+
      
  const {
     EditTask,
@@ -127,21 +127,20 @@ const handleAddSubtask = () => {
             queryClient.invalidateQueries(['boards','Task']);
             toast({
                 title: "Task edit sucessfully",
-                
-              })
+                })
         },
         onError:()=>{
             toast({
                 title: "Error to edit the task!",
-                
-              })
+                })
         }
         }
     );    const column = useChangeColumnMutation()
 
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
-        if(data && data[0].boards[currentBoardIndex].id){
+        if(taskManager && taskManager[0].boards[currentBoardIndex].id){
+            updateTask(props.taskId,taskName,taskDescription,subTasktoDelete,subTasktoAdd,subTasked,taskManager[0].boards[currentBoardIndex].id,props.columnId)
             mutation.mutate({taskId:props.taskId,taskName,taskDescription,subTasktoAdd:subTasked
                 .filter((sub) => sub.add)
                 .map((sub) => sub.title),subTasktoDelete,subTask})
@@ -154,16 +153,6 @@ const handleAddSubtask = () => {
         queryClient.invalidateQueries(['Task','boards'])
         }        
 
-
-            
-        
-            if (isError) {
-                return (
-                    <p>
-                        Something went wrong
-                    </p>
-                );
-            }
 
 
  // Render the EditTask component
@@ -253,7 +242,7 @@ const handleAddSubtask = () => {
                             theme === 'light' ? styles.light : styles.dark
                         }`}
                     >
-                        {data && renderSelect (data[0].boards[currentBoardIndex].columns)}
+                        {taskManager && renderSelect (taskManager[0].boards[currentBoardIndex].columns)}
                     </select>
             <button className={styles.EditTaskSaveButton}  
             type='submit'

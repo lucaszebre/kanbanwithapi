@@ -6,8 +6,6 @@ import { DataContext } from '@/state/datacontext';
 import { useTheme } from '@/state/themecontext';
 import { Logout } from '@/utils/logout';
 import { useQuery, useQueryClient } from 'react-query';
-import { fetchBoards } from '@/utils/fetchBoard';
-import Skeleton from 'react-loading-skeleton';
 import EditBoard from './editBoard/editBoard';
 import AddTask from './addTask/addTask';
 import DeleteThisBoard from './DeletethisBoard';
@@ -25,6 +23,7 @@ import {
 import React from 'react'
 import Cookies from 'js-cookie';
 import AddBoard from './addBoard';
+import { useTaskManagerStore } from '@/state/taskManager';
 export default function Header(props:{boards:boolean}) {
     // state to toggle the display of the  different components to decide to click on 
     const {
@@ -44,17 +43,8 @@ export default function Header(props:{boards:boolean}) {
 
     const { theme } = useTheme();
 
-    const {data,isLoading,isError,error} = useQuery({
-        queryKey:['boards'],
-        queryFn:()=>fetchBoards(),
-      });
-      
-      if ( data === undefined) {
-        // If there's an error or data is undefined, display the custom error page
-        
-      }else{
-        setIsLoggedIn(true)
-      }
+    const taskManager = useTaskManagerStore((state)=>state.taskManager)
+
         function stringToColor(string: string) {
             let hash = 0;
             let i;
@@ -100,41 +90,7 @@ export default function Header(props:{boards:boolean}) {
             queryClient.invalidateQueries(['boards']);
           };
 
-      if (isLoading) {
-        // Return loading skeletons
-        return (
-            <>
-                <div className={styles.HeaderContainer}>
-                    {/* Display loading skeletons for desktop header */}
-                    <div className={`${styles.HeaderWrapperDesktop} ${theme === 'light' ? styles.light : styles.dark}`}>
-                        <Skeleton height={26} width={152} style={{ marginRight: '20px' }} />
-                        <Skeleton height={30} width={300} />
-                        <Skeleton height={30} width={100} style={{ marginLeft: 'auto' }} />
-                    </div>
-                    {/* Display loading skeletons for mobile header */}
-                    <div className={styles.HeaderWrapperMobile}>
-                        <div className={styles.HeaderMobileLeft}>
-                            <Skeleton height={56} width={56} style={{ marginRight: '20px' }} />
-                            <Skeleton height={30} width={200} />
-                            <Skeleton height={15} width={30} style={{ marginLeft: 'auto' }} />
-                        </div>
-                        <div className={styles.HeaderMobileRight}>
-                            <Skeleton height={25} width={25} style={{ marginRight: '10px' }} />
-                            <Skeleton height={15} width={15} />
-                        </div>
-                    </div>
-                </div>
-            </>
-        );
-    }
-
-    if (isError) {
-        return (
-            <p>
-                Something went wrong
-            </p>
-        );
-    }
+      
 
     return (
         <>
@@ -162,7 +118,7 @@ export default function Header(props:{boards:boolean}) {
                     <h1 
                     className={`${styles.HeaderTitle} ${
                         theme === 'light' ? styles.light : styles.dark
-                        }`}>{ data[0].boards[currentBoardIndex]? data[0].boards[currentBoardIndex].name : ''}</h1>
+                        }`}>{ taskManager[0].boards[currentBoardIndex]? taskManager[0].boards[currentBoardIndex].name : ''}</h1>
                     <div className={styles.HeaderBlock1}>
                     {props.boards && <button
                         onClick={() => {
@@ -183,7 +139,7 @@ export default function Header(props:{boards:boolean}) {
                     
                     {props.boards && <div style={{'cursor':'po'}} onClick={() => {
                         setIsOpenModal(!isOpenModal);
-                        }}> <Avatar {...stringAvatar(data[0].name)} /> </div>}
+                        }}> <Avatar {...stringAvatar(taskManager[0].name)} /> </div>}
                     </div>
                 </div>
             </div>
@@ -201,7 +157,7 @@ export default function Header(props:{boards:boolean}) {
                     width={56}
                     height={56}
                     />
-                    <h1 className={styles.HeaderMobileTitle}>{data[0].boards[currentBoardIndex]? data[0].boards[currentBoardIndex].name : ''}</h1>
+                    <h1 className={styles.HeaderMobileTitle}>{taskManager[0].boards[currentBoardIndex]? taskManager[0].boards[currentBoardIndex].name : ''}</h1>
                     
                     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -214,10 +170,10 @@ export default function Header(props:{boards:boolean}) {
                     />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mt-4 w-56">
-        <DropdownMenuLabel className='cursor-pointer' >ALL boards({data[0].boards.length})</DropdownMenuLabel>
+        <DropdownMenuLabel className='cursor-pointer' >ALL boards({taskManager[0].boards.length})</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {data[0].boards.map((board: { name: string; id: string; },index: number) => (
+        {taskManager[0].boards.map((board: { name: string; id: string; },index: number) => (
                 // eslint-disable-next-line react/jsx-key
                 <DropdownMenuLabel className='cursor-pointer' onClick={() => { handleBoardClick( index,board.id) }}>
                 {board.name} 
