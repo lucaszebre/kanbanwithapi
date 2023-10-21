@@ -22,10 +22,7 @@ const Subtasks = (props: {
     (formData: { isCompleted: boolean; subtaskId: string }) =>
       toggleSubtaskCompletion(formData.isCompleted, formData.subtaskId),
     {
-      onSuccess: () => {
-        // Invalidate queries as needed after backend update
-        queryClient.refetchQueries(['Task', 'boards']);
-      },
+     
     }
   );
 

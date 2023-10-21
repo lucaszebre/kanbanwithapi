@@ -1,6 +1,8 @@
 import {create} from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { ColumnData, Subtasked } from '@/types';
+import { Column, ColumnData, Subtasked } from '@/types';
+import { TaskManager,Task,Board} from '@/types/global';
+import Cookies from 'js-cookie';
 
 type State = {
   taskManager: TaskManager;
@@ -23,6 +25,7 @@ type State = {
 
   toggleSubtask: (boardId: string, columnId: string, taskId: string, subtaskId: string,isCompleted:boolean) => void;
   setTaskManagerData: (data:TaskManager) =>void;
+  changeCol:(newColumnId:string,columnId:string,taskId:string)=>void;
 };
 
 export const useTaskManagerStore = create<State>((set) => ({
@@ -124,6 +127,7 @@ export const useTaskManagerStore = create<State>((set) => ({
     columnId: string,
     SubTaskCurrent?: string[]
   ) => set((state) => {
+    console.log('des',taskDescription)
     const newTask: Task = {
       id: uuidv4(), // Use a function or library to generate unique IDs
       title: taskTitle,
@@ -247,6 +251,31 @@ export const useTaskManagerStore = create<State>((set) => ({
   
     return { ...state };
   }),
- 
+  changeCol: (newColumnId, columnId, taskId) => {
+    set((state) => {
+      const boardIndex = parseInt(Cookies.get('currentBoardIndex') || '0');
+      const sourceColumn = state.taskManager[0].boards[boardIndex].columns.find(col => col.id === columnId);
+      const destinationColumn = state.taskManager[0].boards[boardIndex].columns.find(col => col.id === newColumnId);
+
+      if (!sourceColumn || !destinationColumn) {
+        console.error("Either source or destination column not found");
+        return state;
+      }
+
+      const taskIndex = sourceColumn.tasks.findIndex(task => task.id === taskId);
+      if (taskIndex === -1) {
+        console.error("Task not found in source column");
+        return state;
+      }
+
+      // Remove the task from the source column
+      const [taskToMove] = sourceColumn.tasks.splice(taskIndex, 1);
+      
+      // Add the task to the destination column
+      destinationColumn.tasks.push(taskToMove);
+
+      return { ...state };
+    });
+  },
  
 }));

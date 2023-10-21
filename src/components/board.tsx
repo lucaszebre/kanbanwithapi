@@ -71,6 +71,7 @@ const Board = () => {
       }, [data,isStale, setTaskManagerData]);
     
 
+      const changeCol = useTaskManagerStore((state) => state.changeCol);
 
 
 
@@ -98,6 +99,7 @@ const Board = () => {
         const destinationColumnId = result.destination.droppableId;
     
         // Call the changeColumn mutation to update the task's column
+        changeCol(destinationColumnId,sourceColumnId,draggedTask)
         column.mutate({
           newColumnId: destinationColumnId,
           columnId: sourceColumnId,

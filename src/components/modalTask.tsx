@@ -19,12 +19,14 @@ const ModalTask = (props:{
     columnId: string;
     index:number;
 }) => {
-    const {currentBoardIndex,completed} = useStore()
-    const {setOpenedTask,setIsLoggedIn } = useContext(DataContext);
+    const {currentBoardIndex} = useStore()
+    const {setOpenedTask } = useContext(DataContext);
   
     const taskManager = useTaskManagerStore((state)=>state.taskManager)
-    
+    console.log('data',taskManager)
     const task =  taskManager[0].boards[currentBoardIndex].columns.find((col)=>col.id === props.columnId)?.tasks.find((task)=>task.id==props.id)
+
+    console.log('task',task)
 
     // state 
     const {
@@ -36,6 +38,8 @@ const ModalTask = (props:{
     // state to manage the global Data 
     // state to know wich column id we are currently 
     const [selectedColumnId, setSelectedColumnId] = React.useState(props.columnId);
+    
+    const changeCol = useTaskManagerStore((state) => state.changeCol);
 
     const { theme } = useTheme();
 
@@ -55,7 +59,7 @@ const ModalTask = (props:{
             changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
             {
             onSuccess: () => {
-                queryClient.refetchQueries(['boards','Task']);
+                queryClient.refetchQueries(['boards']);
             },
             }
         );
@@ -75,6 +79,7 @@ const ModalTask = (props:{
                         setOpenedTask(null);
                         setSubTasks(false)
                         if (selectedColumnId && selectedColumnId !== props.columnId) {
+                            changeCol(selectedColumnId,props.columnId,props.id)
                             column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.id
                                 });
                             queryClient.refetchQueries(['boards']);
