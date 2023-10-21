@@ -18,7 +18,6 @@ import {
 import { changeColumn } from '@/utils/changeColumn';
 import { useStore } from '@/state/contextopen';
 import { useTaskManagerStore } from '@/state/taskManager';
-import { randomUUID } from 'crypto';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
@@ -109,7 +108,7 @@ const Board = () => {
         // Invalidate queries to trigger a refetch
         queryClient.refetchQueries(['boards', 'Task']);
       };
-
+      console.log(data)
     // function to render data 
     function renderListTask() {
         if (

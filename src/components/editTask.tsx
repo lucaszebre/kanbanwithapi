@@ -140,7 +140,9 @@ const handleAddSubtask = () => {
     const handleSubmit = async (e: React.FormEvent) => {  // function to handle the final form data 
         e.preventDefault();
         if(taskManager && taskManager[0].boards[currentBoardIndex].id){
-            updateTask(props.taskId,taskName,taskDescription,subTasktoDelete,subTasktoAdd,subTasked,taskManager[0].boards[currentBoardIndex].id,props.columnId)
+            updateTask(props.taskId,taskName,taskDescription,subTasktoDelete,subTasked
+                .filter((sub) => sub.add)
+                .map((sub) => sub.title),subTask,taskManager[0].boards[currentBoardIndex].id,props.columnId)
             mutation.mutate({taskId:props.taskId,taskName,taskDescription,subTasktoAdd:subTasked
                 .filter((sub) => sub.add)
                 .map((sub) => sub.title),subTasktoDelete,subTask})
@@ -150,7 +152,7 @@ const handleAddSubtask = () => {
         if (selectedColumnId && selectedColumnId !== props.columnId) {
             column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.taskId});
             }
-        queryClient.refetchQueries(['Task','boards'])
+        queryClient.refetchQueries(['boards'])
         }        
 
 

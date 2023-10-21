@@ -13,6 +13,7 @@ import { useMutation,useQueryClient,useQuery } from 'react-query';
 import {useStore}
  from '@/state/contextopen';
 import { useTaskManagerStore } from '@/state/taskManager';
+import { getTask } from '@/utils/getTask';
 
 const ModalTask = (props:{
     id: string;
@@ -23,10 +24,8 @@ const ModalTask = (props:{
     const {setOpenedTask } = useContext(DataContext);
   
     const taskManager = useTaskManagerStore((state)=>state.taskManager)
-    console.log('data',taskManager)
-    const task =  taskManager[0].boards[currentBoardIndex].columns.find((col)=>col.id === props.columnId)?.tasks.find((task)=>task.id==props.id)
+    const taske =  taskManager[0].boards[currentBoardIndex].columns.find((col)=>col.id === props.columnId)?.tasks.find((task)=>task.id==props.id)
 
-    console.log('task',task)
 
     // state 
     const {
@@ -63,12 +62,13 @@ const ModalTask = (props:{
             },
             }
         );
-            
-    if(task){
+      
+
+    if(taske){
         return (
             <>
             <EditTask columnId={props.columnId} taskId={props.id} index={props.index}  />
-            <DeleteThisTask columnId={props.columnId} TaskTitle={task.title}  TaskId={props.id} />
+            <DeleteThisTask columnId={props.columnId} TaskTitle={taske.title}  TaskId={props.id} />
                 <div
                     className={styles.ModalTaskWrapper}
                     style={{
@@ -99,7 +99,7 @@ const ModalTask = (props:{
                             theme === 'light' ? styles.light : styles.dark
                             }`}
                         >
-                            <h1>{task.title}</h1>
+                            <h1>{taske.title}</h1>
                             <Image
                                 onClick={() => {
                                     setOpenModalAbout(!openModalAbout);
@@ -111,13 +111,13 @@ const ModalTask = (props:{
                                 height={20}/>
                         </div>
                         <p className={styles.TaskDescription}>
-                            {task.description}
+                            {taske.description}
                         </p>
                         <h2 className={styles.ModalTaskH2}>Subtasks     </h2>
                         <RenderSubTask 
                             boardId={taskManager[0].boards[currentBoardIndex].id}
                             columnId={props.columnId}
-                            subtasks={task.subtasks} 
+                            subtasks={taske.subtasks} 
                             />
                         <h2 className={`${styles.ModalTaskH2} ${
                             theme === 'light' ? styles.light : styles.dark

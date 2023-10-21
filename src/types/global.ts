@@ -5,13 +5,7 @@ interface Subtask {
   taskId: string;
 }
 
-export interface Task {
-  id: string;
-  title: string;
-  description:string;
-  status:string;
-  subtasks: Subtask[];
-}
+
 
 interface Column {
   id: string;
@@ -31,6 +25,12 @@ export interface User {
   email: string;
   boards: Board[];
 }
-
+export interface Task {
+  id: string;
+  title: string;
+  description:string;
+  status:string;
+  subtasks: Subtask[];
+}
 export type TaskManager = User[]; // An array of User objects
   
