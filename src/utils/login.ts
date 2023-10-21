@@ -20,6 +20,8 @@ export const login = async (
       console.log(response)
       Cookies.set('key', response.data.token);
       // Authentication successful
+      window.location.reload();
+
       setIsLoading(false);  // Reset loading when login is successful
       return response.data;
     } else {
