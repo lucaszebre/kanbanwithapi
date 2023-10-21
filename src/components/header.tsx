@@ -87,7 +87,7 @@ export default function Header(props:{boards:boolean}) {
           
             // * Invalidate queries to refetch the data, assuming you are using React Query.
             // If not, you can remove this part.
-            queryClient.invalidateQueries(['boards']);
+            queryClient.refetchQueries(['boards']);
           };
 
       

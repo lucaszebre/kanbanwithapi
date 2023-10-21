@@ -9,7 +9,7 @@ function useChangeColumnMutation() {
         changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['boards','Task']);
+            queryClient.refetchQueries(['boards','Task']);
         },
         }
     );

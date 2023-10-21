@@ -24,7 +24,7 @@ const Subtasks = (props: {
     {
       onSuccess: () => {
         // Invalidate queries as needed after backend update
-        queryClient.invalidateQueries(['Task', 'boards']);
+        queryClient.refetchQueries(['Task', 'boards']);
       },
     }
   );

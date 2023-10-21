@@ -124,7 +124,7 @@ const handleAddSubtask = () => {
         editTask(formData.taskId,formData.taskName,formData.taskDescription,formData.subTasktoAdd,formData.subTasktoDelete,formData.subTask),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['boards','Task']);
+            queryClient.refetchQueries(['boards','Task']);
             toast({
                 title: "Task edit sucessfully",
                 })
@@ -150,7 +150,7 @@ const handleAddSubtask = () => {
         if (selectedColumnId && selectedColumnId !== props.columnId) {
             column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.taskId});
             }
-        queryClient.invalidateQueries(['Task','boards'])
+        queryClient.refetchQueries(['Task','boards'])
         }        
 
 

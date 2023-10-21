@@ -55,7 +55,7 @@ const ModalTask = (props:{
             changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['boards','Task']);
+                queryClient.refetchQueries(['boards','Task']);
             },
             }
         );
@@ -77,7 +77,7 @@ const ModalTask = (props:{
                         if (selectedColumnId && selectedColumnId !== props.columnId) {
                             column.mutate({newColumnId:selectedColumnId,columnId:props.columnId,taskId:props.id
                                 });
-                            queryClient.invalidateQueries(['boards']);
+                            queryClient.refetchQueries(['boards']);
                         }}}}>
                 
                     <div 

@@ -65,7 +65,7 @@ const {
     setCurrentBoardIndex(boardIndex);
     localStorage.setItem('currentBoardIndex', boardIndex.toString());
     localStorage.setItem('currentBoardId', boardId);
-    queryClient.invalidateQueries(['Task','boards']);
+    queryClient.refetchQueries(['Task','boards']);
     };
     const {data,isLoading,isError,error} = useQuery({
         queryKey:['boards'],

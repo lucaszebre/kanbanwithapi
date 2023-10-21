@@ -5,19 +5,17 @@ import SubTask from './SubTask';
 import { useTheme } from '@/state/themecontext';
 import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
-import { fetchBoards } from '@/utils/fetchBoard';
-import Skeleton from 'react-loading-skeleton';
 import Cookies from 'js-cookie';
 import { useToast } from "@/components/ui/use-toast"
+import { useTaskManagerStore } from '@/state/taskManager';
 
 const AddTask = (props: {
   addTask: boolean;
   setAddTask: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['boards'],
-    queryFn: () => fetchBoards(),
-  });
+  const taskManager = useTaskManagerStore((state)=>state.taskManager)
+  const addTask = useTaskManagerStore((state)=>state.addTask)
+
   const [taskTitle, setTaskTitle] = useState(''); // state for the task title
   const [taskDescription, setTaskDescription] = useState(''); // state for task description
   const [SubTaskCurrent, setSubTaskCurrent] = useState<string[]>([]); // states to save up the name of all the subtasks I add
@@ -27,8 +25,8 @@ const AddTask = (props: {
   const [SelectId, setSelectId] = useState(''); // state to know which column is selected
   useEffect(() => {
     const index = parseInt(Cookies.get('currentBoardIndex')||'0') 
-    if (data && data[0].boards[index] && data[0].boards[index].columns) {
-      setSelectId(data[0].boards[index].columns[0].id);
+    if (taskManager && taskManager[0].boards[index] && taskManager[0].boards[index].columns) {
+      setSelectId(taskManager[0].boards[index].columns[0].id);
       console.log(index)
     }
   }, [parseInt(Cookies.get('currentBoardIndex')||'0') ]);
@@ -41,7 +39,7 @@ const AddTask = (props: {
     {
       onSuccess: () => {
         
-        queryClient.invalidateQueries(['boards','Task']);
+        queryClient.refetchQueries(['boards']);
         toast({
           title: "Task add sucessfully",
           
@@ -71,6 +69,7 @@ const AddTask = (props: {
   };
   const HandleSubmit = async () => {
     if (taskTitle && taskDescription && SelectId) {
+      addTask(taskManager[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0')].id,taskTitle,taskDescription,SelectId,SubTaskCurrent)
       mutation.mutate({ taskTitle, taskDescription, columnId: SelectId, SubTaskCurrent });
       setTaskTitle('');
       setTaskDescription('');
@@ -79,23 +78,7 @@ const AddTask = (props: {
       console.error("error in Add Task");
     }
   };
-  if (isLoading) {
-    return (
-      <div className={styles.AddTaskWrapper} style={{ display: props.addTask ? 'flex' : 'none' }}>
-        <div className={`${styles.AddTaskBlock} ${theme === 'light' ? styles.light : styles.dark}`}>
-          <Skeleton height={30} width={200} style={{ marginBottom: '10px' }} />
-          {/* Other skeleton components */}
-        </div>
-      </div>
-    );
-  }
-  if (isError) {
-    return (
-      <p>
-        Something went wrong
-      </p>
-    );
-  }
+  
   return (
     <div onClick={(e)=>{if(e.currentTarget==e.target){
       
@@ -162,7 +145,7 @@ const AddTask = (props: {
             onClick={() => { console.log(SelectId) }}
             className={`${styles.SelectAddTask} ${theme === 'light' ? styles.light : styles.dark}`}
           >
-            {data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ] && data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns && renderSelect(data[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns)}
+            {taskManager[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ] && taskManager[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns && renderSelect(taskManager[0].boards[parseInt(Cookies.get('currentBoardIndex')||'0') ].columns)}
           </select>
           <button className={styles.AddTaskSaveButton} type="submit">
             Create Task

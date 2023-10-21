@@ -35,7 +35,7 @@ const sideMobile = () => {
         
           // * Invalidate queries to refetch the data, assuming you are using React Query.
           // If not, you can remove this part.
-          queryClient.invalidateQueries(['boards']);
+          queryClient.refetchQueries(['boards']);
         };
         
             // eslint-disable-next-line react-hooks/rules-of-hooks

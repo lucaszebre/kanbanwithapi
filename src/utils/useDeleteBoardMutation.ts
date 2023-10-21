@@ -27,7 +27,7 @@ function useDeleteBoardMutation() {
     (boardId:string) => deleteBoard(boardId),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['boards']);
+        queryClient.refetchQueries(['boards']);
       },
     }
   );

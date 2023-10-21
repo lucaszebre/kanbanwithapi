@@ -6,7 +6,6 @@ import EmptyBoard from './emptyBoard';
 import { useSidebarStore } from '@/state/sidebarcontext';
 import Header from './header';
 import styles from '../styles/Board.module.css';
-import { DataContext } from '@/state/datacontext';
 import { getInitialWindowWidth } from '@/utils/GetInitialWidth';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { fetchBoards } from '@/utils/fetchBoard'; // Import updateBoard function
@@ -19,11 +18,11 @@ import {
 import { changeColumn } from '@/utils/changeColumn';
 import { useStore } from '@/state/contextopen';
 import { useTaskManagerStore } from '@/state/taskManager';
+import { randomUUID } from 'crypto';
 
 const Board = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
     const {currentBoardIndex}=useStore()
-    const {  setIsLoggedIn } = useContext(DataContext);
     const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
     const [editBoard, setEditBoard] = useState(false);
     const queryClient = useQueryClient();
@@ -32,7 +31,7 @@ const Board = () => {
         changeColumn(formData.newColumnId,formData.columnId,formData.taskId),
         {
         onSuccess: () => {
-            queryClient.invalidateQueries(['boards','Task']);
+            queryClient.refetchQueries(['boards','Task']);
         },
         }
     );
@@ -56,7 +55,7 @@ const Board = () => {
         }
     }, [windowWidth, setIsSidebarOpen]);
 
-    const { data, isLoading,isError } = useQuery({
+    const { data, isStale } = useQuery({
         queryKey: ['boards'],
         queryFn: () => fetchBoards()
         });
@@ -66,16 +65,12 @@ const Board = () => {
     const taskManager = useTaskManagerStore((state)=>state.taskManager)
 
     useEffect(() => {
-        if (!isLoading && data && !isError) {
+        if ( data ) {
           setTaskManagerData(data);
         }
-      }, [data, isLoading, isError, setTaskManagerData]);
+      }, [data,isStale, setTaskManagerData]);
     
-if(data){
-    console.log(data)
-    console.log('taskManager',taskManager)
 
-}
 
 
 
@@ -110,7 +105,7 @@ if(data){
         });
     
         // Invalidate queries to trigger a refetch
-        queryClient.invalidateQueries(['boards', 'Task']);
+        queryClient.refetchQueries(['boards', 'Task']);
       };
 
     // function to render data 
@@ -124,7 +119,7 @@ if(data){
                     {taskManager[0].boards[currentBoardIndex].columns.map(
                         (column: Column, columnIndex: number) => (
                             <ListTask
-                                key={column.id}
+                                key={columnIndex}
                                 title={column.name}
                                 tasks={column.tasks}
                                 columnId={column.id}

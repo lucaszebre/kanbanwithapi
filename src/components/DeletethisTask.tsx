@@ -7,6 +7,7 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import React from 'react'
 import { deleteTask } from '@/utils/deleteTask';
 import { useToast } from "@/components/ui/use-toast"
+import { useTaskManagerStore } from '@/state/taskManager';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
@@ -17,10 +18,9 @@ const {
   } = useStore()
   const { toast } = useToast()
 
-  const {data,isLoading,isError,error} = useQuery({
-    queryKey:['boards'],
-    queryFn:()=>fetchBoards(),
-  });
+  const taskManager = useTaskManagerStore((state)=>state.taskManager)
+  const delTask = useTaskManagerStore((state)=>state.deleteTask)
+
   const {currentBoardIndex}=useStore()
   const queryClient = useQueryClient();
 
@@ -29,7 +29,7 @@ const {
     deleteTask(formData.taskId),
     {
     onSuccess: () => {
-        queryClient.invalidateQueries(['boards']);
+        queryClient.refetchQueries(['boards']);
         toast({
             title: "Task delete sucessfully!",
             
@@ -62,7 +62,8 @@ const {
                 <div className={styles.DeleteThisTaskButtons}>
                     <button
                         onClick={() => {
-                            mutation.mutate({boardId:data[0].boards[currentBoardIndex].id,columnId:props.columnId,taskId:props.TaskId})
+                            delTask(taskManager[0].boards[currentBoardIndex].id,props.columnId,props.TaskId)
+                            mutation.mutate({boardId:taskManager[0].boards[currentBoardIndex].id,columnId:props.columnId,taskId:props.TaskId})
                             setDeleteTaskBlock(false);
                         }}
                         className={styles.DeleteButton}

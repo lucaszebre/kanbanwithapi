@@ -124,7 +124,7 @@ function renderColumns() {
             handleSaveChanges(formData.columnsToDelete, formData.columnsToRename,formData.columnstoAdd,formData.currentBoardId,formData.Header,formData.headerTitle),
             {
             onSuccess: () => {
-                queryClient.invalidateQueries(['boards']);
+                queryClient.refetchQueries(['boards']);
                 toast({
                     title: "Edit board  sucessfully",
                     
@@ -146,7 +146,7 @@ function renderColumns() {
     <div className={styles.EditBoardWrapper}
         onClick={(e) => {
             if (e.target === e.currentTarget) {
-                queryClient.invalidateQueries(['boards']);
+                queryClient.refetchQueries(['boards']);
                 props.setEditBoard(false);
             }}}
         style={{
@@ -174,7 +174,7 @@ function renderColumns() {
                         mutation.mutate({columnsToDelete, columnsToRename,columnstoAdd:columnstoAdd,currentBoardId:taskManager[0].boards[currentBoardIndex].id,Header,headerTitle:taskManager[0].boards[currentBoardIndex].name})
                         props.setEditBoard(false);
                         SetSave(!Save);
-                        queryClient.invalidateQueries(['boards']);
+                        queryClient.refetchQueries(['boards']);
                     }
                     
                     

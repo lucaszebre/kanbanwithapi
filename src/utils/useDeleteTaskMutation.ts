@@ -9,7 +9,7 @@ function useDeleteTaskMutation() {
     deleteTask(formData.taskId),
     {
     onSuccess: () => {
-        queryClient.invalidateQueries(['boards']);
+        queryClient.refetchQueries(['boards']);
     },
     }
 );

@@ -19,6 +19,7 @@ const ListTask: React.FC<ListTaskProps> = ({ tasks, title, columnId, columnIndex
                         {...provided.dragHandleProps}
                     >
                         <TaskCard
+                            key={task.id}
                             title={task.title}
                             description={task.description}
                             id={task.id}

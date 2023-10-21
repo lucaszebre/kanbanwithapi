@@ -27,7 +27,7 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
             (boardId:string) => deleteBoard(boardId),
             {
               onSuccess: () => {
-                queryClient.invalidateQueries(['boards']);
+                queryClient.refetchQueries(['boards']);
                 toast({
                     title: "Delete the board sucessfully!",
                     

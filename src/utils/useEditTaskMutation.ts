@@ -10,7 +10,7 @@ function useEditTaskMutation() {
     editTask(formData.taskId,formData.taskName,formData.taskDescription,formData.subTasktoAdd,formData.subTasktoDelete,formData.subTask),
     {
     onSuccess: () => {
-        queryClient.invalidateQueries(['boards','Task']);
+        queryClient.refetchQueries(['boards','Task']);
     },
     }
 );
