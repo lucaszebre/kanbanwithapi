@@ -108,7 +108,6 @@ const Board = () => {
         // Invalidate queries to trigger a refetch
         queryClient.refetchQueries(['boards', 'Task']);
       };
-      console.log(data)
     // function to render data 
     function renderListTask() {
         if (

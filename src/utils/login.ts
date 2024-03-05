@@ -17,7 +17,6 @@ export const login = async (
     });
     
     if (response && response.data && response.data.token) {
-      console.log(response)
       Cookies.set('key', response.data.token);
       // Authentication successful
       window.location.reload();

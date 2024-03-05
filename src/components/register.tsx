@@ -43,7 +43,6 @@ export function Register() {
             values.name,
         )
         setIsLoading(isLoading)
-        console.log(values)
       }
   return (
         
