@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://kanbanexpress.onrender.com', // Replace with your API's base URL
+  baseURL: 'https://kanbanapi-4d88529b1e71.herokuapp.com/', // Replace with your API's base URL
   headers: {
     common: {
       Authorization: `Bearer ${token}`,
