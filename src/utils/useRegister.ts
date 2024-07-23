@@ -1,35 +1,33 @@
-import { useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { axiosInstance } from './instance';
 
- const register = async (email:string, password:string,fullname:string) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+interface RegisterData {
+  email: string;
+  password: string;
+  fullname: string;
+}
 
-    try {
-        const response = await axiosInstance.post('/auth/register', {
-            email,
-            password,
-            name:fullname,
-        });
-    
-        if (response && response.data && response.data.token) {
-            // Authentication successful
-           
-            return response.data;
-        } else {
-            // Authentication failed
-           
-            return response;
-        }
-        } catch (error) {
-            
-        console.error(error);
-        return null;
-        }
-    };
+const register = async ({ email, password, fullname }: RegisterData) => {
+  try {
+    const response = await axiosInstance.post('/register', {
+      email,
+      password,
+      name: fullname,
+    });
 
-    export const useRegister = (email:string, password:string,fullname:string) => {
-        const { data, isLoading, isError } = useQuery([ email, password,fullname], 
-            () => register( email, password,fullname));
-    
-        return { data, isLoading, isError };
-    };
+    if (response && response.data && response.data.token) {
+      // Authentication successful
+      return response.data;
+    } else {
+      // Authentication failed
+      throw new Error('Registration failed');
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const useRegister = () => {
+  return useMutation<any, Error, RegisterData>(register);
+};

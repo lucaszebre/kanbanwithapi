@@ -35,13 +35,30 @@ export function Register() {
       })
 
 
+      const registerMutation = useRegister();
+
+      const handleRegister = (email: string, password: string, fullname: string) => {
+        registerMutation.mutate({ email, password, fullname }, {
+          onSuccess: (data) => {
+            // Handle successful registration
+            console.log(data);
+          },
+          onError: (error) => {
+            // Handle registration error
+            console.error(error);
+          }
+        });
+      };
+
       
       function onSubmit(values: z.infer<typeof SchemaRegister>) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-    const {isLoading}=    useRegister(values.email,
+    const dd =    handleRegister(values.email,
             values.password,
             values.name,
         )
+
+        
         setIsLoading(isLoading)
       }
   return (
@@ -75,7 +92,7 @@ export function Register() {
                 <FormItem className="flex-col items-start content-start w-full">
                 <FormLabel className="text-start w-full" >Email</FormLabel>
                 <FormControl>
-                    <Input type="password" placeholder="lucas1@gmail.com" {...field} />
+                    <Input type="email"  placeholder="lucas1@gmail.com" {...field} />
                 </FormControl>
                 
                 <FormMessage />
@@ -89,7 +106,7 @@ export function Register() {
                 <FormItem className="w-full">
                 <FormLabel className="text-start items-start w-full" >Password</FormLabel>
                 <FormControl>
-                    <Input placeholder="shadcn@dd11" {...field} />
+                    <Input type="password" placeholder="shadcn@dd11" {...field} />
                 </FormControl>
                 
                 <FormMessage />
