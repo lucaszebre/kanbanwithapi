@@ -6,8 +6,8 @@ import { useTheme } from '@/state/themecontext';
 import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { createTask } from '@/utils/createTask';
 import Cookies from 'js-cookie';
-import { useToast } from "@/components/ui/use-toast"
 import { useTaskManagerStore } from '@/state/taskManager';
+import toast from 'react-hot-toast';
 
 const AddTask = (props: {
   addTask: boolean;
@@ -30,7 +30,6 @@ const AddTask = (props: {
       console.log(index)
     }
   }, [parseInt(Cookies.get('currentBoardIndex')||'0') ]);
-  const { toast } = useToast()
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
@@ -40,16 +39,10 @@ const AddTask = (props: {
       onSuccess: () => {
         
         queryClient.refetchQueries(['boards']);
-        toast({
-          title: "Task add sucessfully",
-          
-        })
+        toast.success("Task add sucessfully")
       },
       onError:()=>{
-        toast({
-          title: "Error to add a task",
-          
-        })
+        toast.error("Error to add a task")
       }
     }
   );

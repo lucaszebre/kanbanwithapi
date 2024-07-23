@@ -10,8 +10,8 @@ import { fetchBoards } from '@/utils/fetchBoard';
 import {  ColumnData } from "@/types";
 import React from 'react'
 import { useStore } from "@/state/contextopen";
-import { useToast } from "@/components/ui/use-toast"
 import { useTaskManagerStore } from "@/state/taskManager";
+import toast from "react-hot-toast";
 
 const EditBoard = (props:{editBoard:boolean,setEditBoard:React.Dispatch<React.SetStateAction<boolean>>}) => {
 
@@ -25,7 +25,6 @@ const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know
 const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]);  // state to know the column to delete in the database
 const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]);// state to know the column to rename in the database
 const { theme } = useTheme();
-const { toast } = useToast()
 
 const taskManager = useTaskManagerStore((state)=>state.taskManager)
 const updateBoard = useTaskManagerStore((state)=>state.updateBoard)
@@ -125,16 +124,10 @@ function renderColumns() {
             {
             onSuccess: () => {
                 queryClient.refetchQueries(['boards']);
-                toast({
-                    title: "Edit board  sucessfully",
-                    
-                  })
+                toast.success("Edit board  sucessfully")
             },
             onError:()=>{
-                toast({
-                    title: "Error to edit the board",
-                    
-                  })
+                toast.error("Error to edit the board")
             }
             }
         );

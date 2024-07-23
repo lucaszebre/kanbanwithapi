@@ -6,8 +6,8 @@ import Skeleton from 'react-loading-skeleton';
 import { useStore } from '@/state/contextopen';
 import React from 'react'
 import { deleteBoard } from '@/utils/deleteBoard';
-import { useToast } from "@/components/ui/use-toast"
 import { useTaskManagerStore } from '@/state/taskManager';
+import toast from 'react-hot-toast';
 
 const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatch<React.SetStateAction<boolean>>}) => {
     const { setCurrentBoardIndex} = useStore();  // state to manage the global data 
@@ -15,7 +15,6 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
         const {currentBoardIndex}=useStore()
 
     
-        const { toast } = useToast()
 
     const queryClient = useQueryClient();
 
@@ -28,16 +27,12 @@ const DeleteThisBoard = (props:{DeleteBlock:boolean,setDeleteBlock:React.Dispatc
             {
               onSuccess: () => {
                 queryClient.refetchQueries(['boards']);
-                toast({
-                    title: "Delete the board sucessfully!",
-                    
-                  })
+
+                toast.success("Delete the board sucessfully!")
+
               },
               onError:()=>{
-                toast({
-                    title: "Error to delete the board",
-                    
-                  })
+                toast.error("Error to delete the board")
               }
             }
           );

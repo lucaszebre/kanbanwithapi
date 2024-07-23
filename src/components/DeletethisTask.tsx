@@ -6,8 +6,8 @@ import {useStore}
 import { fetchBoards } from '@/utils/fetchBoard';
 import React from 'react'
 import { deleteTask } from '@/utils/deleteTask';
-import { useToast } from "@/components/ui/use-toast"
 import { useTaskManagerStore } from '@/state/taskManager';
+import toast from 'react-hot-toast';
 
 
 const DeleteThisTask = (props:{TaskTitle:string,TaskId:string,columnId:string}) => {
@@ -16,7 +16,6 @@ const {
     DeleteTaskBlock,
     setDeleteTaskBlock,
   } = useStore()
-  const { toast } = useToast()
 
   const taskManager = useTaskManagerStore((state)=>state.taskManager)
   const delTask = useTaskManagerStore((state)=>state.deleteTask)
@@ -30,16 +29,11 @@ const {
     {
     onSuccess: () => {
         queryClient.refetchQueries(['boards']);
-        toast({
-            title: "Task delete sucessfully!",
-            
-          })
+        toast.success("Task delete sucessfully!")
     },
     onError: ()=>{
-        toast({
-            title: "Error to delete the task!",
-            
-          })
+        toast.error("Error to delete the task!")
+      
     }
     }
 );   

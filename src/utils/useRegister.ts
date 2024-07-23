@@ -1,5 +1,6 @@
 import { useMutation } from 'react-query';
 import { axiosInstance } from './instance';
+import toast from 'react-hot-toast';
 
 interface RegisterData {
   email: string;
@@ -16,14 +17,13 @@ const register = async ({ email, password, fullname }: RegisterData) => {
     });
 
     if (response && response.data && response.data.token) {
-      // Authentication successful
       return response.data;
     } else {
-      // Authentication failed
       throw new Error('Registration failed');
     }
   } catch (error) {
     console.error(error);
+
     throw error;
   }
 };

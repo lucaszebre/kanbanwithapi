@@ -21,6 +21,7 @@ import { z } from "zod"
 import { Icons } from "./icons"
 import { useRegister } from "@/utils/useRegister"
 import React, { SetStateAction, useState } from "react"
+import toast from "react-hot-toast"
 
 
 
@@ -40,11 +41,11 @@ export function Register() {
       const handleRegister = (email: string, password: string, fullname: string) => {
         registerMutation.mutate({ email, password, fullname }, {
           onSuccess: (data) => {
-            // Handle successful registration
+            toast.success("User registered sucessfully")
             console.log(data);
           },
           onError: (error) => {
-            // Handle registration error
+            toast.error(error.message)
             console.error(error);
           }
         });

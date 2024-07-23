@@ -17,8 +17,8 @@ import {useStore}
 import useEditTaskMutation from "@/utils/useEditTaskMutation";
 import useChangeColumnMutation from "@/utils/useChangeColumnMutation";
 import { editTask } from "@/utils/editTask";
-import { useToast } from "@/components/ui/use-toast"
 import { useTaskManagerStore } from "@/state/taskManager";
+import toast from "react-hot-toast";
 
 const EditTask = (props:{columnId:string,taskId:string,index:number}) => {
     const { currentBoardIndex} = useStore();
@@ -47,7 +47,6 @@ const [selectedColumnId, setSelectedColumnId] = useState(props.columnId);
 const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
 const [inputError, setInputError] = useState<boolean>(false);
 const { theme } = useTheme();
-const { toast } = useToast()
 
 useEffect(()=>{
     if(task){
@@ -125,14 +124,10 @@ const handleAddSubtask = () => {
         {
         onSuccess: () => {
             queryClient.refetchQueries(['boards','Task']);
-            toast({
-                title: "Task edit sucessfully",
-                })
+            toast.success("Task edit sucessfully")
         },
         onError:()=>{
-            toast({
-                title: "Error to edit the task!",
-                })
+            toast.error("Error to edit the task!")
         }
         }
     );    const column = useChangeColumnMutation()
