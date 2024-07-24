@@ -1,10 +1,10 @@
 import {  render, waitFor} from "@testing-library/react"
-import  from "../components/"
 import user from "@testing-library/user-event"
 import '@testing-library/jest-dom'
 import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
 import mockRouter from 'next-router-mock';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Login } from "@/components/login";
 let queryClient: QueryClient;
 
 
@@ -21,25 +21,25 @@ afterAll(() => {
 });
 
 
-describe(" components Test",()=>{
+describe("Login components Test",()=>{
 it("input and button should be present",async ()=>{
-    const render = render(
+    const renderLogin = render(
         <QueryClientProvider client={queryClient}>
-          < />
+          <Login />
         </QueryClientProvider>
       );
-    const inputEmail=  await render.findAllByPlaceholderText('e.g. lucasbeaugosse@email.com')
+    const inputEmail=  await renderLogin.findAllByPlaceholderText('e.g. lucasbeaugosse@email.com')
     expect(inputEmail).toBeTruthy();
-    const inputPassword = await render.findAllByPlaceholderText('Enter your password');
+    const inputPassword = await renderLogin.findAllByPlaceholderText('Enter your password');
     expect(inputPassword).toBeTruthy();
-    const button =  render.getAllByRole('button')
-    expect(button).toBeTruthy();
+    const buttonLogin =  renderLogin.getAllByRole('button')
+    expect(buttonLogin).toBeTruthy();
 })
 
 it('input fields should accept user input',async ()=>{
         const { findByPlaceholderText, getByRole } = render(
             <QueryClientProvider client={queryClient}>
-            < />
+            <Login />
             </QueryClientProvider>
         );
         
@@ -61,20 +61,20 @@ it('input fields should accept user input',async ()=>{
 it('if the input is empty the error should show',async ()=>{
         const { findByPlaceholderText, getByRole,findByText } = render(
             <QueryClientProvider client={queryClient}>
-            < />
+            <Login />
             </QueryClientProvider>
         );
         
         const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
         const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
-        const button = getByRole('button');
+        const buttonLogin = getByRole('button');
 
         
         expect(inputEmail).toBeInTheDocument();
         expect(inputPassword).toBeInTheDocument();
         
         // Check if the input fields have the expected values
-        user.click(button)
+        user.click(buttonLogin)
 
         expect(inputEmail.value).toBe('');
         expect(inputPassword.value).toBe('');
@@ -88,20 +88,20 @@ it('if the input is empty the error should show',async ()=>{
 it("if the password is not in the goodformat error should show P1",async ()=>{
     const { findByPlaceholderText, getByRole,findByText } = render(
         <QueryClientProvider client={queryClient}>
-        < />
+        <Login />
         </QueryClientProvider>
     );
     
     const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
     const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
-    const button = getByRole('button');
+    const buttonLogin = getByRole('button');
 
     
     expect(inputEmail).toBeInTheDocument();
     expect(inputPassword).toBeInTheDocument();
     
     // Check if the input fields have the expected values
-    await user.click(button)
+    await user.click(buttonLogin)
 
     expect(inputEmail.value).toBe('');
     expect(inputPassword.value).toBe('');
@@ -114,20 +114,20 @@ it("if the password is not in the goodformat error should show P1",async ()=>{
 it("if the password is not in the goodformat error should show P2",async ()=>{
     const { findByPlaceholderText, getByRole,findByText } = render(
         <QueryClientProvider client={queryClient}>
-        < />
+        <Login />
         </QueryClientProvider>
     );
     
     const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
     const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
-    const button = getByRole('button');
+    const buttonLogin = getByRole('button');
 
     
     expect(inputEmail).toBeInTheDocument();
     expect(inputPassword).toBeInTheDocument();
     
     // Check if the input fields have the expected values
-    await user.click(button)
+    await user.click(buttonLogin)
 
     expect(inputEmail.value).toBe('');
     expect(inputPassword.value).toBe('');
@@ -140,20 +140,20 @@ it("if the password is not in the goodformat error should show P2",async ()=>{
 it("if the password is not in the goodformat error should show P3",async ()=>{
     const { findByPlaceholderText, getByRole,findByText } = render(
         <QueryClientProvider client={queryClient}>
-        < />
+        <Login />
         </QueryClientProvider>
     );
     
     const inputEmail = (await findByPlaceholderText('e.g. lucasbeaugosse@email.com')) as HTMLInputElement;
     const inputPassword = (await findByPlaceholderText('Enter your password')) as HTMLInputElement;
-    const button = getByRole('button');
+    const buttonLogin = getByRole('button');
 
     
     expect(inputEmail).toBeInTheDocument();
     expect(inputPassword).toBeInTheDocument();
     
     // Check if the input fields have the expected values
-    await user.click(button)
+    await user.click(buttonLogin)
 
     expect(inputEmail.value).toBe('');
     expect(inputPassword.value).toBe('');
@@ -168,7 +168,7 @@ it("if the password is not in the goodformat error should show P3",async ()=>{
 test('Link is present and contain the right href',async () => {
   const { findByText } = render(
     <QueryClientProvider client={queryClient}>
-      < />
+      <Login />
     </QueryClientProvider>,{ wrapper: MemoryRouterProvider }
   );
 
