@@ -21,7 +21,7 @@ export const createTask = async (taskTitle:string,taskDescription:string,columnI
         
                 // User is authenticated, check if a row exists in the "User" table
                 
-                    const response = await axiosInstance.post(`/columns/${columnId}/tasks`,
+                    const response = await axiosInstance.post(`/api/columns/${columnId}/tasks`,
                     {
                         title:taskTitle,
                         description:taskDescription,

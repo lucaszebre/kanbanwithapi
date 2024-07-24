@@ -47,7 +47,7 @@ function Home() {
             </Layout>
           </ErrorBoundary>
         ) : (
-          // Wrap your Login component with ErrorBoundary
+          // Wrap your  component with ErrorBoundary
           <ErrorBoundary>
             <Auth />
           </ErrorBoundary>

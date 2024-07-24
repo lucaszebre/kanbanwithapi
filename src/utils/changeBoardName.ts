@@ -2,7 +2,7 @@ import { handleSessionExpiration } from "./handleSessionexpiration";
 import { axiosInstance } from "./instance";
 export const changeBoardName = async (boardId:string,name:string) : Promise<any> =>{
     try{
-        const response = await axiosInstance.put(`/boards/${boardId}`,{
+        const response = await axiosInstance.put(`/api/boards/${boardId}`,{
             name:name
         });
         if(response){

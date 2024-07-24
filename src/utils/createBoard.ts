@@ -17,7 +17,7 @@ import { handleSessionExpiration } from "./handleSessionexpiration";
 export const createBoard = async (boardName:string,columnsName:string[]) =>{
     try{
                 const response = await axiosInstance.post(
-                    `/boards`,
+                    `/api/boards`,
                     {
                         name:boardName,
                         columns:columnsName

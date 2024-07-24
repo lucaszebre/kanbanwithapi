@@ -23,7 +23,7 @@ export const editTask = async (
     };
 
     // Make the PUT request using axios
-    const response = await axiosInstance.put(`/tasks/${taskId}`, requestBody);
+    const response = await axiosInstance.put(`/api/tasks/${taskId}`, requestBody);
 
     if (response.data) {
       console.log('Edit Task successfully');

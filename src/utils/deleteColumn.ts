@@ -3,7 +3,7 @@ import { axiosInstance } from "./instance";
 
 export const deleteColumn = async (columnId:string) : Promise<any> =>{
     try{
-        const response = await axiosInstance.delete(`/columns/${columnId}`);
+        const response = await axiosInstance.delete(`/api/columns/${columnId}`);
         if(response){
             return response
         }else{

@@ -3,7 +3,7 @@ import { axiosInstance } from "./instance";
 
 export const deleteBoard = async (boardId:string) =>{
     try{
-        const response = await axiosInstance.delete(`/boards/${boardId}`);
+        const response = await axiosInstance.delete(`/api/boards/${boardId}`);
         if(response){
             return response
         }else{

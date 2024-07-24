@@ -4,7 +4,7 @@ import { axiosInstance } from "./instance";
 
 export const deleteTask = async (taskId:string) =>{
     try{
-        const response = await axiosInstance.delete(`/tasks/${taskId}`);
+        const response = await axiosInstance.delete(`/api/tasks/${taskId}`);
         if(response){
             console.log(response.status)
         }else{

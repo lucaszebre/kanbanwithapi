@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie';
 import { axiosInstance } from './instance';
 import React, { SetStateAction } from 'react';
+import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
 export const login = async (
   email: string, 
@@ -29,7 +31,11 @@ export const login = async (
       setIsLoading(false);  // Reset loading when login fails
       return null;
     }
-  } catch (error) {
+  } catch (error:any) {
+
+    if (error.response!.status === 401) {
+      toast.error('Wrong Credentials')
+     }
    
     console.error(error);
     setIsLoading(false);  // Ensure loading is reset even on error

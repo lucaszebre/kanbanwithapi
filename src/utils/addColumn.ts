@@ -3,7 +3,7 @@ import { axiosInstance } from "./instance";
 export const addColumn = async (boardId:string,Columnname:string) : Promise<any> =>{
     try{
 
-        const response = await axiosInstance.post(`/boards/${boardId}/columns`,{
+        const response = await axiosInstance.post(`/api/boards/${boardId}/columns`,{
             name:Columnname
         });
         if(response){

@@ -4,7 +4,7 @@ import { handleSessionExpiration } from './handleSessionexpiration';
 export const fetchBoards = async ():Promise<any> => {
   try {
     
-    const response = await axiosInstance.get(`/boards`);
+    const response = await axiosInstance.get(`/api/boards`);
       if (response) {
         return response.data;
       } else {

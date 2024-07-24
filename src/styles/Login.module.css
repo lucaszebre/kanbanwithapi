@@ -1,4 +1,4 @@
-.loginDiv {
+.Div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,14 +8,14 @@
         font-family: 'Ubuntu', sans-serif;
     }
     
-    .loginTitle {
+    .Title {
         font-size: 2rem;
         font-weight: 600;
         margin-bottom: 24px;
         color: #333;
     }
     
-    .loginWithGoogleBtn {
+    .WithGoogleBtn {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -32,25 +32,25 @@
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
-    .loginWithGoogleBtn:hover {
+    .WithGoogleBtn:hover {
         background-color: #2a75f3;
         box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     }
     
-    .loginWithGoogleBtn img {
+    .WithGoogleBtn img {
         width: 20px;
         height: 20px;
         margin-right: 8px;
     }
 
 @media (max-width:767px){
-    .loginTitle{
+    .Title{
         font-size: 1rem;
     }
 }
 
 
-.LoginContainer{
+.Container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -59,20 +59,20 @@
     background-color: transparent !important;
   }
   
-  .LoginError{
+  .Error{
     color: red;
     font-size: .7rem;
     position: absolute;
     right: 10px;
     top: 1rem;
   }
-  .LoginImage{
+  .Image{
     height: 40px;
     width: 500px;
     position: relative;
   }
   
-  .LoginWrapper{
+  .Wrapper{
       max-width: 29.75rem;
       display: flex;
       flex-direction: column;
@@ -84,7 +84,7 @@
       
     }
       
-  .LoginForm{
+  .Form{
       -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.1); 
       box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.1);
       display: flex;
@@ -99,7 +99,7 @@
       border: 1px solid #e5e7eb;
   }
   
-  .LoginH1{
+  .H1{
       color: var(--dark-grey, #333);
       /* Heading M */
       font-family: Instrument Sans;
@@ -109,7 +109,7 @@
       line-height: 150%;
   }
   
-  .LoginDescription{
+  .Description{
       color: var(--grey, #737373);
       /* Body M */
       font-family: Instrument Sans;
@@ -124,7 +124,7 @@
     justify-content: space-between;
     gap: 2rem;
   }
-  .LoginLabel{
+  .Label{
       color: var(--dark-grey, #333);
       /* Body S */
       font-family: Instrument Sans;
@@ -134,12 +134,12 @@
       line-height: 150%;
   }
   
-  .LoginInputWrapper{
+  .InputWrapper{
       position: relative;
       height: 3rem;
       width: 100%;
   }
-  .LoginInput{
+  .Input{
       padding-left: 2em;
       display: flex;
       width: 100%;
@@ -151,7 +151,7 @@
       background: var(--white, #FFF)
   }
   
-  .LoginInput::placeholder {
+  .Input::placeholder {
       color: var(--dark-grey, #333);
       font-family: 'Instrument Sans', sans-serif;
       font-size: 1rem;
@@ -161,44 +161,44 @@
     }
     
     /* For modern browsers */
-    .LoginInput:-moz-placeholder {
+    .Input:-moz-placeholder {
       position: relative;
       left: 3rem;
     }
     
     /* For Internet Explorer 10-11 */
-    .LoginInput::-ms-input-placeholder {
+    .Input::-ms-input-placeholder {
       position: relative;
       left: 3rem;
     }
     
     /* For Microsoft Edge */
-    .LoginInput::-ms-input-placeholder {
+    .Input::-ms-input-placeholder {
       position: relative;
       left: 3rem;
     }
     
     /* For WebKit-based browsers */
-    .LoginInput::-webkit-input-placeholder {
+    .Input::-webkit-input-placeholder {
       position: relative;
       left: 3rem;
     }
     
     /* For Opera */
-    .LoginInput::-o-input-placeholder {
+    .Input::-o-input-placeholder {
       position: relative;
       left: 3rem;
     }
   
     /* For Mozilla Firefox */
   @-moz-document url-prefix() {
-      .LoginInput::placeholder {
+      .Input::placeholder {
         position: relative;
         left: 3rem;
       }
     }
   
-  .LoginButton{
+  .Button{
       display: flex;
       padding: 1.6rem;
       flex-direction: column;
@@ -215,13 +215,13 @@
       cursor: pointer;
   }
   
-  .LoginButton:active{
+  .Button:active{
     background: var(--purple-hover-color, #BEADFF);
   /* active-selection */
   box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25);
   }
   
-  .LoginDiv{
+  .Div{
       display: flex;
       align-self: center;
       color: #737373;
@@ -235,11 +235,11 @@
       line-height: 150%;
   }
   
-  .LoginNoAccount{
+  .NoAccount{
       color: #633CFF;
   }
   
-  .LoginImageInput{
+  .ImageInput{
       position: absolute;
       left: 10px;
       top: 1rem;
@@ -251,7 +251,7 @@
     justify-content: space-between;
     width: 100%;
   }
-  .LoginGithub{
+  .Github{
     transition: background-color .3s, box-shadow .3s;
     cursor: pointer;
     padding: 12px 16px 12px 42px;
@@ -269,15 +269,15 @@
     background-repeat: no-repeat;
     background-position: 12px 11px;
     
-    .loginwithgooglebtn:hover {
+    .withgooglebtn:hover {
       box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
     }
     
-    .LoginGithub:active {
+    .Github:active {
       background-color: #eeeeee;
     }
     
-    .LoginGithub:focus {
+    .Github:focus {
       outline: none;
       box-shadow: 
         0 -1px 0 rgba(0, 0, 0, .04),
@@ -285,7 +285,7 @@
         0 0 0 3px #c8dafc;
     }
     
-    .LoginGithub:disabled {
+    .Github:disabled {
       filter: grayscale(100%);
       background-color: #ebebeb;
       box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
@@ -293,7 +293,7 @@
     }
   }
   
-  .loginwithgooglebtn {
+  .withgooglebtn {
     transition: background-color .3s, box-shadow .3s;
     cursor: pointer;
     padding: 12px 16px 12px 42px;
@@ -311,15 +311,15 @@
     background-repeat: no-repeat;
     background-position: 12px 11px;
     
-    .loginwithgooglebtn:hover {
+    .withgooglebtn:hover {
       box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
     }
     
-    .loginwithgooglebtn:active {
+    .withgooglebtn:active {
       background-color: #eeeeee;
     }
     
-    .loginwithgooglebtn:focus {
+    .withgooglebtn:focus {
       outline: none;
       box-shadow: 
         0 -1px 0 rgba(0, 0, 0, .04),
@@ -327,7 +327,7 @@
         0 0 0 3px #c8dafc;
     }
     
-    .loginwithgooglebtn:disabled {
+    .withgooglebtn:disabled {
       filter: grayscale(100%);
       background-color: #ebebeb;
       box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
@@ -345,29 +345,29 @@
   
   @media (max-width:500px){
   
-      .LoginWrapper{
+      .Wrapper{
           background-color: white;
           margin: 0;
           height: 100%;
           width: 100%;
       }
-      .LoginImage{
+      .Image{
         height: 40px;
         width: 200px;
         position: relative;
       }
-      .LoginImageWrapper{
+      .ImageWrapper{
         align-items: start;
         padding: 2rem;
         display: flex;
         justify-content: start;
         width: 100%;
       }
-      .LoginForm{
+      .Form{
           box-shadow: none;
           gap: .5rem;
       }
-      .LoginDiv{
+      .Div{
         flex-direction: column;
       }
   
@@ -375,7 +375,7 @@
   }
   
   @media (max-width:510px){
-    .LoginForm{
+    .Form{
       border: none;
     }
    

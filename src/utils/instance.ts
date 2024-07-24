@@ -12,9 +12,11 @@ if (typeof window !== "undefined") {
   token = Cookies.get("key") || "";
 }
 
+let BASEurl =  'http://localhost:8050/'
+let BASEurl2 =  'https://kanbanapi-4d88529b1e71.herokuapp.com/'
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://kanbanapi-4d88529b1e71.herokuapp.com/', // Replace with your API's base URL
+  baseURL: BASEurl, // Replace with your API's base URL
   headers: {
     common: {
       Authorization: `Bearer ${token}`,

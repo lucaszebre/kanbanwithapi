@@ -1,6 +1,7 @@
 import { useMutation } from 'react-query';
 import { axiosInstance } from './instance';
 import toast from 'react-hot-toast';
+import { AxiosResponse, AxiosError } from 'axios'
 
 interface RegisterData {
   email: string;
@@ -10,7 +11,7 @@ interface RegisterData {
 
 const register = async ({ email, password, fullname }: RegisterData) => {
   try {
-    const response = await axiosInstance.post('/register', {
+    const response:AxiosResponse = await axiosInstance.post('/register', {
       email,
       password,
       name: fullname,
@@ -19,9 +20,13 @@ const register = async ({ email, password, fullname }: RegisterData) => {
     if (response && response.data && response.data.token) {
       return response.data;
     } else {
-      throw new Error('Registration failed');
+      throw new AxiosError('Registration failed');
     }
-  } catch (error) {
+  } catch (error:any) {
+
+    if (error.response!.status === 404) {
+       toast.error('email already in use')
+      }
     console.error(error);
 
     throw error;

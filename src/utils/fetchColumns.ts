@@ -4,7 +4,7 @@ import { axiosInstance } from "./instance";
 
 export const fetchColumns = async (columnId:string) =>{
     try{
-        const response = await axiosInstance.get(`/columns/${columnId}`);
+        const response = await axiosInstance.get(`/api/columns/${columnId}`);
         if(response){
             return response
         }else{

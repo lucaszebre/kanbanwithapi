@@ -45,7 +45,6 @@ export function Register() {
             console.log(data);
           },
           onError: (error) => {
-            toast.error(error.message)
             console.error(error);
           }
         });
@@ -53,14 +52,14 @@ export function Register() {
 
       
       function onSubmit(values: z.infer<typeof SchemaRegister>) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+       setIsLoading(true)
     const dd =    handleRegister(values.email,
             values.password,
             values.name,
         )
 
         
-        setIsLoading(isLoading)
+        setIsLoading(false)
       }
   return (
         

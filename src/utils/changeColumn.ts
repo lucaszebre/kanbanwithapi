@@ -13,7 +13,7 @@ export  interface Task {
 export const changeColumn = async (newColumnId: string,columnId:string,taskId:string) => {
     if (newColumnId !== columnId) {
         try{
-            const response = await axiosInstance.put(`/tasks/${taskId}/column/${newColumnId}`);
+            const response = await axiosInstance.put(`/api/tasks/${taskId}/column/${newColumnId}`);
             if(response){
                 return response
             }else{
