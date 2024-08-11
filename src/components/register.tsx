@@ -42,7 +42,6 @@ export function Register() {
         registerMutation.mutate({ email, password, fullname }, {
           onSuccess: (data) => {
             toast.success("User registered sucessfully")
-            console.log(data);
           },
           onError: (error) => {
             console.error(error);
