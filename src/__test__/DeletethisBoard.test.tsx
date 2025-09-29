@@ -1,22 +1,22 @@
-import { ThemeProvidered } from '@/state/themecontext';
-import '@testing-library/jest-dom'
-import DeleteThisBoard from '@/components/DeletethisBoard';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import useDeleteBoardMutation from '@/utils/useDeleteBoardMutation';
+import useDeleteBoardMutation from "@/api/mutations/useDeleteBoardMutation";
+import DeleteThisBoard from "@/components/delete/DeletethisBoard";
+import { ThemeProvidered } from "@/state/themecontext";
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-jest.mock('../utils/useDeleteBoardMutation', () => ({
+jest.mock("../utils/useDeleteBoardMutation", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
 // Mock the modules and functions that are used in the component
-jest.mock('react-query', () => ({
-  ...jest.requireActual('react-query'),
+jest.mock("react-query", () => ({
+  ...jest.requireActual("react-query"),
   useQuery: jest.fn(),
   useMutation: jest.fn(),
 }));
 
-jest.mock('../utils/instance', () => ({
+jest.mock("../utils/instance", () => ({
   axiosInstance: {
     delete: jest.fn(),
   },
@@ -24,45 +24,47 @@ jest.mock('../utils/instance', () => ({
 
 const queryClient = new QueryClient();
 
-describe('DeleteThisBoard component', () => {
+describe("DeleteThisBoard component", () => {
   beforeEach(() => {
     (useDeleteBoardMutation as jest.Mock).mockReturnValue(jest.fn()); // Mock it to return a Jest mock function
   });
-  it('renders loading skeleton when loading', () => {
+  it("renders loading skeleton when loading", () => {
     // Mock isLoading to true
     const mockUseQuery = jest.fn().mockReturnValue({ isLoading: true });
-    require('react-query').useQuery.mockImplementation(mockUseQuery);
+    require("react-query").useQuery.mockImplementation(mockUseQuery);
 
     const { container } = render(
-    <ThemeProvidered>
-      <QueryClientProvider client={queryClient}>
-        <DeleteThisBoard DeleteBlock={true} setDeleteBlock={() => {}} />
-      </QueryClientProvider>
+      <ThemeProvidered>
+        <QueryClientProvider client={queryClient}>
+          <DeleteThisBoard DeleteBlock={true} setDeleteBlock={() => {}} />
+        </QueryClientProvider>
       </ThemeProvidered>
     );
 
     // Check if loading skeleton is displayed
-    expect(container.querySelector('.DeleteThisBoardTitle')).not.toBeInTheDocument();
+    expect(
+      container.querySelector(".DeleteThisBoardTitle")
+    ).not.toBeInTheDocument();
   });
 
-  it('renders error message when there is an error', () => {
+  it("renders error message when there is an error", () => {
     // Mock isError to true
     const mockUseQuery = jest.fn().mockReturnValue({ isError: true });
-    require('react-query').useQuery.mockImplementation(mockUseQuery);
+    require("react-query").useQuery.mockImplementation(mockUseQuery);
 
     const { container } = render(
-        <ThemeProvidered>
-      <QueryClientProvider client={queryClient}>
-        <DeleteThisBoard DeleteBlock={true} setDeleteBlock={() => {}} />
-      </QueryClientProvider>
+      <ThemeProvidered>
+        <QueryClientProvider client={queryClient}>
+          <DeleteThisBoard DeleteBlock={true} setDeleteBlock={() => {}} />
+        </QueryClientProvider>
       </ThemeProvidered>
     );
 
     // Check if error message is displayed
-    expect(container.textContent).toContain('Something went wrong');
+    expect(container.textContent).toContain("Something went wrong");
   });
 
-  it('renders the confirmation dialog when not loading and no error', () => {
+  it("renders the confirmation dialog when not loading and no error", () => {
     // Mock data to simulate a successful query
     const mockUseQuery = jest.fn().mockReturnValue({
       isLoading: false,
@@ -70,29 +72,27 @@ describe('DeleteThisBoard component', () => {
       data: {
         boards: [
           {
-            id: 'board1',
-            name: 'Board 1',
+            id: "board1",
+            name: "Board 1",
           },
         ],
       },
     });
-    require('react-query').useQuery.mockImplementation(mockUseQuery);
+    require("react-query").useQuery.mockImplementation(mockUseQuery);
 
     const setDeleteBlock = jest.fn();
 
     render(
-        <ThemeProvidered>
-      <QueryClientProvider client={queryClient}>
-        <DeleteThisBoard DeleteBlock={true} setDeleteBlock={setDeleteBlock} />
-      </QueryClientProvider>
+      <ThemeProvidered>
+        <QueryClientProvider client={queryClient}>
+          <DeleteThisBoard DeleteBlock={true} setDeleteBlock={setDeleteBlock} />
+        </QueryClientProvider>
       </ThemeProvidered>
     );
 
     // Check if confirmation dialog is displayed
-    expect(screen.getByText('Delete this board?')).toBeInTheDocument();
+    expect(screen.getByText("Delete this board?")).toBeInTheDocument();
   });
-
-
 
   it('calls useDeleteBoardMutation function when "Delete" button is clicked', async () => {
     // Mock data to simulate a successful query
@@ -102,16 +102,16 @@ describe('DeleteThisBoard component', () => {
       data: {
         boards: [
           {
-            id: 'board1',
-            name: 'Board 1',
+            id: "board1",
+            name: "Board 1",
           },
         ],
       },
     });
-    require('react-query').useQuery.mockImplementation(mockUseQuery);
-  
+    require("react-query").useQuery.mockImplementation(mockUseQuery);
+
     const setDeleteBlock = jest.fn();
-  
+
     render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvidered>
@@ -119,9 +119,9 @@ describe('DeleteThisBoard component', () => {
         </ThemeProvidered>
       </QueryClientProvider>
     );
-  
+
     // Find and click the "Delete" button
-    const deleteButton = await screen.getByText('Delete'); // Make sure to use `await` to wait for the element
+    const deleteButton = await screen.getByText("Delete"); // Make sure to use `await` to wait for the element
     fireEvent.click(deleteButton);
 
     expect(setDeleteBlock).toHaveBeenCalledWith(false);
@@ -140,26 +140,26 @@ describe('DeleteThisBoard component', () => {
       data: {
         boards: [
           {
-            id: 'board1',
-            name: 'Board 1',
+            id: "board1",
+            name: "Board 1",
           },
         ],
       },
     });
-    require('react-query').useQuery.mockImplementation(mockUseQuery);
+    require("react-query").useQuery.mockImplementation(mockUseQuery);
 
     const setDeleteBlock = jest.fn();
 
     render(
-        <ThemeProvidered>
-      <QueryClientProvider client={queryClient}>
-        <DeleteThisBoard DeleteBlock={true} setDeleteBlock={setDeleteBlock} />
-      </QueryClientProvider>
+      <ThemeProvidered>
+        <QueryClientProvider client={queryClient}>
+          <DeleteThisBoard DeleteBlock={true} setDeleteBlock={setDeleteBlock} />
+        </QueryClientProvider>
       </ThemeProvidered>
     );
 
     // Find and click the "Cancel" button
-    const cancelButton = screen.getByText('Cancel');
+    const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
 
     // Check if setDeleteBlock was called to close the dialog
