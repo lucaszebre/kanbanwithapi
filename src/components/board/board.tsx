@@ -3,14 +3,14 @@ import { columnApiServices } from "@/api/column/column.service";
 import { useStore } from "@/state/contextopen";
 import { useSidebarStore } from "@/state/sidebarcontext";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { Column } from "@/types";
+import { ColumnType } from "@/types";
 import { getInitialWindowWidth } from "@/utils/GetInitialWidth";
 import { useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import styles from "../../styles/Board.module.css";
 import Header from "../layout/header";
 import Sidebar from "../navigation/sideBar";
-import styles from "../styles/Board.module.css";
 import ListTask from "../task/listTask";
 import EditBoard from "./editBoard";
 import EmptyBoard from "./emptyBoard";
@@ -116,7 +116,7 @@ const Board = () => {
       return (
         <DragDropContext onDragEnd={onDragEnd}>
           {taskManager[0].boards[currentBoardIndex].columns.map(
-            (column: Column, columnIndex: number) => (
+            (column: ColumnType, columnIndex: number) => (
               <ListTask
                 key={columnIndex}
                 title={column.name}

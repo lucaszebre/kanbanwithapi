@@ -1,4 +1,5 @@
-import z from "zod"
+import z from "zod";
+import { Board } from "./Zodtype";
 
 
 export type BoardData = {
@@ -82,50 +83,50 @@ export type AddBoardType = {
 
 
 
-export interface Board {
+export type BoardType = {
     id: string;
     name: string;
     userId: string;
-    columns: Column[];
+    columns: ColumnType[];
     }
-    export interface ColumnAdd {
+    export type ColumnAddType = {
         id: string;
         name: string;
         boardId: string;
-        tasks: Task[];
+        tasks: TaskType[];
         add:boolean // Make sure it's 'tasks' instead of 'task'
     }
 
-    export interface Column {
+    export type ColumnType = {
         id: string;
         name: string;
-        tasks: Task[];
+        tasks: TaskType[];
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }
-     export interface ColumntoAdd {
+     export type ColumntoAddType = {
         id: string;
         name: string;
         boardId: string;
-        tasks: Task[];
+        tasks: TaskType[];
         add?:boolean // Make sure it's 'tasks' instead of 'task'
     }
-    export interface Task {
+    export type TaskType = {
         id: string;
         title: string;
         status:string
         description: string;
         columnId?: string;
-        subtasks : Subtask[]
+        subtasks : SubtaskType[]
     }
     
-    export interface Subtask {
+    export type SubtaskType = {
         id: string;
         title: string;
         isCompleted: boolean;
         taskId: string;
     }
 
-    export interface Subtasked{
+    export type SubtaskedType = {
         id:string
         title:string;
         isCompleted:boolean
@@ -134,8 +135,8 @@ export interface Board {
 
 
 
-  export   interface ListTaskProps {
-        tasks: Task[];
+  export   type ListTaskPropsType = {
+        tasks: TaskType[];
         title: string;
         NbList: number;
         columnId:string
@@ -149,7 +150,7 @@ export interface Board {
             ,
           });
           
-          export interface FormDataRegister {
+          export type FormDataRegisterType = {
             email: string;
             password: string;
             username: string;

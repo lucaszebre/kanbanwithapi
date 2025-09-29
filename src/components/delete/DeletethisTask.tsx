@@ -4,7 +4,7 @@ import { useTaskManagerStore } from "@/state/taskManager";
 import { useTheme } from "@/state/themecontext";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
-import styles from "../styles/DeleteThisTask.module.css";
+import styles from "../../styles/DeleteThisTask.module.css";
 
 const DeleteThisTask = (props: {
   TaskTitle: string;

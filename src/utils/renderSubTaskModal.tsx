@@ -1,8 +1,8 @@
-import { Subtasks } from "@/components/task/subTask";
-import { Subtask } from "@/types";
+import { Subtask } from "@/components/task/subTask";
+import { SubtaskType } from "@/types";
 import React from "react";
 interface RenderSubTaskProps {
-  subtasks: Subtask[];
+  subtasks: SubtaskType[];
   boardId: string;
   columnId: string;
 }
@@ -16,7 +16,7 @@ const RenderSubTask: React.FC<RenderSubTaskProps> = ({
     return (
       <>
         {subtasks.map((sub, index) => (
-          <Subtasks
+          <Subtask
             key={index}
             title={sub.title}
             checked={sub.isCompleted}

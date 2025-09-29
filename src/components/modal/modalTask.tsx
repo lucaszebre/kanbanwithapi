@@ -8,8 +8,8 @@ import RenderSubTask from "@/utils/renderSubTaskModal";
 import Image from "next/image";
 import React, { useContext, useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import styles from "../../styles/ModalTask.module.css";
 import DeleteThisTask from "../delete/DeletethisTask";
-import styles from "../styles/ModalTask.module.css";
 import EditTask from "../task/editTask";
 import ModalAboutTask from "./modalAboutTask";
 

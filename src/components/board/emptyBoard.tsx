@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../styles/EmptyBoard.module.css";
+import styles from "../../styles/EmptyBoard.module.css";
 import AddBoard from "./addBoard";
 import EditBoard from "./editBoard";
 const EmptyBoard = (props: { boards: boolean }) => {

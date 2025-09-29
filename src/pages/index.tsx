@@ -5,9 +5,10 @@ import Hide from "@/components/navigation/hide";
 import { DataContext } from "@/state/datacontext";
 import Cookies from "js-cookie";
 import jwt, { JwtPayload } from "jsonwebtoken"; // Import JwtPayload
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import Board from "../components/board/board";
 import "../i18n/index";
+
 function Home() {
   const { setIsLoggedIn, isLoggedIn } = useContext(DataContext);
 

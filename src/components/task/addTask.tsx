@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import renderSelect from "../../utils/renderselect";
-import SubTask from "./SubTask";
+import SubTasks from "./subTasks";
 
 const AddTask = (props: {
   addTask: boolean;
@@ -189,7 +189,7 @@ const AddTask = (props: {
           >
             Subtasks
           </label>
-          <SubTask
+          <SubTasks
             subTasks={SubTaskCurrent}
             handleSubTaskDelete={handleSubTaskDelete}
             handleColumnTitleChange={handleColumnTitleChange}

@@ -1,4 +1,4 @@
-import { Subtasks } from "@/components/task/subTask";
+import { Subtask } from "@/components/task/subTask";
 import { ThemeProvidered } from "@/state/themecontext";
 import "@testing-library/jest-dom";
 import { render } from "@testing-library/react";
@@ -19,7 +19,7 @@ describe("TaskCard Component Tests", () => {
     const { getByText } = render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvidered>
-          <Subtasks
+          <Subtask
             title="eeeee"
             checked={false}
             subtaskId="23444"
@@ -39,7 +39,7 @@ describe("TaskCard Component Tests", () => {
     const { container, rerender } = render(
       <QueryClientProvider client={queryClient}>
         <ThemeProvidered>
-          <Subtasks
+          <Subtask
             title="eeeee"
             checked={false}
             subtaskId="23444"
@@ -59,7 +59,7 @@ describe("TaskCard Component Tests", () => {
     rerender(
       <QueryClientProvider client={queryClient}>
         <ThemeProvidered>
-          <Subtasks
+          <Subtask
             title="eeeee"
             checked={true}
             subtaskId="23444"

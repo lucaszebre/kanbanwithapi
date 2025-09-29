@@ -16,11 +16,11 @@ import Cookies from "js-cookie";
 import Image from "next/image";
 import { useContext, useState } from "react";
 import { useQueryClient } from "react-query";
+import styles from "../../styles/Header.module.css";
 import AddBoard from "../board/addBoard";
 import EditBoard from "../board/editBoard";
 import DeleteThisBoard from "../delete/DeletethisBoard";
 import ModalAbout from "../modal/modalAbout";
-import styles from "../styles/Header.module.css";
 import AddTask from "../task/addTask";
 export default function Header(props: { boards: boolean }) {
   // state to toggle the display of the  different components to decide to click on

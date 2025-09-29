@@ -6,6 +6,7 @@ import { GlobalScrollbarStyle } from "@/utils/Scrollbar";
 import { lightTheme } from "@/utils/theme";
 import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
+import React from "react";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "tailwindcss/tailwind.css";

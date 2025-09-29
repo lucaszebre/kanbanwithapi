@@ -1,17 +1,17 @@
 import { useStore } from "@/state/contextopen";
 import { DataContext } from "@/state/datacontext";
 import { useTheme } from "@/state/themecontext";
-import { Subtask } from "@/types";
+import { SubtaskType } from "@/types";
 import { useContext, useEffect } from "react";
+import styles from "../../styles/TaskCard.module.css";
 import ModalTask from "../modal/modalTask";
-import styles from "../styles/TaskCard.module.css";
 
 const TaskCard = (props: {
   index: number;
   title: string;
   description: string;
   id: string;
-  subtask: Subtask[];
+  subtask: SubtaskType[];
   columnId: string;
   onClick: () => void;
   columnIndex: number;

@@ -1,4 +1,4 @@
-import { Subtasked } from "@/types";
+import { SubtaskedType } from "@/types";
 import { handleSessionExpiration } from "../common/handleSessionexpiration";
 import { axiosInstance } from "../common/instance";
 
@@ -8,7 +8,7 @@ export const editTask = async (
   taskDescription: string,
   subTasksToAdd: string[],
   subTasksToDelete: string[],
-  subTasksToChange: Subtasked[]
+  subTasksToChange: SubtaskedType[]
 ) => {
   try {
     // Prepare the request body

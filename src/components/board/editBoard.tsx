@@ -1,7 +1,7 @@
 import { useStore } from "@/state/contextopen";
 import { useTaskManagerStore } from "@/state/taskManager";
 import { useTheme } from "@/state/themecontext";
-import { Column, ColumnData } from "@/types";
+import { ColumnData, ColumnType } from "@/types";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
@@ -13,13 +13,13 @@ const EditBoard = (props: {
   editBoard: boolean;
   setEditBoard: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [copyBoardColumns, setCopyBoardColumns] = useState<Column[]>([]); // state to know the current present in the database
+  const [copyBoardColumns, setCopyBoardColumns] = useState<ColumnType[]>([]); // state to know the current present in the database
   const [Header, setHeader] = useState<string>(""); // state to know the current boardname selected
   const [Save, SetSave] = useState<boolean>(false); // state to toggle the disabled thhe button save
   const { currentBoardIndex } = useStore(); // state to manage the global data
   const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to handle if one input is empty
   const [inputError, setInputError] = useState<boolean>(false); // state to handle if the boardname is empty
-  const [columnstoAdd, setColumnstoAdd] = useState<Column[]>([]); // state to know the column to add in the database
+  const [columnstoAdd, setColumnstoAdd] = useState<ColumnType[]>([]); // state to know the column to add in the database
   const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]); // state to know the column to delete in the database
   const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]); // state to know the column to rename in the database
   const { theme } = useTheme();
@@ -134,7 +134,7 @@ const EditBoard = (props: {
     (formData: {
       columnsToDelete: string[];
       columnsToRename: ColumnData[];
-      columnstoAdd: Column[];
+      columnstoAdd: ColumnType[];
       currentBoardId: string;
       Header: string;
       headerTitle: string;

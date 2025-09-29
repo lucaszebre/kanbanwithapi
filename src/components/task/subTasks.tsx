@@ -8,7 +8,7 @@ interface SubTaskProps {
   columnErrors: boolean[];
 }
 
-const SubTask: React.FC<SubTaskProps> = ({
+const SubTasks: React.FC<SubTaskProps> = ({
   subTasks,
   handleSubTaskDelete,
   handleColumnTitleChange,
@@ -31,4 +31,4 @@ const SubTask: React.FC<SubTaskProps> = ({
   );
 };
 
-export default SubTask;
+export default SubTasks;

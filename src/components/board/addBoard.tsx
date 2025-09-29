@@ -4,7 +4,7 @@ import { useTheme } from "@/state/themecontext";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
-import styles from "../styles/AddBoard.module.css"; // styles modules css
+import styles from "../../styles/AddBoard.module.css"; // styles modules css
 import { ColumnsRenderer } from "../task/rendercolumn"; // get the render columns
 
 const AddBoard = (props: {

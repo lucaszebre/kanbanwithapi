@@ -5,7 +5,7 @@ import styles from "@/styles/Subtasks.module.css";
 import React from "react";
 import { useMutation, useQueryClient } from "react-query";
 
-export const Subtasks = (props: {
+export const Subtask = (props: {
   title: string;
   checked: boolean;
   subtaskId: string;

@@ -4,13 +4,13 @@ import { Subtask } from "@/types/Zodtype";
 import renderSelect from "@/utils/renderselect";
 import { RenderSubTask } from "@/utils/renderSubTask";
 import { useEffect, useState } from "react";
-import styles from "../styles/EditTask.module.css";
+import styles from "../../styles/EditTask.module.css";
 // Main EditTask functional component
 import useChangeColumnMutation from "@/api/mutations/useChangeColumnMutation";
 import { taskApiServices } from "@/api/task/task.service";
 import { useStore } from "@/state/contextopen";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { Subtasked } from "@/types";
+import { SubtaskedType } from "@/types";
 import React from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
@@ -32,7 +32,7 @@ const EditTask = (props: {
   const { EditTask, setEditTask } = useStore();
   const [taskName, setTaskName] = useState<string>("");
   const [taskDescription, setTaskDescription] = useState<string>("");
-  const [subTasked, setSubTasked] = useState<Subtasked[]>([]);
+  const [subTasked, setSubTasked] = useState<SubtaskedType[]>([]);
   const [subTasktoDelete, setSubTasktoDelete] = useState<string[]>([]);
   const [subTask, setSubTask] = useState<Subtask[]>([]);
   const [subTasktoAdd, setSubTasktoAdd] = useState<string[]>([]);
@@ -116,7 +116,7 @@ const EditTask = (props: {
       taskDescription: string;
       subTasktoAdd: string[];
       subTasktoDelete: string[];
-      subTask: Subtasked[];
+      subTask: SubtaskedType[];
     }) =>
       taskApiServices.editTask(
         formData.taskId,

@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SchemaLogin } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Icons } from "../common/icons";
