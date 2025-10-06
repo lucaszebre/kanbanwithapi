@@ -1,268 +1,313 @@
-import {create} from 'zustand';
-import { v4 as uuidv4 } from 'uuid';
-import { Column, ColumnData, Subtasked } from '@/types';
-import { TaskManager,Task,Board} from '@/types/global';
-import Cookies from 'js-cookie';
+import type { ColumnData } from "@/types";
+import type { Task, TaskManager } from "@/types/global";
+import type { Subtask } from "@/types/Zodtype";
+import Cookies from "js-cookie";
+import { v4 as uuidv4 } from "uuid";
+import { create } from "zustand";
 
 type State = {
   taskManager: TaskManager;
-  addBoard: (boardName: string,column:string[]) => void;
-  updateBoard: (columnsToDelete:string[],columnsToRename:ColumnData[],columnstoAdd:Column[],currentBoardId:string,Header:string,headerTitle:string) => void;
+  addBoard: (boardName: string, column: string[]) => void;
+  updateBoard: (data: {}) => void;
   deleteBoard: (boardId: string) => void;
 
+  addTask: (data: {
+    boardId: string;
+    title: string;
+    id: string;
+    description: string;
+    columnId: string;
+    subtasks: Subtask[];
+  }) => void;
+  updateTask: (data: {
+    boardId: string;
+    id: string;
+    title: string;
+    description: string;
+    columnId: string;
+    subtasks: Subtask[];
+  }) => void;
+  deleteTask: (data: { boardId: string; columnId: string; id: string }) => void;
 
-  addTask: (boardId:string,taskTitle:string,taskDescription:string,columnId:string,SubTaskCurrent?:string[]) => void;
-  updateTask: (  
-    taskId: string,
-    taskName: string,
-    taskDescription: string,
-    subTasksToDelete: string[],
-    subTasksToAdd:string[],
-    subTasksToChange: Subtasked[],
+  toggleSubtask: (
     boardId: string,
-    columnId: string) => void;
-  deleteTask: (boardId: string, columnId: string, taskId: string) => void;
-
-  toggleSubtask: (boardId: string, columnId: string, taskId: string, subtaskId: string,isCompleted:boolean) => void;
-  setTaskManagerData: (data:TaskManager) =>void;
-  changeCol:(newColumnId:string,columnId:string,taskId:string)=>void;
+    columnId: string,
+    taskId: string,
+    subtaskId: string,
+    isCompleted: boolean
+  ) => void;
+  setTaskManagerData: (data: TaskManager) => void;
+  changeCol: (newColumnId: string, columnId: string, taskId: string) => void;
 };
 
 export const useTaskManagerStore = create<State>((set) => ({
-    taskManager: [{
+  taskManager: [
+    {
+      id: uuidv4(),
+      name: "",
+      email: "",
+      boards: [],
+    },
+  ],
+  setTaskManagerData: (data: TaskManager) => set({ taskManager: data }),
+
+  addBoard: (boardName, columnNames) =>
+    set((state) => {
+      const columns = columnNames.map((name) => ({
         id: uuidv4(),
-        name: '',
-        email: '',
-        boards: [],
-    }],
-    setTaskManagerData: (data:TaskManager) => set({ taskManager: data }),
+        name,
+        tasks: [],
+      }));
 
-    addBoard: (boardName, columnNames) => set((state) => {
-        const columns = columnNames.map(name => ({
-            id: uuidv4(),
-            name,
-            tasks: [],
-        }));
+      // Assuming the first user for simplicity
+      const user = state.taskManager[0];
 
-        // Assuming the first user for simplicity
-        const user = state.taskManager[0];
-
-        return {
-            ...state,
-            taskManager: [{
-                ...user,
-                boards: [...user.boards, { id: uuidv4(), name: boardName, columns }]
-            }],
-        };
+      return {
+        ...state,
+        taskManager: [
+          {
+            ...user,
+            boards: [
+              ...user.boards,
+              { id: uuidv4(), name: boardName, columns },
+            ],
+          },
+        ],
+      };
     }),
 
-    updateBoard: (
-        columnsToDelete: string[], // Assuming this is an array of column IDs to delete
-        columnsToRename: ColumnData[],
-        columnstoAdd: Column[],
-        currentBoardId: string,
-        Header: string,
-        headerTitle: string
-    ) => set((state) => {
-        const updatedBoards = state.taskManager[0].boards.map(board => {
-        if (board.id !== currentBoardId) return board;
-    
+  updateBoard: (data: {
+    id: string;
+    name: string;
+    userId: string;
+    columns: ColumnData[];
+  }) =>
+    set((state) => {
+      const updatedBoards = state.taskManager[0].boards.map((board) => {
+        if (board.id !== data.id) return board;
+
         let updatedColumns = board.columns;
-    
+
+        const recordColumns = data.columns.reduce((prev, c) => {
+          return {
+            ...prev,
+            [c.id]: c.name,
+          };
+        }, {});
+
         // Delete columns
-        updatedColumns = updatedColumns.filter(col => !columnsToDelete.includes(col.id));
-    
-        // Rename columns
-        columnsToRename.forEach(renameData => {
-            const column = updatedColumns.find(col => col.id === renameData.id);
-            if (column) {
-            column.name = renameData.name;
-            }
-        });
-    
-        // Add new columns
-        updatedColumns = [...updatedColumns, ...columnstoAdd];
-    
+        updatedColumns = updatedColumns
+          .filter((col) => !data.columns.map((c) => c.id).includes(col.id))
+          .map((c) => {
+            return {
+              ...c,
+              name: recordColumns[c.id as string],
+            };
+          });
+
         // Return updated board
         return {
-            ...board,
-            name: Header === 'boardName' ? headerTitle : board.name, // assuming 'boardName' is the identifier for updating the board name
-            columns: updatedColumns
+          ...board,
+          name: data.name ?? board.name, // assuming 'boardName' is the identifier for updating the board name
+          columns: updatedColumns,
         };
-        });
-    
-        return {
+      });
+
+      return {
         ...state,
         taskManager: {
-            ...state.taskManager,
-            boards: updatedBoards,
-        }
-        };
-    })
-    
-    ,
+          ...state.taskManager,
+          boards: updatedBoards,
+        },
+      };
+    }),
 
-
-  deleteBoard: (boardId) => set((state) => {
-    const boards = state.taskManager[0].boards.filter((b) => b.id !== boardId);
-    return {
-      ...state,
-      taskManager: {
-        ...state.taskManager,
-        boards,
-      },
-    };
-  }),
-
-
-
+  deleteBoard: (boardId) =>
+    set((state) => {
+      const boards = state.taskManager[0].boards.filter(
+        (b) => b.id !== boardId
+      );
+      return {
+        ...state,
+        taskManager: {
+          ...state.taskManager,
+          boards,
+        },
+      };
+    }),
 
   // Task
 
-
-  addTask: (
-    boardId: string,
-    taskTitle: string,
-    taskDescription: string,
-    columnId: string,
-    SubTaskCurrent?: string[]
-  ) => set((state) => {
-    console.log('des',taskDescription)
-    const newTask: Task = {
-      id: uuidv4(), // Use a function or library to generate unique IDs
-      title: taskTitle,
-      description: taskDescription,
-      status:"to do", // Assuming Task type has a description property
-      subtasks: SubTaskCurrent ? SubTaskCurrent.map(title => ({
-        id: uuidv4(),
+  addTask: ({
+    boardId,
+    id,
+    title,
+    description,
+    columnId,
+    subtasks,
+  }: {
+    boardId: string;
+    id: string;
+    title: string;
+    description: string;
+    columnId: string;
+    subtasks: Subtask[];
+  }) =>
+    set((state) => {
+      const newTask: Task = {
+        id, // Use a function or library to generate unique IDs
         title,
-        isCompleted: false, // Assuming a default value
-        taskId:uuidv4()
-      })) : []
-    };
-  
-    const board = state.taskManager[0].boards.find(b => b.id === boardId);
-    const column = board?.columns.find(c => c.id === columnId);
-    if (column) {
-      column.tasks.push(newTask);
-    }
-  
-    return { ...state };
-  }),
- 
-  updateTask: (
-    taskId: string,
-    taskName: string,
-    taskDescription: string,
-    subTasksToAdd: string[],
-    subTasksToDelete: string[],
-    subTasksToChange: Subtasked[],
-    boardId: string,
-    columnId: string
-) => set((state) => {
-    // Find the board and column
-    const board = state.taskManager[0].boards.find(b => b.id === boardId);
-    if (!board) return state;  
-    const column = board?.columns.find(c => c.id === columnId);
-    
-    if (!column) return state;  // If no column found, return the current state
+        description,
+        status: "to do", // Assuming Task type has a description property
+        subtasks,
+      };
 
-    // Clone the tasks array for immutability
-    const updatedTasks = [...column.tasks];
+      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      const column = board?.columns.find((c) => c.id === columnId);
+      if (column) {
+        column.tasks.push(newTask);
+      }
 
-    // Find the task index (we'll use this to replace the task in the array)
-    const taskIndex = updatedTasks.findIndex(t => t.id === taskId);
-    if (taskIndex === -1) return state; // If no task found, return the current state
+      return { ...state };
+    }),
 
-    const originalTask = updatedTasks[taskIndex];
-    
-    // Construct the updated task
-    const updatedTask = {
+  updateTask: (data: {
+    boardId: string;
+    id: string;
+    title: string;
+    description: string;
+    columnId: string;
+    subtasks: Subtask[];
+  }) =>
+    set((state) => {
+      const {
+        boardId,
+        id,
+        title,
+        description,
+        columnId,
+        subtasks: subTasks,
+      } = data;
+      // Find the board and column
+      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      if (!board) return state;
+      const column = board?.columns.find((c) => c.id === columnId);
+
+      if (!column) return state; // If no column found, return the current state
+
+      // Clone the tasks array for immutability
+      const updatedTasks = [...column.tasks];
+
+      // Find the task index (we'll use this to replace the task in the array)
+      const taskIndex = updatedTasks.findIndex((t) => t.id === id);
+      if (taskIndex === -1) return state; // If no task found, return the current state
+
+      const originalTask = updatedTasks[taskIndex];
+
+      // Construct the updated task
+      const updatedTask = {
         ...originalTask,
-        title: taskName,
-        description: taskDescription,
-        subtasks: originalTask.subtasks
-            .filter(subtask => !subTasksToDelete.includes(subtask.id))  // Remove subtasks to delete
-            .map(subtask => {  // Update existing subtasks
-                const change = subTasksToChange.find(s => s.id === subtask.id);
-                if (change) {
-                    return {
-                        ...subtask,
-                        title: change.title,
-                        isCompleted: change.isCompleted
-                    };
-                }
-                return subtask;
-            })
-            .concat(  // Add new subtasks
-                subTasksToAdd.map(title => ({
-                    id: uuidv4(),
-                    title,
-                    isCompleted: false,
-                    taskId: taskId
-                })),
-                subTasksToChange
-                    .filter(change => change.add)
-                    .map(change => ({
-                        id: uuidv4(),
-                        title: change.title,
-                        isCompleted: change.isCompleted,
-                        taskId: taskId
-                    }))
-            )
-    };
+        title,
+        description,
+        subtasks: subTasks,
+      };
 
-    // Replace the task in the array
-    updatedTasks[taskIndex] = updatedTask;
+      // Replace the task in the array
+      updatedTasks[taskIndex] = updatedTask;
 
-    // Update the column's tasks
-    const updatedColumns = board.columns.map(c => c.id === columnId ? { ...c, tasks: updatedTasks } : c);
+      // Update the column's tasks
+      const updatedColumns = board.columns.map((c) =>
+        c.id === columnId ? { ...c, tasks: updatedTasks } : c
+      );
 
-    return {
+      return {
         ...state,
         taskManager: {
-            ...state.taskManager,
-            boards: state.taskManager[0].boards.map(b => b.id === boardId ? { ...b, columns: updatedColumns } : b)
-        }
-    };
-})
+          ...state.taskManager,
+          boards: state.taskManager[0].boards.map((b) =>
+            b.id === boardId ? { ...b, columns: updatedColumns } : b
+          ),
+        },
+      };
+    }),
 
-,
+  deleteTask: ({ boardId, columnId, id }) =>
+    set((state) => {
+      // Defensive: if no users or boards just return state
+      const user = state.taskManager[0];
+      if (!user) return state;
 
-  deleteTask: (boardId, columnId, taskId) => set((state) => {
-    const board = state.taskManager[0].boards.find(b => b.id === boardId);
-    const column = board?.columns.find(c => c.id === columnId);
-    if (column) {
-      column.tasks = column.tasks.filter(t => t.id !== taskId);
-    }
-    return { ...state };
-  }),
-  
+      const updatedBoards = user.boards.map((b) => {
+        if (b.id !== boardId) return b; // unchanged board
+        return {
+          ...b,
+          columns: b.columns.map((c) => {
+            if (c.id !== columnId) return c; // unchanged column
+            const filteredTasks = c.tasks.filter((t) =>
+              t.id === id ? false : true
+            );
+            // If no change, return same ref to avoid unnecessary renders
+            if (filteredTasks === c.tasks) return c;
+            return { ...c, tasks: filteredTasks };
+          }),
+        };
+      });
+
+      // Only create new user object if boards changed
+      const userChanged = updatedBoards.some(
+        (b, idx) => b !== user.boards[idx]
+      );
+      if (!userChanged) return state;
+
+      return {
+        ...state,
+        taskManager: [
+          {
+            ...user,
+            boards: updatedBoards,
+          },
+        ],
+      };
+    }),
+
   // Subtask CRUD
-  toggleSubtask: (boardId: string, columnId: string, taskId: string, subtaskId: string,isCompleted:boolean) => set((state) => {
-    const board = state.taskManager[0].boards.find(b => b.id === boardId);
-    const column = board?.columns.find(c => c.id === columnId);
-    const task = column?.tasks.find(t => t.id === taskId);
-    const subtask = task?.subtasks.find(s => s.id === subtaskId);
-  
-    if (subtask) {
-      subtask.isCompleted = isCompleted; // Toggle the isCompleted property
-    }
-  
-    return { ...state };
-  }),
+  toggleSubtask: (
+    boardId: string,
+    columnId: string,
+    taskId: string,
+    subtaskId: string,
+    isCompleted: boolean
+  ) =>
+    set((state) => {
+      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      const column = board?.columns.find((c) => c.id === columnId);
+      const task = column?.tasks.find((t) => t.id === taskId);
+      const subtask = task?.subtasks.find((s) => s.id === subtaskId);
+
+      if (subtask) {
+        subtask.isCompleted = isCompleted; // Toggle the isCompleted property
+      }
+
+      return { ...state };
+    }),
   changeCol: (newColumnId, columnId, taskId) => {
     set((state) => {
-      const boardIndex = parseInt(Cookies.get('currentBoardIndex') || '0');
-      const sourceColumn = state.taskManager[0].boards[boardIndex].columns.find(col => col.id === columnId);
-      const destinationColumn = state.taskManager[0].boards[boardIndex].columns.find(col => col.id === newColumnId);
+      const boardIndex = parseInt(Cookies.get("currentBoardIndex") || "0");
+      const sourceColumn = state.taskManager[0].boards[boardIndex].columns.find(
+        (col) => col.id === columnId
+      );
+      const destinationColumn = state.taskManager[0].boards[
+        boardIndex
+      ].columns.find((col) => col.id === newColumnId);
 
       if (!sourceColumn || !destinationColumn) {
         console.error("Either source or destination column not found");
         return state;
       }
 
-      const taskIndex = sourceColumn.tasks.findIndex(task => task.id === taskId);
+      const taskIndex = sourceColumn.tasks.findIndex(
+        (task) => task.id === taskId
+      );
       if (taskIndex === -1) {
         console.error("Task not found in source column");
         return state;
@@ -270,12 +315,11 @@ export const useTaskManagerStore = create<State>((set) => ({
 
       // Remove the task from the source column
       const [taskToMove] = sourceColumn.tasks.splice(taskIndex, 1);
-      
+
       // Add the task to the destination column
       destinationColumn.tasks.push(taskToMove);
 
       return { ...state };
     });
   },
- 
 }));

@@ -1,0 +1,14 @@
+{
+  "addNewTask": "+ Ajouter Nouvelle Tâche",
+  "logout": "Déconnexion",
+  "allBoards": "TOUS les tableaux",
+  "addBoard": "Ajouter un tableau",
+  "editBoard": "Modifier le tableau",
+  "deleteBoard": "Supprimer le tableau",
+  "alt": {
+    "logo": "logo",
+    "mobileLogoKanban": "logo-mobile-kanban",
+    "chevronDown": "chevron-bas",
+    "verticalEllipsis": "ellipse-verticale"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "addNewTask": "+ Add New Task",
+  "logout": "Logout",
+  "allBoards": "ALL boards",
+  "addBoard": "Add a board",
+  "editBoard": "Edit Board",
+  "deleteBoard": "Delete Board",
+  "alt": {
+    "logo": "logo",
+    "mobileLogoKanban": "mobile-logo-kanban",
+    "chevronDown": "chevron-down",
+    "verticalEllipsis": "vertical-ellipsis"
+  }
+}

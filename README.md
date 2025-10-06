@@ -1,58 +1,95 @@
-# Kanban Task Manager
+# React + TypeScript + Vite
 
-![App Screenshot](/public/assets/Kanban.jpg)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Overview
+Currently, two official plugins are available:
 
-The Kanban Task Manager is a web application built with Next.js, Nest.js, and PostgreSQL that helps you efficiently manage your tasks using the Kanban methodology. It provides a visual way to organize, track, and prioritize your work, making it easier to collaborate with your team and stay organized.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Features
+## React Compiler
 
-- **Kanban Boards:** Create and manage multiple Kanban boards for different projects or workflows.
-- **Columns and Tasks:** Each board consists of columns representing different stages of your workflow (e.g., To Do, In Progress, Done), and you can add tasks to these columns.
-- **Drag and Drop:** Easily move tasks between columns by dragging and dropping them.
-- **Subtasks:** Break down tasks into smaller subtasks to manage them more effectively.
-- **Task Details:** Add descriptions and additional information to your tasks.
-- **User Authentication:** Securely sign in and manage your tasks with user accounts.
-- **Responsive Design:** Access and manage your tasks on various devices, including desktop and mobile.
+The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
 
-## Getting Started
+## Expanding the ESLint configuration
 
-To get started with the Kanban Task Manager, follow these steps:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-1. **Clone the Repository:** Clone this repository to your local machine.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-   ```bash
-   git clone https://github.com/lucaszebre/kanbanwithapi
-   
-2.  **Install Dependencies:** Navigate to the project directory and install the required dependencies.
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-   cd kanban-task-manager
-    npm install
+## Reusable Alert Dialog
 
-3. **Start the Application:** Start the frontend application.
+This project includes a `ReusableAlertDialog` component (in `src/components/reusable/reusable-alert-dialog.tsx`) built on top of shadcn/ui primitives. It replaces the old `DeleteThisBoard` overlay.
 
-    npm run dev
+Basic usage example:
 
-4. **Acces the App*** Open your web browser and access the app at http://localhost:3000.
+```tsx
+import ReusableAlertDialog from '@/components/reusable/reusable-alert-dialog'
+import { Button } from '@/components/ui/button'
 
-### Technologies Used
+<ReusableAlertDialog
+  trigger={<Button variant="destructive">Delete</Button>}
+  variant="destructive"
+  title="Delete item"
+  description="Are you sure you want to delete this item? This action cannot be undone."
+  confirmLabel="Delete"
+  cancelLabel="Cancel"
+  onConfirm={async () => { /* perform deletion */ }}
+/>;
+```
 
-    Frontend: Next.js, React, React Query, Chakra UI, TypeScript
-    Backend: Nest.js, PostgreSQL, TypeORM, JWT Authentication
-    Styling: CSS Modules
-    State Management: React Query
-    Drag and Drop: react-beautiful-dnd
-    User Authentication: JWT (JSON Web Tokens)
-    Contributing
-    Contributions are welcome! If you'd like to contribute to this project, please follow our Contributing Guidelines.
+Controlled mode (optional): pass `open` and `onOpenChange` to manage visibility externally.
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-### Acknowledgments
-Special thanks to the open-source community for their amazing contributions and libraries.
-Inspired by the Kanban methodology for project management.
-Happy task managing!
-
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```

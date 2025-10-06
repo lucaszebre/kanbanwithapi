@@ -1,25 +1,31 @@
-import { boardApiServices } from "@/api/board/board.service";
+import { boardApiServices } from "@/api/board.service";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { useTheme } from "@/state/themecontext";
-import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
+import React, {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
-import styles from "../../styles/AddBoard.module.css"; // styles modules css
+import { useTranslation } from "react-i18next";
 import { ColumnsRenderer } from "../task/rendercolumn"; // get the render columns
 
-const AddBoard = (props: {
+export const AddBoard = (props: {
   addBoard: boolean;
-  setAddBoard: React.Dispatch<React.SetStateAction<boolean>>;
+  setAddBoard: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [boardName, setBoardName] = useState<string>(""); // Boardname state
   const [columnNames, setColumnNames] = useState<string[]>(["", ""]); // COlumns Names state
   const [inputError, setInputError] = useState<boolean>(false); // state to manage is the input of board name is empty
   const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to manage is one of the column name input is empty
   const { theme } = useTheme();
+  const { t } = useTranslation("board");
 
   const addBoard = useTaskManagerStore((state) => state.addBoard);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // when we add a board we use ismoving to update the data and then here we set the current state to the             // the iniatial value
     setBoardName("");
     setColumnNames(["", ""]);
@@ -35,19 +41,17 @@ const AddBoard = (props: {
   };
 
   const queryClient = useQueryClient();
-  const mutation = useMutation(
-    (formData: { boardName: string; columns: string[] }) =>
+  const mutation = useMutation({
+    mutationFn: (formData: { boardName: string; columns: string[] }) =>
       boardApiServices.createBoard(formData.boardName, formData.columns),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-        toast.success("Add board sucessfully");
-      },
-      onError: () => {
-        toast.error("Error to add the board!");
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+      toast.success(t("addBoard.successMessage"));
+    },
+    onError: () => {
+      toast.error(t("addBoard.errorMessage"));
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     // function to handle the final form data
@@ -98,7 +102,7 @@ const AddBoard = (props: {
 
   return (
     <div
-      className={styles.AddBoardWrapper}
+      className="fixed inset-0 z-30 flex items-center justify-center bg-black/50"
       style={{ display: props.addBoard ? "flex" : "none" }} // toggle the display of addBoard components
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -107,50 +111,58 @@ const AddBoard = (props: {
       }}
     >
       <div
-        className={`${styles.AddBoardBlock} ${
-          theme === "light" ? styles.light : styles.dark
+        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[480px] max-w-[90%] max-h-[90%] rounded-2xl p-8 flex flex-col items-start z-15 overflow-auto ${
+          theme === "light" ? "bg-white" : "bg-[#2B2C37]"
         }`}
       >
-        <h1 className={styles.AddBoardTitle}>Add Board</h1>
+        <h1
+          className={`text-2xl font-semibold ${
+            theme === "light" ? "text-black" : "text-white"
+          }`}
+        >
+          {t("addBoard.title")}
+        </h1>
         <form
-          className={styles.FormAddBoard}
+          className="w-full h-full flex flex-col items-start justify-between"
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(e);
           }}
         >
           <label
-            className={`${styles.LabeladdBoard} ${
-              theme === "light" ? styles.light : styles.dark
+            className={`text-sm font-semibold mb-2 ${
+              theme === "light" ? "text-black" : "text-white"
             }`}
             htmlFor="boardName"
           >
-            Board Name
+            {t("addBoard.boardName")}
           </label>
           <input
-            className={`${styles.InputAddBoard} ${
-              theme === "light" ? styles.light : styles.dark
-            } ${inputError ? styles.InputError : ""}`}
+            className={`w-full border rounded-lg bg-transparent text-xl font-semibold px-4 mb-4 cursor-pointer h-10 placeholder:text-gray-400 placeholder:text-base focus:outline-none ${
+              theme === "light"
+                ? "text-black border-gray-400"
+                : "text-white border-gray-400"
+            } ${inputError ? "border-red-500" : ""}`}
             type="text"
             id="boardName"
-            placeholder="eg Web design"
+            placeholder={t("addBoard.boardNamePlaceholder")}
             onChange={(e) => {
               handleBoardNameChange(e);
             }}
             value={boardName}
           />
           {inputError && (
-            <div className={styles.ErrorMessage}>
-              Please enter a board name.
+            <div className="text-red-500 text-xs mt-1">
+              {t("addBoard.boardNameError")}
             </div>
           )}
           <label
-            className={`${styles.LabeladdBoard} ${
-              theme === "light" ? styles.light : styles.dark
+            className={`text-sm font-semibold mb-2 ${
+              theme === "light" ? "text-black" : "text-white"
             }`}
             htmlFor="boardColumns"
           >
-            Board Columns
+            {t("addBoard.boardColumns")}
           </label>
           <ColumnsRenderer
             columnNames={columnNames}
@@ -161,20 +173,23 @@ const AddBoard = (props: {
           <button
             disabled={inputError}
             type="button"
-            className={`${styles.AddBoardButton} ${
-              theme === "light" ? styles.light : styles.dark
+            className={`w-full h-10 border-none rounded-lg text-xl font-semibold cursor-pointer mb-2 ${
+              theme === "light"
+                ? "bg-blue-50 text-[#635FC7]"
+                : "bg-white text-[#635FC7]"
             }`}
             onClick={addColumn}
           >
-            + Add Column
+            {t("addBoard.addColumn")}
           </button>
-          <button className={styles.AddBoardSaveButton} type="submit">
-            Create Board
+          <button
+            className="w-full h-10 border-none rounded-lg bg-[#635FC7] text-white text-xl font-semibold cursor-pointer mb-2"
+            type="submit"
+          >
+            {t("addBoard.createBoard")}
           </button>
         </form>
       </div>
     </div>
   );
 };
-
-export default AddBoard;

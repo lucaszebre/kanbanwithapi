@@ -1,49 +1,59 @@
-import { useState } from "react";
-import styles from "../../styles/EmptyBoard.module.css";
-import AddBoard from "./addBoard";
-import EditBoard from "./editBoard";
-const EmptyBoard = (props: { boards: boolean }) => {
+import { useTaskManagerStore } from "@/state/taskManager";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
+import { Button } from "../ui/button";
+import { AddBoard } from "./addBoard";
+import { EditBoard } from "./editBoard";
+
+export const EmptyBoard = () => {
+  const { t } = useTranslation("board");
   const [addBoard, setAddBoard] = useState(false);
   const [editBoard, setEditBoard] = useState(false);
-  if (props.boards) {
-    return (
-      <>
-        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
-        <div className={styles.emptyBoardDiv}>
-          <h1 className={styles.emptyBoardTitle}>
-            This board is empty. Create a new column to get started.
-          </h1>
-          <button
-            onClick={() => {
-              setEditBoard(true);
-            }}
-            className={styles.emptyBoardButton}
-          >
-            + Add New Column
-          </button>
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
-        <div className={styles.emptyBoardDiv}>
-          <h1 className={styles.emptyBoardTitle}>
-            You have no boards you should create one boards to start.
-          </h1>
-          <button
-            onClick={() => {
-              setAddBoard(true);
-            }}
-            className={styles.emptyBoardButton}
-          >
-            + Add a boards
-          </button>
-        </div>
-      </>
-    );
-  }
-};
+  const taskManager = useTaskManagerStore((s) => s.taskManager);
+  const { boardId } = useParams();
 
-export default EmptyBoard;
+  const currentBoard = useMemo(
+    () =>
+      taskManager[0]?.boards.find((b) => b.id === boardId) ||
+      taskManager[0]?.boards ||
+      [][0] ||
+      null,
+    [boardId, taskManager]
+  );
+
+  const containerClasses =
+    "flex flex-col items-center justify-center h-full w-full box-border text-[14px] cursor-pointer";
+  const titleClasses =
+    "text-[20px] font-medium mb-2.5 text-gray-500 md:text-[20px] text-center px-4 md:px-0";
+  const buttonClasses =
+    "bg-[#635FC7] text-white rounded-md px-5 py-2.5 text-[14px] font-medium cursor-pointer transition-colors w-[174px] h-12 hover:brightness-110";
+
+  const titleKey = currentBoard
+    ? "empty.noBoards.title"
+    : "empty.withBoards.title";
+  const buttonKey = currentBoard
+    ? "empty.noBoards.button"
+    : "empty.withBoards.button";
+
+  const handleClick = () => {
+    if (currentBoard) setAddBoard(true);
+    else setEditBoard(true); // editing current board to add columns
+  };
+
+  return (
+    <>
+      {currentBoard ? (
+        <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
+      ) : (
+        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
+      )}
+      <div className={containerClasses}>
+        <h1 className={titleClasses}>{t(titleKey)}</h1>
+        <Button onClick={handleClick} className={buttonClasses}>
+          {t(buttonKey)}
+        </Button>
+      </div>
+    </>
+  );
+};

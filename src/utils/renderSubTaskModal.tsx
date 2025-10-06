@@ -1,5 +1,5 @@
 import { Subtask } from "@/components/task/subTask";
-import { SubtaskType } from "@/types";
+import type { SubtaskType } from "@/types";
 import React from "react";
 interface RenderSubTaskProps {
   subtasks: SubtaskType[];

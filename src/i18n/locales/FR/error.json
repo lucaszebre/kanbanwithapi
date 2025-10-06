@@ -1,0 +1,7 @@
+{
+  "sessionExpired": {
+    "title": "Session Expirée",
+    "message": "Votre session a expiré. Veuillez actualiser la page et vous reconnecter.",
+    "goToHome": "Aller à l'accueil"
+  }
+}

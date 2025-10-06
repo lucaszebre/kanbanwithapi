@@ -1,20 +1,19 @@
-import { useMutation, useQueryClient } from "react-query";
-import { taskApiServices } from "../task/task.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { taskApiServices } from "../task.service";
 
-function useDeleteTaskMutation() {
+export const useDeleteTaskMutation = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(
-    (formData: { boardId: string; columnId: string; taskId: string }) =>
-      taskApiServices.deleteTask(formData.taskId),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-      },
-    }
-  );
+  const mutation = useMutation({
+    mutationFn: (formData: {
+      boardId: string;
+      columnId: string;
+      taskId: string;
+    }) => taskApiServices.deleteTask(formData.taskId),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+    },
+  });
 
   return mutation;
-}
-
-export default useDeleteTaskMutation;
+};

@@ -1,4 +1,4 @@
-import { authApiServices } from "@/api/auth/auth.service";
+import { authApiServices } from "@/api/auth.service";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,85 +6,63 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useStore } from "@/state/contextopen";
-import { DataContext } from "@/state/datacontext";
 import { useSidebarStore } from "@/state/sidebarcontext";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { useTheme } from "@/state/themecontext";
-import Avatar from "@mui/material/Avatar";
-import Cookies from "js-cookie";
-import Image from "next/image";
-import { useContext, useState } from "react";
-import { useQueryClient } from "react-query";
-import styles from "../../styles/Header.module.css";
-import AddBoard from "../board/addBoard";
-import EditBoard from "../board/editBoard";
-import DeleteThisBoard from "../delete/DeletethisBoard";
-import ModalAbout from "../modal/modalAbout";
-import AddTask from "../task/addTask";
-export default function Header(props: { boards: boolean }) {
-  // state to toggle the display of the  different components to decide to click on
-  const {
-    isOpenModal,
-    setIsOpenModal,
-    currentBoardIndex,
-    setCurrentBoardIndex,
-  } = useStore();
-  // state to get the current headerTitle
-  const { setIsLoggedIn } = useContext(DataContext);
+import { useTheme } from "next-themes";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
+import { AddBoard } from "../board/addBoard";
+import { EditBoard } from "../board/editBoard";
+import { DeleteThisBoard } from "../delete/DeletethisBoard";
+// Removed ModalAbout in favor of ReusablePopover inline actions
+import ReusablePopover from "../reusable/reusable-popover";
+import { AddTask } from "../task/addTask";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 
-  const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore(); // state to toggle the sidebar
+export const Header = () => {
+  const navigate = useNavigate();
+  const { t } = useTranslation("header");
+  const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();
   const [editBoard, setEditBoard] = useState(false);
   const [addTask, setAddTask] = useState(false);
   const [addBoard, setAddBoard] = useState(false);
   const [DeleteBlock, setDeleteBlock] = useState(false);
-
   const { theme } = useTheme();
-
+  const { boardId } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
 
-  function stringToColor(string: string) {
-    let hash = 0;
-    let i;
+  const currentBoard = useMemo(() => {
+    return (
+      taskManager[0].boards.find((board) => board.id === boardId) ??
+      taskManager[0].boards[0] ??
+      null
+    );
+  }, [boardId, taskManager]);
 
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
+  const desktopWrapper = `hidden md:flex border-l-0 flex-row justify-between items-center w-full h-16 px-8 rounded-none`;
+  const mobileWrapper = `flex md:hidden flex-row justify-between items-center w-full p-4 bg-white dark:bg-[#2B2C37] z-25`;
+  const addTaskButton = `flex items-center justify-center bg-[#635FC7] text-white rounded-full px-5 py-2.5 text-sm font-medium cursor-pointer hover:brightness-110 transition-colors`;
+  const logoutButton = `text-white dark:bg-transparent bg-[#2B2C37] dark:text-white border border-white rounded-md px-2.5 py-1.5 text-sm font-medium cursor-pointer ml-2 mr-4 transition-colors hover:bg-white hover:text-[#635FC7]`;
+  const mobileAddButton = `flex items-center justify-center bg-[#635FC7] text-white rounded-full px-4 py-2 text-lg font-semibold cursor-pointer`;
 
-    let color = "#";
+  const getInitials = (name?: string) => {
+    if (!name) return "";
+    const parts = name
+      .trim()
+      .split(/[\s_-]+/)
+      .filter(Boolean);
 
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
+    if (parts.length === 0) return "";
 
-    return color;
-  }
-  function stringAvatar(name: string) {
-    return {
-      sx: {
-        bgcolor: stringToColor(name),
-      },
-      children: `${name.split(" ")[0][0]}`,
-    };
-  }
+    const initials =
+      parts.length > 1
+        ? `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`
+        : parts[0].slice(0, 2);
 
-  const queryClient = useQueryClient();
-
-  const handleBoardClick = (boardIndex: number, boardId: string) => {
-    // Update the state for the currentBoardIndex
-    setCurrentBoardIndex(boardIndex);
-    console.log("Board Index:", boardIndex);
-
-    // Update cookies with the new boardIndex and boardId
-    Cookies.set("currentBoardIndex", boardIndex.toString());
-    Cookies.set("currentBoardId", boardId);
-
-    // * Invalidate queries to refetch the data, assuming you are using React Query.
-    // If not, you can remove this part.
-    queryClient.refetchQueries(["boards"]);
+    return initials.toUpperCase();
   };
 
   return (
@@ -96,166 +74,196 @@ export default function Header(props: { boards: boolean }) {
       <AddTask addTask={addTask} setAddTask={setAddTask} />
       <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
       <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
-      {isOpenModal && (
-        <ModalAbout
-          right={"2rem"}
-          top={"7rem"}
-          visible={isOpenModal}
-          editBoard={editBoard}
-          setEditBoard={setEditBoard}
-          setDeleteBlock={setDeleteBlock}
-        />
-      )}
-      <div className={styles.HeaderContainer}>
-        <div
-          className={`${styles.HeaderWrapperDesktop} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
-        >
-          <div className={styles.HeaderLeft}>
-            <Image
-              className={styles.HeaderLogo}
-              src={
-                theme === "dark"
-                  ? "/assets/logo-light.svg"
-                  : "/assets/logo-dark.svg"
-              }
-              alt=""
-              width={152}
-              height={26}
-            />
-          </div>
-          <div className={styles.HeaderRight}>
-            <h1
-              className={`${styles.HeaderTitle} ${
-                theme === "light" ? styles.light : styles.dark
-              }`}
-            >
-              {taskManager[0].boards[currentBoardIndex]
-                ? taskManager[0].boards[currentBoardIndex].name
-                : ""}
-            </h1>
-            <div className={styles.HeaderBlock1}>
-              {props.boards && (
-                <button
-                  onClick={() => {
-                    setAddTask(true);
-                  }}
-                  className={styles.HeaderButton}
-                >
-                  + Add New Task
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  authApiServices.logout();
-                  setIsLoggedIn(false);
-                  window.location.reload;
-                }}
-                className={styles.LogoutButton}
-              >
-                Logout
-              </button>
 
-              {props.boards && (
-                <div
-                  style={{ cursor: "po" }}
-                  onClick={() => {
-                    setIsOpenModal(!isOpenModal);
-                  }}
-                >
-                  {" "}
-                  <Avatar {...stringAvatar(taskManager[0].name)} />{" "}
+      {/* Desktop */}
+      <Card className={desktopWrapper}>
+        <div className="flex flex-row items-center h-full w-[350px]">
+          <img
+            className="w-[152px] h-[26px]"
+            src={
+              theme === "dark"
+                ? "/assets/logo-light.svg"
+                : "/assets/logo-dark.svg"
+            }
+            alt={t("alt.logo")}
+            width={152}
+            height={26}
+          />
+        </div>
+
+        <div className="flex flex-row items-center justify-between text-center w-full p-4">
+          <h1 className="text-2xl font-bold ">
+            {currentBoard ? currentBoard.name : ""}
+          </h1>
+          <div className="flex flex-row items-center justify-around">
+            {currentBoard?.id && (
+              <Button
+                onClick={() => {
+                  setAddTask(true);
+                }}
+                className={addTaskButton}
+              >
+                {t("addNewTask")}
+              </Button>
+            )}
+            <Button
+              onClick={async () => {
+                await authApiServices.logout();
+                navigate("/auth");
+              }}
+              className={logoutButton}
+            >
+              {t("logout")}
+            </Button>
+            {currentBoard?.id && (
+              <ReusablePopover
+                trigger={
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src="" />
+                    <AvatarFallback>
+                      {getInitials(taskManager[0]?.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                }
+                align="end"
+                side="bottom"
+                size="sm"
+                contentClassName="p-4"
+              >
+                <div className="flex flex-col gap-3 w-40">
+                  <button
+                    type="button"
+                    className="text-left text-sm text-gray-500 hover:text-gray-400 dark:text-gray-300 dark:hover:text-gray-200"
+                    onClick={() => {
+                      setEditBoard(true);
+                    }}
+                  >
+                    {t("editBoard")}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-left text-sm text-[#ea5555] hover:text-[#ff8d8d]"
+                    onClick={() => {
+                      setDeleteBlock(true);
+                    }}
+                  >
+                    {t("deleteBoard")}
+                  </button>
                 </div>
-              )}
-            </div>
+              </ReusablePopover>
+            )}
           </div>
         </div>
-        {/* Mobile Section */}
-        <div className={styles.HeaderWrapperMobile}>
-          <div
-            className={styles.HeaderMobileLeft}
-            onClick={() => {
-              setIsSidebarMobile(!isSidebarMobile);
-            }}
-          >
-            <Image
-              className={styles.HeaderMobileLogo}
-              src="/assets/logo-mobile.svg"
-              alt="mobile-logo-kanba"
-              width={56}
-              height={56}
-            />
-            <h1 className={styles.HeaderMobileTitle}>
-              {taskManager[0].boards[currentBoardIndex]
-                ? taskManager[0].boards[currentBoardIndex].name
-                : ""}
-            </h1>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Image
-                  src="/assets/icon-chevron-down.svg"
-                  alt="chevron-up"
-                  width={15}
-                  height={15}
-                  style={{ cursor: "pointer" }}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="mt-4 w-56">
-                <DropdownMenuLabel className="cursor-pointer">
-                  ALL boards({taskManager[0].boards.length})
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {taskManager[0].boards.map(
-                  (board: { name: string; id: string }, index: number) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <DropdownMenuLabel
-                      className="cursor-pointer"
-                      onClick={() => {
-                        handleBoardClick(index, board.id);
-                      }}
-                    >
-                      {board.name}
-                    </DropdownMenuLabel>
-                  )
-                )}
-                <DropdownMenuSeparator />
-
-                <DropdownMenuLabel
-                  onClick={() => {
-                    setAddBoard(true);
-                  }}
-                  className="cursor-pointer"
-                >
-                  Add a board
-                </DropdownMenuLabel>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className={styles.HeaderMobileRight}>
+      </Card>
+      {/* Mobile */}
+      <div className={mobileWrapper}>
+        <div
+          className="flex flex-row items-center justify-center"
+          onClick={() => {
+            setIsSidebarMobile(!isSidebarMobile);
+          }}
+        >
+          <img
+            className="w-6 h-6 mr-2"
+            src="/assets/logo-mobile.svg"
+            alt={t("alt.mobileLogoKanban")}
+            width={24}
+            height={24}
+          />
+          <h1 className="text-xl mr-2 text-black dark:text-white">
+            {currentBoard ? currentBoard.name : ""}
+          </h1>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <img
+                src="/assets/icon-chevron-down.svg"
+                alt={t("alt.chevronDown")}
+                width={15}
+                height={15}
+                className="cursor-pointer"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="mt-4 w-56">
+              <DropdownMenuLabel className="cursor-pointer">
+                {t("allBoards")}({taskManager[0].boards.length})
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {taskManager[0].boards.map(
+                (board: { name: string; id: string }) => (
+                  <DropdownMenuLabel
+                    key={board.id}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(`/boards/${board.id}`);
+                    }}
+                  >
+                    {board.name}
+                  </DropdownMenuLabel>
+                )
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel
+                onClick={() => {
+                  setAddBoard(true);
+                }}
+                className="cursor-pointer"
+              >
+                {t("addBoard")}
+              </DropdownMenuLabel>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="flex flex-row items-center justify-center gap-4">
+          {currentBoard?.id && (
             <button
               onClick={() => {
                 setAddTask(true);
               }}
-              className={styles.AddStaskMobile}
+              className={mobileAddButton}
             >
               +
             </button>
-            <Image
-              className={styles.HeaderMobileEllipsis}
-              onClick={() => {
-                setIsOpenModal(!isOpenModal);
-              }}
-              src="/assets/icon-vertical-ellipsis.svg"
-              alt="vertical-ellipsis"
-              width={8}
-              height={16}
-            />
-          </div>
+          )}
+          {currentBoard?.id && (
+            <ReusablePopover
+              trigger={
+                <img
+                  className="cursor-pointer"
+                  src="/assets/icon-vertical-ellipsis.svg"
+                  alt={t("alt.verticalEllipsis")}
+                  width={8}
+                  height={16}
+                />
+              }
+              align="end"
+              side="bottom"
+              size="sm"
+              contentClassName="p-4"
+            >
+              <div className="flex flex-col gap-3 w-40">
+                <button
+                  type="button"
+                  className="text-left text-sm text-gray-500 hover:text-gray-400 dark:text-gray-300 dark:hover:text-gray-200"
+                  onClick={() => {
+                    setEditBoard(true);
+                  }}
+                >
+                  {t("editBoard")}
+                </button>
+                <button
+                  type="button"
+                  className="text-left text-sm text-[#ea5555] hover:text-[#ff8d8d]"
+                  onClick={() => {
+                    setDeleteBlock(true);
+                  }}
+                >
+                  {t("deleteBoard")}
+                </button>
+              </div>
+            </ReusablePopover>
+          )}
         </div>
       </div>
     </>
   );
-}
+};

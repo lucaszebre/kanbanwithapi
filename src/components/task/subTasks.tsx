@@ -1,25 +1,25 @@
-import React from "react";
-import BoardColumn from "../board/boardColumn";
+import type { Subtask } from "@/types/Zodtype";
+import { BoardColumn } from "../board/boardColumn";
 
-interface SubTaskProps {
-  subTasks: string[];
+type SubTaskProps = {
+  subTasks: Subtask[];
   handleSubTaskDelete: (index: number) => void;
   handleColumnTitleChange: (index: number, updatedTitle: string) => void;
   columnErrors: boolean[];
-}
+};
 
-const SubTasks: React.FC<SubTaskProps> = ({
+export const SubTasks = ({
   subTasks,
   handleSubTaskDelete,
   handleColumnTitleChange,
   columnErrors,
-}) => {
+}: SubTaskProps) => {
   return (
-    <>
-      {subTasks.map((text: string, index: number) => (
+    <div className="flex flex-col gap-4 w-full pb-4">
+      {subTasks.map((subtask, index) => (
         <BoardColumn
-          key={index}
-          title={text}
+          key={subtask.id}
+          title={subtask.title}
           Remove={() => handleSubTaskDelete(index)}
           onChange={(updatedTitle: string) =>
             handleColumnTitleChange(index, updatedTitle)
@@ -27,8 +27,6 @@ const SubTasks: React.FC<SubTaskProps> = ({
           error={columnErrors[index] || false}
         />
       ))}
-    </>
+    </div>
   );
 };
-
-export default SubTasks;

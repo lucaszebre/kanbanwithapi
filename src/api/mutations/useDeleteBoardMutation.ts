@@ -1,8 +1,8 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { useMutation, useQueryClient } from "react-query";
-import { boardApiServices } from "../board/board.service";
+import { boardApiServices } from "../board.service";
 import { axiosInstance } from "../common/instance";
-const deleteBoard = async (boardId: string) => {
+export const deleteBoard = async (boardId: string) => {
   try {
     const response = await axiosInstance.delete(`/boards/${boardId}`);
 
@@ -16,20 +16,15 @@ const deleteBoard = async (boardId: string) => {
     console.error("Error while deleting the board:", error);
   }
 };
-
-function useDeleteBoardMutation() {
+export const useDeleteBoardMutation = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(
-    (boardId: string) => boardApiServices.deleteBoard(boardId),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-      },
-    }
-  );
+  const mutation = useMutation({
+    mutationFn: (boardId: string) => boardApiServices.deleteBoard(boardId),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+    },
+  });
 
   return mutation;
-}
-
-export default useDeleteBoardMutation;
+};

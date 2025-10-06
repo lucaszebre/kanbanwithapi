@@ -1,39 +1,43 @@
-import { boardApiServices } from "@/api/board/board.service";
-import { columnApiServices } from "@/api/column/column.service";
-import { useStore } from "@/state/contextopen";
-import { useSidebarStore } from "@/state/sidebarcontext";
+import { boardApiServices } from "@/api/board.service";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { ColumnType } from "@/types";
+import type { ColumnType } from "@/types";
 import { getInitialWindowWidth } from "@/utils/GetInitialWidth";
-import { useEffect, useState } from "react";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import styles from "../../styles/Board.module.css";
-import Header from "../layout/header";
-import Sidebar from "../navigation/sideBar";
-import ListTask from "../task/listTask";
-import EditBoard from "./editBoard";
-import EmptyBoard from "./emptyBoard";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router";
+import { ListTaskNoDnd } from "../task/listTask";
+import { EditBoard } from "./editBoard";
+import { EmptyBoard } from "./emptyBoard";
 
-const Board = () => {
-  const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
-  const { currentBoardIndex } = useStore();
+export const Board = () => {
+  const { boardId } = useParams();
   const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
   const [editBoard, setEditBoard] = useState(false);
-  const queryClient = useQueryClient();
-  const column = useMutation(
-    (formData: { newColumnId: string; columnId: string; taskId: string }) =>
-      columnApiServices.changeColumn(
-        formData.newColumnId,
-        formData.columnId,
-        formData.taskId
-      ),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards", "Task"]);
-      },
-    }
-  );
+  const taskManager = useTaskManagerStore((state) => state.taskManager);
+
+  // const queryClient = useQueryClient();
+  // const column = useMutation({
+  //   mutationFn: (formData: {
+  //     newColumnId: string;
+  //     columnId: string;
+  //     taskId: string;
+  //   }) =>
+  //     columnApiServices.changeColumn(
+  //       formData.newColumnId,
+  //       formData.columnId,
+  //       formData.taskId
+  //     ),
+  //   onSuccess: () => {
+  //     queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+  //   },
+  // });
+  const currentBoard = useMemo(() => {
+    return (
+      taskManager[0].boards.find((board) => board.id === boardId) ??
+      taskManager[0].boards[0] ??
+      null
+    );
+  }, [boardId, taskManager]);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleResize = () => {
@@ -47,11 +51,11 @@ const Board = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (windowWidth <= 767) {
-      setIsSidebarOpen(false);
-    }
-  }, [windowWidth, setIsSidebarOpen]);
+  // useEffect(() => {
+  //   if (windowWidth <= 767) {
+  //     setIsSidebarOpen(false);
+  //   }
+  // }, [windowWidth, setIsSidebarOpen]);
 
   const { data, isStale } = useQuery({
     queryKey: ["boards"],
@@ -62,62 +66,84 @@ const Board = () => {
     (state) => state.setTaskManagerData
   );
 
-  const taskManager = useTaskManagerStore((state) => state.taskManager);
-
   useEffect(() => {
     if (data) {
       setTaskManagerData(data);
     }
   }, [data, isStale, setTaskManagerData]);
 
-  const changeCol = useTaskManagerStore((state) => state.changeCol);
+  // const changeCol = useTaskManagerStore((state) => state.changeCol);
 
   // Define the onDragEnd function
-  const onDragEnd = (result: DropResult) => {
-    // Check if the task was dropped into a different column
-    if (!result.destination) {
-      return;
-    }
+  // const onDragEnd = (result: Data) => {
+  //   // Check if the task was dropped into a different column
+  //   if (!result.destination) {
+  //     return;
+  //   }
 
-    // Find the source column based on the source droppableId
-    const sourceColumnId = result.source.droppableId;
-    const sourceColumn = taskManager[0].boards[currentBoardIndex].columns.find(
-      (column: { id: string }) => column.id === sourceColumnId
-    );
+  //   // Find the source column based on the source droppableId
+  //   const sourceColumnId = result.source.droppableId;
+  //   const sourceColumn = taskManager[0].boards[currentBoardIndex].columns.find(
+  //     (column: { id: string }) => column.id === sourceColumnId
+  //   );
 
-    // Check if the source column was found
-    if (!sourceColumn) {
-      return;
-    }
+  //   // Check if the source column was found
+  //   if (!sourceColumn) {
+  //     return;
+  //   }
 
-    // Find the task that was dragged based on its index in the source column
-    const draggedTask = sourceColumn.tasks[result.source.index].id;
+  //   // Find the task that was dragged based on its index in the source column
+  //   const draggedTask = sourceColumn.tasks[result.source.index].id;
 
-    // Find the destination column's ID
-    const destinationColumnId = result.destination.droppableId;
+  //   // Find the destination column's ID
+  //   const destinationColumnId = result.destination.droppableId;
 
-    // Call the changeColumn mutation to update the task's column
-    changeCol(destinationColumnId, sourceColumnId, draggedTask);
-    column.mutate({
-      newColumnId: destinationColumnId,
-      columnId: sourceColumnId,
-      taskId: draggedTask,
-    });
+  //   // Call the changeColumn mutation to update the task's column
+  //   changeCol(destinationColumnId, sourceColumnId, draggedTask);
+  //   column.mutate({
+  //     newColumnId: destinationColumnId,
+  //     columnId: sourceColumnId,
+  //     taskId: draggedTask,
+  //   });
 
-    // Invalidate queries to trigger a refetch
-    queryClient.refetchQueries(["boards", "Task"]);
-  };
+  //   // Invalidate queries to trigger a refetch
+  //   queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+  // };
   // function to render data
-  function renderListTask() {
-    if (
-      taskManager[0].boards[currentBoardIndex].columns &&
-      taskManager[0].boards[currentBoardIndex].columns.length > 0
-    ) {
+  // function renderListTask() {
+  //   if (
+  //     taskManager?.[0]?.boards?.[currentBoardIndex]?.columns &&
+  //     taskManager?.[0]?.boards?.[currentBoardIndex]?.columns?.length > 0
+  //   ) {
+  //     return (
+  //       <DndContext onDragEnd={onDragEnd}>
+  //         {taskManager[0].boards[currentBoardIndex].columns.map(
+  //           (column: ColumnType, columnIndex: number) => (
+  //             <ListTask
+  //               key={columnIndex}
+  //               title={column.name}
+  //               tasks={column.tasks}
+  //               columnId={column.id}
+  //               columnIndex={columnIndex}
+  //               NbList={columnIndex}
+  //             />
+  //           )
+  //         )}
+  //       </DndContext>
+  //     );
+  //   } else {
+  //     return <EmptyBoard  />;
+  //   }
+  // }
+
+  // function to render data without drag and drop
+  function renderListTaskNoDnd() {
+    if (currentBoard?.columns && currentBoard?.columns?.length > 0) {
       return (
-        <DragDropContext onDragEnd={onDragEnd}>
-          {taskManager[0].boards[currentBoardIndex].columns.map(
+        <div className="flex gap-4">
+          {currentBoard?.columns.map(
             (column: ColumnType, columnIndex: number) => (
-              <ListTask
+              <ListTaskNoDnd
                 key={columnIndex}
                 title={column.name}
                 tasks={column.tasks}
@@ -127,77 +153,26 @@ const Board = () => {
               />
             )
           )}
-        </DragDropContext>
+        </div>
       );
     } else {
-      return <EmptyBoard boards={true} />;
+      return <EmptyBoard />;
     }
   }
 
-  if (taskManager && taskManager[0].boards[currentBoardIndex]) {
+  if (taskManager && currentBoard) {
     return (
       <>
         <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
-        <div className={styles.AppContainer}>
-          <div className={styles.HeaderBoard}>
-            <Header boards={true} />
-          </div>
-          <div className={styles.BoardDiv}>
-            <div
-              className={styles.SideContainer}
-              style={{
-                display: isSidebarOpen ? "block" : "none",
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              <Sidebar boards={true} />
-            </div>
-            <div
-              className={styles.BoardWrapper}
-              tabIndex={0}
-              style={{
-                marginLeft: isSidebarOpen ? "-70px" : "0px",
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              {renderListTask()}
-            </div>
-          </div>
-        </div>
+
+        {renderListTaskNoDnd()}
       </>
     );
   } else {
     return (
       <>
-        <div className={styles.AppContainer}>
-          <div className={styles.HeaderBoard}>
-            <Header boards={false} />
-          </div>
-          <div className={styles.BoardDiv}>
-            <div
-              className={styles.SideContainer}
-              style={{
-                display: isSidebarOpen ? "block" : "none",
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              <Sidebar boards={false} />
-            </div>
-            <div
-              className={styles.BoardWrapper}
-              tabIndex={0}
-              style={{
-                marginLeft: isSidebarOpen ? "-70px" : "0px",
-                transition: "all 0.3s ease-in-out",
-              }}
-            >
-              <EmptyBoard boards={false} />
-            </div>
-          </div>
-        </div>
+        <EmptyBoard />
       </>
     );
   }
 };
-
-export default Board;

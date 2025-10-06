@@ -1,134 +1,128 @@
-import { taskApiServices } from "@/api/task/task.service";
+import { taskApiServices } from "@/api/task.service";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { useTheme } from "@/state/themecontext";
-import styles from "@/styles/AddTask.module.css";
-import Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
+import type { Subtask } from "@/types/Zodtype";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
-import renderSelect from "../../utils/renderselect";
-import SubTasks from "./subTasks";
-
-const AddTask = (props: {
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
+import { v4 as uuidv4 } from "uuid";
+import ReusableSelect from "../reusable/reusable-select";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { SubTasks } from "./subTasks";
+export const AddTask = (props: {
   addTask: boolean;
   setAddTask: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const addTask = useTaskManagerStore((state) => state.addTask);
-
-  const [taskTitle, setTaskTitle] = useState(""); // state for the task title
-  const [taskDescription, setTaskDescription] = useState(""); // state for task description
-  const [SubTaskCurrent, setSubTaskCurrent] = useState<string[]>([]); // states to save up the name of all the subtasks I add
-  const [SubTasksError, setSubTasksError] = useState<boolean[]>([]); // state to handle if one of the subtasks is empty
+  const { t } = useTranslation("task");
+  const { boardId: boardIdParams } = useParams();
+  const [title, setTitle] = useState(""); // state for the task title
+  const [description, setDescription] = useState(""); // state for task description
+  const [subtasks, setSubTasks] = useState<Subtask[]>([]); // states to save up the name of all the subtasks I add
+  const [subTasksError, setSubTasksError] = useState<boolean[]>([]); // state to handle if one of the subtasks is empty
   const [taskTitleError, setTaskTitleError] = useState(false); // state to handle if the task title is empty
-  const { theme } = useTheme();
-  const [SelectId, setSelectId] = useState(""); // state to know which column is selected
+  const [columnId, setColumnId] = useState(""); // state to know which column is selected
+  const boardId = useMemo(
+    () => (boardIdParams ? boardIdParams : taskManager[0]?.boards?.[0]?.id),
+    [boardIdParams, taskManager]
+  );
+  const currentBoard = useMemo(() => {
+    return (
+      taskManager[0].boards.find((board) => board?.id === boardId) ??
+      taskManager[0].boards[0] ??
+      null
+    );
+  }, [boardId, taskManager]);
   useEffect(() => {
-    const index = parseInt(Cookies.get("currentBoardIndex") || "0");
-    if (
-      taskManager &&
-      taskManager[0].boards[index] &&
-      taskManager[0].boards[index].columns
-    ) {
-      setSelectId(taskManager[0].boards[index].columns[0].id);
-      console.log(index);
+    if (taskManager && currentBoard && currentBoard?.columns) {
+      setColumnId(currentBoard.columns[0]?.id);
     }
-  }, [parseInt(Cookies.get("currentBoardIndex") || "0")]);
+  }, [currentBoard, taskManager]);
 
   const queryClient = useQueryClient();
-  const mutation = useMutation(
-    (formData: {
-      taskTitle: string;
-      taskDescription: string;
+  const addTaskMutation = useMutation({
+    mutationFn: (formData: {
+      title: string;
+      description: string;
       columnId: string;
-      SubTaskCurrent: string[];
-    }) =>
-      taskApiServices.createTask(
-        formData.taskTitle,
-        formData.taskDescription,
-        formData.columnId,
-        formData.SubTaskCurrent
-      ),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-        toast.success("Task add sucessfully");
-      },
-      onError: () => {
-        toast.error("Error to add a task");
-      },
-    }
-  );
+      subtasks: Subtask[];
+    }) => taskApiServices.createTask(formData),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+      toast.success(t("add.toast.success"));
+    },
+    onError: () => {
+      toast.error(t("add.toast.error"));
+    },
+  });
   function addSubTask() {
-    setSubTaskCurrent([...SubTaskCurrent, ""]);
+    setSubTasks([...subtasks, { id: uuidv4(), title: "", isCompleted: false }]);
   }
   const handleColumnTitleChange = (index: number, updatedTitle: string) => {
-    const updatedColumns = [...SubTaskCurrent];
-    updatedColumns[index] = updatedTitle;
-    setSubTaskCurrent(updatedColumns);
+    const updatedColumns = [...subtasks];
+    updatedColumns[index] = { ...updatedColumns[index], title: updatedTitle };
+    setSubTasks(updatedColumns);
     setTaskTitleError(false);
   };
   function handleSubTaskDelete(index: number) {
-    const newSubTask = [...SubTaskCurrent];
+    const newSubTask = [...subtasks];
     newSubTask.splice(index, 1);
-    setSubTaskCurrent(newSubTask);
+    setSubTasks(newSubTask);
   }
   const HandleSubmit = async () => {
-    if (taskTitle && taskDescription && SelectId) {
-      addTask(
-        taskManager[0].boards[parseInt(Cookies.get("currentBoardIndex") || "0")]
-          .id,
-        taskTitle,
-        taskDescription,
-        SelectId,
-        SubTaskCurrent
-      );
-      mutation.mutate({
-        taskTitle,
-        taskDescription,
-        columnId: SelectId,
-        SubTaskCurrent,
+    if (title && description && columnId && boardId) {
+      addTask({
+        id: uuidv4(),
+        boardId,
+        title: title,
+        description: description,
+        columnId: columnId,
+        subtasks,
       });
-      setTaskTitle("");
-      setTaskDescription("");
-      setSubTaskCurrent([]);
+      addTaskMutation.mutate({
+        title: title,
+        description: description,
+        columnId: columnId,
+        subtasks,
+      });
+      setTitle("");
+      setDescription("");
+      setSubTasks([]);
     } else {
-      console.error("error in Add Task");
+      console.error(t("add.console.submitError"));
     }
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.currentTarget == e.target) {
-          props.setAddTask(false);
-        }
-      }}
-      className={styles.AddTaskWrapper}
-      style={{ display: props.addTask ? "flex" : "none" }}
-    >
-      <div
-        className={`${styles.AddTaskBlock} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
+    <Dialog open={props.addTask} onOpenChange={props.setAddTask}>
+      <DialogContent
+        className="max-h-[90%] w-[480px] overflow-y-auto"
+        showCloseButton
       >
-        <h2
-          className={`${styles.AddTaskTitle} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
-        >
-          Add Task
-        </h2>
+        <DialogHeader>
+          <DialogTitle>{t("add.modalTitle")}</DialogTitle>
+        </DialogHeader>
         <form
-          className={styles.AddTaskForm}
+          className="flex h-full w-full flex-col items-start justify-between"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (!SubTaskCurrent || !taskTitle) {
-              const newSubTaskErrors = SubTaskCurrent.map(
-                (subTask) => subTask.trim() === ""
+            if (!subtasks || !title) {
+              const newSubTaskErrors = subtasks.map(
+                (subTask) => subTask.title.trim() === ""
               );
               setSubTasksError(newSubTaskErrors);
-              if (taskTitle.trim() === "") {
+              if (title.trim() === "") {
                 setTaskTitleError(true);
               } else if (newSubTaskErrors.some((error) => error)) {
                 console.error("error in subtask ");
@@ -140,100 +134,85 @@ const AddTask = (props: {
             }
           }}
         >
-          <label
-            className={`${styles.AddTaskLabel} ${
-              theme === "light" ? styles.light : styles.dark
-            }`}
-            htmlFor="taskTitle"
-          >
-            Task Title
-          </label>
-          <input
+          <Label className="mb-2 text-xs font-semibold" htmlFor="taskTitle">
+            {t("add.form.titleLabel")}
+          </Label>
+          <Input
             type="text"
-            value={taskTitle}
+            value={title}
             onChange={(e) => {
-              setTaskTitle(e.target.value);
+              setTitle(e.target.value);
               setTaskTitleError(false);
             }}
-            className={`${styles.AddTaskInput} ${
-              theme === "light" ? styles.light : styles.dark
-            } ${taskTitleError ? styles.error : ""}`}
+            className={`mb-4 h-10 w-full cursor-pointer rounded-md border border-gray-400 bg-transparent px-4 text-lg font-semibold outline-none focus:ring-2 focus:ring-indigo-500 ${
+              taskTitleError ? "border-red-500" : ""
+            }`}
           />
           {taskTitleError && (
-            <div className={styles.TaskTitleError}>
-              Task name can not be empty{" "}
+            <div className="mb-2 text-sm text-red-500">
+              {t("add.validation.titleRequired")}
             </div>
           )}
-          <label
-            className={`${styles.AddTaskLabel} ${
-              theme === "light" ? styles.light : styles.dark
-            }`}
+          <Label
+            className="mb-2 text-xs font-semibold"
             htmlFor="taskDescription"
           >
-            Task Description
-          </label>
-          <textarea
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
+            {t("add.form.descriptionLabel")}
+          </Label>
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             cols={30}
             rows={10}
-            className={`${styles.AddTaskTextArea} ${
-              theme === "light" ? styles.light : styles.dark
-            }`}
-          ></textarea>
-          <label
-            className={`${styles.AddTaskLabel} ${
-              theme === "light" ? styles.light : styles.dark
-            }`}
-            htmlFor="taskColumnSelect"
-          >
-            Subtasks
-          </label>
+            className="mb-4 w-full cursor-pointer rounded-md border border-gray-400 bg-transparent px-4 py-2 text-lg font-semibold"
+          ></Textarea>
+          {subtasks.length > 0 && (
+            <Label
+              className="mb-2 text-xs font-semibold"
+              htmlFor="taskColumnSelect"
+            >
+              {t("add.form.subtasksLabel")}
+            </Label>
+          )}
           <SubTasks
-            subTasks={SubTaskCurrent}
+            subTasks={subtasks}
             handleSubTaskDelete={handleSubTaskDelete}
             handleColumnTitleChange={handleColumnTitleChange}
-            columnErrors={SubTasksError}
+            columnErrors={subTasksError}
           />
-          <button
-            className={styles.AddTaskSaveButton}
+          <Button
+            className="mb-6 w-full h-12 rounded-md bg-indigo-600 px-4 font-semibold text-white transition-colors hover:bg-indigo-700"
             style={{ marginBottom: "25px" }}
             onClick={(e) => {
               e.preventDefault();
               addSubTask();
             }}
           >
-            + Add New Subtask
-          </button>
-          <select
-            onChange={(e) => setSelectId(e.target.value)}
-            value={SelectId}
-            onClick={() => {
-              console.log(SelectId);
-            }}
-            className={`${styles.SelectAddTask} ${
-              theme === "light" ? styles.light : styles.dark
-            }`}
+            {t("add.form.addSubtaskButton")}
+          </Button>
+
+          <ReusableSelect
+            label={null}
+            value={columnId}
+            onValueChange={(val) => setColumnId(val)}
+            placeholder={t("view.selectColumnPlaceholder", {
+              defaultValue: "Select column",
+            })}
+            items={(currentBoard?.columns || []).map((col) => ({
+              value: col.id,
+              label: col.name,
+            }))}
+            triggerClassName="w-full h-12"
+            className="mt-1 w-full pb-4"
+          />
+          <Button
+            className="h-12 w-full rounded-md pt-4 font-semibold "
+            type="submit"
           >
-            {taskManager[0].boards[
-              parseInt(Cookies.get("currentBoardIndex") || "0")
-            ] &&
-              taskManager[0].boards[
-                parseInt(Cookies.get("currentBoardIndex") || "0")
-              ].columns &&
-              renderSelect(
-                taskManager[0].boards[
-                  parseInt(Cookies.get("currentBoardIndex") || "0")
-                ].columns
-              )}
-          </select>
-          <button className={styles.AddTaskSaveButton} type="submit">
-            Create Task
-          </button>
+            {t("add.form.createButton")}
+          </Button>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
-
-export default AddTask;

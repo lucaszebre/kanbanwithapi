@@ -1,12 +1,12 @@
-import { Subtask } from '@/types';
-import {create} from 'zustand';
+import type { SubtaskType } from '@/types';
+import { create } from 'zustand';
 
 type OpenedTaskType = {
   id: string;
   title: string;
   description: string;
   columnId: string;
-  subTask: Subtask[];
+  subTask: SubtaskType[];
 } | null;
 
 type DataStore = {

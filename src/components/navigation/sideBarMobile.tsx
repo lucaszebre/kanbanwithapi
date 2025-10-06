@@ -1,118 +1,80 @@
-import { boardApiServices } from "@/api/board/board.service";
+import { boardApiServices } from "@/api/board.service";
 import { useStore } from "@/state/contextopen";
 import { DataContext } from "@/state/datacontext";
 import { useSidebarStore } from "@/state/sidebarcontext";
-import { useTheme } from "@/state/themecontext";
 import { getInitialWindowWidth } from "@/utils/GetInitialWidth";
-import { Switch as MuiSwitch } from "@mui/material";
-import Image from "next/image";
-import React, { useContext, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useQuery, useQueryClient } from "react-query";
-import BoardCart from "../board/boardCart";
-import styles from "../styles/SidebarMobile.module.css";
-const Sidebar = (props: { boards: boolean }) => {
-  const { theme, setTheme } = useTheme();
+import { BoardCart } from "../board/boardCart";
+import { ThemeToggle } from "../theme-toggle";
 
-  const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore(); // state to toggle the sidebar
-  const { setIsLoggedIn } = useContext(DataContext); // state to toggle the sidebar
-  const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth()); // Update the useState call
-  const [addBoard, setAddBoard] = useState(false);
-
+export const Sidebar = (props: { boards: boolean }) => {
+  const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();
+  const { setIsLoggedIn } = useContext(DataContext);
+  const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
   const { currentBoardIndex, setCurrentBoardIndex } = useStore();
-
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Check if the window object is available
     if (typeof window !== "undefined") {
-      // Add this useEffect to update the windowWidth state when the window is resized
-      const handleResize = () => {
-        setWindowWidth(window.innerWidth);
-      };
-
+      const handleResize = () => setWindowWidth(window.innerWidth);
       window.addEventListener("resize", handleResize);
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
+
   useEffect(() => {
-    // Add this useEffect to update the isSidebarOpen state based on the windowWidth state
-    if (windowWidth > 767) {
-      setIsSidebarMobile(false);
-    }
+    if (windowWidth > 767) setIsSidebarMobile(false);
   }, [windowWidth, setIsSidebarMobile]);
 
-  const handleThemeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newTheme = event.target.checked ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme); // Update localStorage with the new theme
-  };
-
-  // function to handle the click on a board cart
   const handleBoardClick = (boardIndex: number, boardId: string) => {
     setCurrentBoardIndex(boardIndex);
     localStorage.setItem("currentBoardIndex", boardIndex.toString());
     localStorage.setItem("currentBoardId", boardId);
-    queryClient.refetchQueries(["Task", "boards"]);
+    queryClient.refetchQueries({ queryKey: ["Task", "boards"] });
   };
-  const { data, isLoading, isError, error } = useQuery({
+
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["boards"],
     queryFn: () => boardApiServices.fetchBoards(),
   });
+
   if (data === undefined) {
-    // If there's an error or data is undefined, display the custom error page
+    // noop for now
   } else {
     setIsLoggedIn(true);
   }
 
+  const overlayBase =
+    "flex md:hidden fixed inset-0 top-24 items-center justify-center z-20 bg-black/50";
+  const panelBase =
+    "w-[90%] max-h-[90%] h-auto rounded-xl shadow-lg text-[#828FA3] p-4 flex flex-col items-start overflow-y-auto bg-white [data-theme='dark']:bg-[#2B2C37]";
+  const titleClasses =
+    "text-[12px] tracking-[2.4px] leading-[15px] mb-6 ml-5 font-bold text-black [data-theme='dark']:text-white";
+  const createBoardClasses =
+    "my-2 flex flex-row cursor-pointer text-[15px] font-bold mr-6 px-6 py-[15px] transition-colors ml-[-0.5rem] rounded-r-full hover:bg-[rgba(99,95,199,0.1)] [data-theme='dark']:hover:bg-white hover:text-[#635FC7]";
+  const createBoardTextClasses = "text-[#635FC7] text-[16px] font-medium";
+  const hideSidebarClasses =
+    "flex flex-row items-center justify-center text-[#828FA3] cursor-pointer gap-2 mt-4 hover:text-[#635FC7]";
+
   if (isLoading) {
-    // Return loading skeletons
     return (
       <div
-        className={`${styles.SidebarContainer} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
+        className={`${overlayBase}`}
+        style={{ display: isSidebarMobile ? "flex" : "none" }}
       >
-        <div className={styles.SibebarWrapper}>
-          <div className={styles.DropDown}>
-            {props.boards && (
-              <Skeleton
-                height={30}
-                width={200}
-                className={`${styles.SideBarTitle} ${
-                  theme === "light" ? styles.light : styles.dark
-                }`}
-              />
-            )}
-
-            {/* Display multiple skeletons for board carts */}
-            {[...Array(3)].map((_, index) => (
-              <Skeleton
-                key={index}
-                height={50}
-                style={{ marginTop: "10px" }}
-                className={currentBoardIndex === index ? styles.selected : ""}
-              />
-            ))}
-
-            <div
-              className={styles.CreateBoard}
-              onClick={() => {
-                setAddBoard(true);
-              }}
-            >
-              <Skeleton height={13} width={10} className={styles.BoardImage} />
-              <Skeleton
-                height={16}
-                width={100}
-                className={styles.CreateBoardText}
-              />
-            </div>
+        <div className={panelBase}>
+          {props.boards && (
+            <Skeleton height={30} width={200} className="mb-4" />
+          )}
+          {[...Array(3)].map((_, index) => (
+            <Skeleton key={index} height={50} className="mt-2" />
+          ))}
+          <div className={createBoardClasses}>
+            <Skeleton height={13} width={10} className="mr-1" />
+            <Skeleton height={16} width={100} />
           </div>
-
-          {/* ... (existing theme toggle and hide sidebar code) */}
         </div>
       </div>
     );
@@ -121,99 +83,49 @@ const Sidebar = (props: { boards: boolean }) => {
   if (isError) {
     return (
       <div
-        className={`${styles.SidebarContainer} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
+        className={`${overlayBase}`}
+        style={{ display: isSidebarMobile ? "flex" : "none" }}
       >
-        <p>Something went wrong</p>
+        <p className="text-white">Something went wrong</p>
       </div>
     );
   }
+
   return (
     <div
-      className={styles.SidebarContainer}
+      className={overlayBase}
       style={{ display: isSidebarMobile ? "flex" : "none" }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          setIsSidebarMobile(false);
-        }
+        if (e.target === e.currentTarget) setIsSidebarMobile(false);
       }}
     >
-      <div
-        className={`${styles.SibebarWrapper} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
-      >
-        <h1
-          className={`${styles.SideBarTitle} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
-        >
-          ALL boards({data.length})
-        </h1>
-
+      <div className={panelBase}>
+        <h1 className={titleClasses}>ALL boards({data.length})</h1>
         {data.map((board: { name: string; id: string }, index: number) => (
           <BoardCart
             text={board.name}
-            key={index}
-            onClick={() => {
-              handleBoardClick(index, board.id);
-            }}
+            key={board.id}
+            onClick={() => handleBoardClick(index, board.id)}
             selected={currentBoardIndex === index}
           />
         ))}
-
-        <div
-          className={`${styles.CreateBoard} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
-          onClick={() => {
-            setAddBoard(true);
-          }}
-        >
-          <Image
-            className={styles.BoardImage}
+        <div className={createBoardClasses}>
+          <img
+            className="mr-1"
             src="/assets/icon-board2.svg"
             alt="plus"
             width={16}
             height={16}
           />
-          <p className={styles.CreateBoardText}>+ Create New Board</p>
+          <p className={createBoardTextClasses}>+ Create New Board</p>
         </div>
-
+        <ThemeToggle />
         <div
-          className={`${styles.ToggleBlock} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
+          onClick={() => setIsSidebarMobile(false)}
+          className={hideSidebarClasses}
         >
-          <Image
-            src="/assets/icon-dark-theme.svg"
-            alt="icon-dark-theme"
-            width={18.33}
-            height={18.33}
-          />
-          <MuiSwitch
-            size="medium"
-            color="default"
-            checked={theme !== "dark"}
-            onChange={handleThemeToggle}
-          />
-          <Image
-            src="/assets/icon-light-theme.svg"
-            alt="icon-light-theme"
-            width={15}
-            height={15}
-          />
-        </div>
-
-        <div
-          onClick={() => {
-            setIsSidebarMobile(false);
-          }}
-          className={styles.HideSideBar}
-        >
-          <Image
-            className={styles.HideItems}
+          <img
+            className="mr-2"
             src="/assets/icon-hide-sidebar.svg"
             width={18}
             height={16}
@@ -225,5 +137,3 @@ const Sidebar = (props: { boards: boolean }) => {
     </div>
   );
 };
-
-export default Sidebar;

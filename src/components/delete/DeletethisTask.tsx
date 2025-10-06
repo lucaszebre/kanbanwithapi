@@ -1,95 +1,77 @@
-import { taskApiServices } from "@/api/task/task.service";
-import { useStore } from "@/state/contextopen";
+import { taskApiServices } from "@/api/task.service";
+import { ReusableDialog } from "@/components/reusable/reusable-dialog";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { useTheme } from "@/state/themecontext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMemo, type Dispatch, type SetStateAction } from "react";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
-import styles from "../../styles/DeleteThisTask.module.css";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
 
-const DeleteThisTask = (props: {
-  TaskTitle: string;
-  TaskId: string;
+export const DeleteThisTask = ({
+  title,
+  id,
+  columnId,
+  open,
+  setOpen,
+}: {
+  title: string;
+  id: string;
   columnId: string;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { theme } = useTheme();
-  const { DeleteTaskBlock, setDeleteTaskBlock } = useStore();
-
+  const { t } = useTranslation("task");
+  const { boardId } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
-  const delTask = useTaskManagerStore((state) => state.deleteTask);
-
-  const { currentBoardIndex } = useStore();
+  const deleteTask = useTaskManagerStore((state) => state.deleteTask);
+  const currentBoard = useMemo(() => {
+    return (
+      taskManager[0].boards.find((board) => board.id === boardId) ??
+      taskManager[0].boards[0] ??
+      null
+    );
+  }, [boardId, taskManager]);
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(
-    (formData: { boardId: string; columnId: string; taskId: string }) =>
-      taskApiServices.deleteTask(formData.taskId),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-        toast.success("Task delete sucessfully!");
-      },
-      onError: () => {
-        toast.error("Error to delete the task!");
-      },
-    }
-  );
+  const mutation = useMutation({
+    mutationFn: (formData: {
+      boardId: string;
+      columnId: string;
+      taskId: string;
+    }) => taskApiServices.deleteTask(formData.taskId),
+
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+    },
+    onError: () => {
+      toast.error(t("delete.toast.error"));
+    },
+  });
   return (
-    <div
-      className={styles.DeleteThisTaskWrapper}
-      style={{ display: DeleteTaskBlock ? "flex" : "none" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          setDeleteTaskBlock(false);
-        }
+    <ReusableDialog
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) setOpen(false);
       }}
-    >
-      <div
-        className={`${styles.DeletethisTaskDiv} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
-      >
-        <h1 className={styles.DeleteThisTaskTitle}>Delete this task?</h1>
-        <p className={styles.DeleteThisTaskText}>
-          Are you sure you want to delete the ‘
-          <a
-            style={{
-              color: "white",
-            }}
-          >
-            {props.TaskTitle}
-          </a>
-          ’ Task? This action will remove this task and this subtasks and cannot
-          be reversed.
-        </p>
-        <div className={styles.DeleteThisTaskButtons}>
-          <button
-            onClick={() => {
-              delTask(
-                taskManager[0].boards[currentBoardIndex].id,
-                props.columnId,
-                props.TaskId
-              );
-              mutation.mutate({
-                boardId: taskManager[0].boards[currentBoardIndex].id,
-                columnId: props.columnId,
-                taskId: props.TaskId,
-              });
-              setDeleteTaskBlock(false);
-            }}
-            className={styles.DeleteButton}
-          >
-            Delete
-          </button>
-          <button
-            className={styles.CancelButton}
-            onClick={() => setDeleteTaskBlock(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+      title={t("delete.modalTitle")}
+      description={
+        <span className="text-left block">
+          {t("delete.description", { title })}
+        </span>
+      }
+      variant="destructive"
+      size="md"
+      confirmLabel={t("delete.buttons.confirm")}
+      cancelLabel={t("delete.buttons.cancel")}
+      onConfirm={() => {
+        deleteTask({ boardId: currentBoard?.id, columnId, id });
+        mutation.mutate({
+          boardId: currentBoard?.id,
+          columnId: columnId,
+          taskId: id,
+        });
+      }}
+      className="w-[480px]"
+    />
   );
 };
-
-export default DeleteThisTask;

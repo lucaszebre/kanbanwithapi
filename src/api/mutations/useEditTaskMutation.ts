@@ -1,18 +1,18 @@
-import { Subtasked } from "@/types";
-import { useMutation, useQueryClient } from "react-query";
-import { taskApiServices } from "../task/task.service";
+import type { SubtaskedType } from "@/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { taskApiServices } from "../task.service";
 
-function useEditTaskMutation() {
+export const useEditTaskMutation = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(
-    (formData: {
+  const mutation = useMutation({
+    mutationFn: (formData: {
       taskId: string;
       taskName: string;
       taskDescription: string;
       subTasktoAdd: string[];
       subTasktoDelete: string[];
-      subTask: Subtasked[];
+      subTask: SubtaskedType[];
     }) =>
       taskApiServices.editTask(
         formData.taskId,
@@ -22,14 +22,10 @@ function useEditTaskMutation() {
         formData.subTasktoDelete,
         formData.subTask
       ),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards", "Task"]);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+    },
+  });
 
   return mutation;
-}
-
-export default useEditTaskMutation;
+};

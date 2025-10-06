@@ -1,13 +1,13 @@
-import { boardApiServices } from "@/api/board/board.service";
+import { boardApiServices } from "@/api/board.service";
 import { useStore } from "@/state/contextopen";
 import { DataContext } from "@/state/datacontext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useContext, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
 import AddBoard from "../board/addBoard";
 import styles from "../styles/sideMobile.module.css";
 
-const sideMobile = () => {
+export const sideMobile = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [addBoard, setAddBoard] = useState(false);
   const {
@@ -36,7 +36,7 @@ const sideMobile = () => {
 
     // * Invalidate queries to refetch the data, assuming you are using React Query.
     // If not, you can remove this part.
-    queryClient.refetchQueries(["boards"]);
+    queryClient.refetchQueries({queryKey:["boards"]});
   };
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -57,4 +57,3 @@ const sideMobile = () => {
   );
 };
 
-export default sideMobile;

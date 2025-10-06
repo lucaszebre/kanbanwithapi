@@ -1,36 +1,32 @@
-interface Subtask {
+type Subtask = {
   id: string;
   title: string;
   isCompleted: boolean;
-  taskId: string;
-}
+};
 
-
-
-interface Column {
+type Column = {
   id: string;
   name: string;
   tasks: Task[];
-}
+};
 
-export interface Board {
+export type Board = {
   id: string;
   name: string;
   columns: Column[];
-}
+};
 
-export interface User {
+export type User = {
   id: string;
   name: string;
   email: string;
   boards: Board[];
-}
-export interface Task {
+};
+export type Task = {
   id: string;
   title: string;
-  description:string;
-  status:string;
+  description: string;
+  status: string;
   subtasks: Subtask[];
-}
+};
 export type TaskManager = User[]; // An array of User objects
-  

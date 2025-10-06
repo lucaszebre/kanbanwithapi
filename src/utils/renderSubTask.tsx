@@ -1,10 +1,10 @@
-import BoardColumn from "@/components/board/boardColumn";
+import { BoardColumn } from "@/components/board/boardColumn";
 
 type NewSubtask = {
   id: string;
   title: string;
   isCompleted: boolean;
-  taskId?: any;
+  taskId?: string;
   add?: boolean;
 };
 
@@ -16,7 +16,7 @@ type RenderSubTaskProps = {
     subTaskId: string,
     add: boolean
   ) => void;
-  handleDeleteSubtask: (index: number, subTaskId: string) => void;
+  handleDeleteSubtask: (id: string) => void;
   columnErrors: boolean[];
 };
 
@@ -35,7 +35,7 @@ export const RenderSubTask = ({
           onChange={(e: string) =>
             handleEditSubTask(index, e, subTask.id, subTask.add || false)
           }
-          Remove={() => handleDeleteSubtask(index, subTask.id)}
+          Remove={() => handleDeleteSubtask(subTask.id)}
           error={columnErrors[index] || false}
         />
       ))}

@@ -1,0 +1,10 @@
+{
+  "allBoards": "All boards",
+  "createNewBoard": "+ Create New Board",
+  "toggleTheme": "Toggle Theme",
+  "alt": {
+    "logo": "logo",
+    "plus": "plus",
+    "board": "board"
+  }
+}

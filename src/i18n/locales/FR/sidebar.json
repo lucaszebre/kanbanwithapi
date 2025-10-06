@@ -1,0 +1,10 @@
+{
+  "allBoards": "Tous les tableaux",
+  "createNewBoard": "+ Créer un nouveau tableau",
+  "toggleTheme": "Basculer le thème",
+  "alt": {
+    "logo": "logo",
+    "plus": "plus",
+    "board": "tableau"
+  }
+}

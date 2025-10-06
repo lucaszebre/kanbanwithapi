@@ -1,7 +1,7 @@
-import { boardApiServices } from "@/api/board/board.service";
-import { columnApiServices } from "@/api/column/column.service";
-import { ColumnData } from "@/types";
-import { Column } from "@/types/Zodtype";
+import { boardApiServices } from "@/api/board.service";
+import { columnApiServices } from "@/api/column.service";
+import type { ColumnData } from "@/types";
+import type { Column } from "@/types/Zodtype";
 
 export const handleSaveChanges = async (
   columnsToDelete: string[],
@@ -40,7 +40,7 @@ export const handleSaveChanges = async (
       try {
         await columnApiServices.addColumn(currentBoardId, column.name);
       } catch (error) {
-        console.error("Error to add column");
+        console.error("Error to add column",error);
       }
     }
   }
@@ -49,7 +49,7 @@ export const handleSaveChanges = async (
     try {
       await boardApiServices.changeBoardName(currentBoardId, Header);
     } catch (error) {
-      console.error("Error to change the baord name ");
+      console.error("Error to change the baord name ",error);
     }
   }
 };

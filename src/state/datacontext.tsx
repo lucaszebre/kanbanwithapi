@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Column, Subtask ,Board} from '@/types/index';
-import Cookies from 'js-cookie';
+import type { SubtaskType } from '@/types';
+import React, { createContext, useState } from 'react';
 
 
 type openedTaskType= {
@@ -9,7 +8,7 @@ type openedTaskType= {
     title: string;
     description: string;
     columnId: string;
-    subTask: Subtask[];
+    subTask: SubtaskType[];
 } | null 
 export type DataContextType = {
     openedTask:openedTaskType;
@@ -32,7 +31,7 @@ export const DataProvider = (props: { children: React.ReactNode }) => {
             id: string;title: string;
             description: string;
             columnId: string;
-            subTask: Subtask[];
+            subTask: SubtaskType[];
             } | null>(null);
         const [isLoggedIn, setIsLoggedIn] = useState(false);
 

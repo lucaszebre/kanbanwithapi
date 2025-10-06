@@ -1,5 +1,4 @@
-import React from "react";
-import BoardColumn from "../board/boardColumn"; // get the board  column components
+import { BoardColumn } from "../board/boardColumn"; // get the board  column components
 
 type ColumnsRendererProps = {
   columnNames: string[];
@@ -8,12 +7,12 @@ type ColumnsRendererProps = {
   columnErrors: boolean[];
 };
 
-export const ColumnsRenderer: React.FC<ColumnsRendererProps> = ({
+export const ColumnsRenderer = ({
   columnNames,
   handleColumnTitleChange,
   removeColumn,
   columnErrors,
-}) => {
+}: ColumnsRendererProps) => {
   return (
     <>
       {columnNames.map((text, index) => (

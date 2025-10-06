@@ -1,24 +1,24 @@
-import { useMutation, useQueryClient } from "react-query";
-import { columnApiServices } from "../column/column.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { columnApiServices } from "../column.service";
 
-function useChangeColumnMutation() {
+export const useChangeColumnMutation = () => {
   const queryClient = useQueryClient();
 
-  const column = useMutation(
-    (formData: { newColumnId: string; columnId: string; taskId: string }) =>
+  const column = useMutation({
+    mutationFn: (formData: {
+      newColumnId: string;
+      columnId: string;
+      taskId: string;
+    }) =>
       columnApiServices.changeColumn(
         formData.newColumnId,
         formData.columnId,
         formData.taskId
       ),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards", "Task"]);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+    },
+  });
 
   return column;
-}
-
-export default useChangeColumnMutation;
+};

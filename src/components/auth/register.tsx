@@ -1,4 +1,4 @@
-import { useRegister } from "@/api/mutations/useRegister";
+import { authApiServices } from "@/api/auth.service";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,13 +17,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { SchemaRegister } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { Icons } from "../common/icons";
 
-export function Register() {
+export const Register = () => {
+  const { t } = useTranslation("auth");
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof SchemaRegister>>({
     resolver: zodResolver(SchemaRegister),
@@ -32,39 +34,44 @@ export function Register() {
     },
   });
 
-  const registerMutation = useRegister();
-
-  const handleRegister = (
+  const handleRegister = async (
     email: string,
     password: string,
     fullname: string
   ) => {
-    registerMutation.mutate(
-      { email, password, fullname },
-      {
-        onSuccess: (data) => {
-          toast.success("User registered sucessfully");
-        },
-        onError: (error) => {
-          console.error(error);
-        },
+    try {
+      const response = await authApiServices.register(
+        email,
+        password,
+        fullname
+      );
+      if (response) {
+        if (response?.status === 404) {
+          toast.error(t("register.alreadyUsedEmailError"));
+          return;
+        }
+        toast.success(t("register.registeredSuccess"));
+
+        return response;
+      } else {
+        throw new Error(t("register.registrationFailed"));
       }
-    );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  function onSubmit(values: z.infer<typeof SchemaRegister>) {
+  async function onSubmit(values: z.infer<typeof SchemaRegister>) {
     setIsLoading(true);
-    const dd = handleRegister(values.email, values.password, values.name);
+    await handleRegister(values.email, values.password, values.name);
 
     setIsLoading(false);
   }
   return (
     <Card className="p-2">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl ">Register an account</CardTitle>
-        <CardDescription>
-          Enter your email below to register your account
-        </CardDescription>
+        <CardTitle className="text-2xl ">{t("register.title")}</CardTitle>
+        <CardDescription>{t("register.description")}</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form
@@ -76,9 +83,14 @@ export function Register() {
             name="name"
             render={({ field }) => (
               <FormItem className="flex-col items-start content-start w-full">
-                <FormLabel className="text-start w-full">Name</FormLabel>
+                <FormLabel className="text-start w-full">
+                  {t("register.name")}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="lucas" {...field} />
+                  <Input
+                    placeholder={t("register.namePlaceholder") || ""}
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -90,11 +102,13 @@ export function Register() {
             name="email"
             render={({ field }) => (
               <FormItem className="flex-col items-start content-start w-full">
-                <FormLabel className="text-start w-full">Email</FormLabel>
+                <FormLabel className="text-start w-full">
+                  {t("register.email")}
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="lucas1@gmail.com"
+                    placeholder={t("register.emailPlaceholder") || ""}
                     {...field}
                   />
                 </FormControl>
@@ -109,25 +123,29 @@ export function Register() {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel className="text-start items-start w-full">
-                  Password
+                  {t("register.password")}
                 </FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="shadcn@dd11" {...field} />
+                  <Input
+                    type="password"
+                    placeholder={t("register.passwordPlaceholder") || ""}
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button className="w-full">
+          <Button className="w-full cursor-pointer">
             {" "}
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Register
+            {t("register.submitButton")}
           </Button>
         </form>
       </Form>
     </Card>
   );
-}
+};

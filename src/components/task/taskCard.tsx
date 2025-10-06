@@ -1,76 +1,67 @@
 import { useStore } from "@/state/contextopen";
-import { DataContext } from "@/state/datacontext";
-import { useTheme } from "@/state/themecontext";
-import { SubtaskType } from "@/types";
-import { useContext, useEffect } from "react";
-import styles from "../../styles/TaskCard.module.css";
-import ModalTask from "../modal/modalTask";
+import type { TaskType } from "@/types";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ModalTask } from "../modal/modalTask";
+import { Card } from "../ui/card";
 
-const TaskCard = (props: {
-  index: number;
-  title: string;
-  description: string;
-  id: string;
-  subtask: SubtaskType[];
-  columnId: string;
+export const TaskCard = ({
+  task,
+  onClick,
+}: {
+  task: TaskType;
   onClick: () => void;
-  columnIndex: number;
 }) => {
-  const { setSubTasks } = useStore();
-  const { openedTask } = useContext(DataContext); // state to able to manage the Global Data
   const { theme } = useTheme();
-  const { completed, setCompleted } = useStore();
+  const { setCompleted } = useStore();
+  const [open, setOpen] = useState(false);
+  const { t } = useTranslation("task");
   function Iscompleted() {
-    // function to get the amout of subtask completed
-    var i: number = 0;
-    if (props.subtask) {
-      for (const sub of props.subtask) {
-        if (sub.isCompleted) {
-          i++;
-        }
+    let i = 0;
+    if (task.subtasks) {
+      for (const sub of task.subtasks) {
+        if (sub.isCompleted) i++;
       }
     }
-    console.log("iscompleted", i);
     return i;
   }
 
   useEffect(() => {
-    const number = Iscompleted();
-    setCompleted(number);
+    setCompleted(Iscompleted());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const containerBase =
+    "cursor-pointer rounded-lg px-4 py-2 w-[280px] text-left mb-4 shadow-sm hover:shadow-md transition-shadow";
+  const themeStyles =
+    theme === "light"
+      ? "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.2)]"
+      : "bg-[#2B2C37] shadow-[0_0_10px_0_rgba(0,0,0,0.2)]";
+  const titleClasses =
+    "text-lg font-semibold mb-4 hover:text-[#3F51B5] transition-colors " +
+    (theme === "light" ? "text-black" : "text-white");
+  const subTextClasses = "text-gray-500 text-sm font-semibold mb-4";
 
   return (
     <>
-      {openedTask && (
-        <ModalTask
-          columnId={openedTask.columnId}
-          id={openedTask.id}
-          index={props.index}
-        />
-      )}
+      <ModalTask task={task} open={open} setOpen={setOpen} />
 
-      <div
-        className={`${styles.TaskCardContainer} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
+      <Card
+        className={`${containerBase} ${themeStyles}`}
         onClick={() => {
-          setSubTasks(true);
-          props.onClick();
+          setOpen(true);
+          onClick();
         }}
       >
-        <h1
-          className={`${styles.TaskCardTitle} ${
-            theme === "light" ? styles.light : styles.dark
-          }`}
-        >
-          {props.title}
-        </h1>
-        <p className={styles.TaskCardP}>
-          {Iscompleted()} of {props.subtask.length} substacks
+        <h1 className={titleClasses}>{task.title}</h1>
+        <p className={subTextClasses}>
+          {t("card.progress", {
+            completed: Iscompleted(),
+            total: task.subtasks.length,
+          })}
         </p>
-      </div>
+      </Card>
     </>
   );
 };
-
-export default TaskCard;

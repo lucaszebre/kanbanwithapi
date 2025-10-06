@@ -1,0 +1,68 @@
+{
+  "add": {
+    "modalTitle": "Ajouter une Tâche",
+    "form": {
+      "titleLabel": "Titre de la Tâche",
+      "descriptionLabel": "Description de la Tâche",
+      "subtasksLabel": "Sous-tâches",
+      "addSubtaskButton": "+ Ajouter une Sous-tâche",
+      "createButton": "Créer la Tâche"
+    },
+    "validation": {
+      "titleRequired": "Le nom de la tâche ne peut pas être vide"
+    },
+    "toast": {
+      "success": "Tâche ajoutée avec succès",
+      "error": "Erreur lors de l'ajout de la tâche"
+    },
+    "console": {
+      "submitError": "erreur lors de l'ajout de la tâche",
+      "subtaskError": "erreur dans la sous-tâche"
+    }
+  },
+  "view": {
+    "subtasksHeading": "Sous-tâches",
+    "currentStatusHeading": "Statut Actuel",
+    "ellipsisAlt": "options",
+    "noDescription": "Aucune description fournie",
+    "selectColumnPlaceholder": "Sélectionner une colonne"
+  },
+  "edit": {
+    "modalTitle": "Modifier la Tâche",
+    "form": {
+      "titleLabel": "Nom de la tâche",
+      "titlePlaceholder": "Nom de la tâche",
+      "descriptionLabel": "Description",
+      "subtasksLabel": "Sous-tâches",
+      "addSubtaskButton": "Ajouter une sous-tâche",
+      "statusLabel": "Statut actuel",
+      "saveButton": "Enregistrer les modifications"
+    },
+    "validation": {
+      "titleRequired": "Veuillez entrer un nom de tâche."
+    },
+    "toast": {
+      "success": "Tâche modifiée avec succès",
+      "error": "Erreur lors de la modification de la tâche"
+    }
+  },
+  "delete": {
+    "modalTitle": "Supprimer cette tâche ?",
+    "description": "Êtes-vous sûr de vouloir supprimer la tâche ‘{{title}}’ ? Cette action supprimera cette tâche et ses sous-tâches et ne peut pas être annulée.",
+    "buttons": {
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "toast": {
+      "success": "Tâche supprimée avec succès",
+      "error": "Erreur lors de la suppression de la tâche"
+    }
+  },
+  "actions": {
+    "editAria": "Modifier la tâche",
+    "deleteAria": "Supprimer la tâche"
+  },
+  "card": {
+    "progress": "{{completed}} sur {{total}} sous-tâches"
+  }
+}

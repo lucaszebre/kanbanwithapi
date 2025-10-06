@@ -1,91 +1,75 @@
-import { boardApiServices } from "@/api/board/board.service";
-import { useStore } from "@/state/contextopen";
+// Backward-compatible wrapper around the new ReusableAlertDialog.
+// Keeps the same props so existing imports continue to work.
+import { boardApiServices } from "@/api/board.service";
+import { ReusableAlertDialog } from "@/components/reusable/reusable-alert-dialog";
 import { useTaskManagerStore } from "@/state/taskManager";
-import { useTheme } from "@/state/themecontext";
-import styles from "@/styles/Deletethisboard.module.css";
-import React from "react";
+import { IdtoBoarName } from "@/utils/IdtoBoarName";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useMemo } from "react";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
 
-const DeleteThisBoard = (props: {
+export const DeleteThisBoard = ({
+  DeleteBlock,
+  setDeleteBlock,
+}: {
   DeleteBlock: boolean;
   setDeleteBlock: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { setCurrentBoardIndex } = useStore(); // state to manage the global data
-  const { theme } = useTheme();
-  const { currentBoardIndex } = useStore();
-
+  const { boardIdParams } = useParams();
+  const { t } = useTranslation("board");
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const taskManager = useTaskManagerStore((s) => s.taskManager);
+  const deleteBoard = useTaskManagerStore((s) => s.deleteBoard);
 
-  const taskManager = useTaskManagerStore((state) => state.taskManager);
-  const delBoard = useTaskManagerStore((state) => state.deleteBoard);
-
-  const mutation = useMutation(
-    (boardId: string) => boardApiServices.deleteBoard(boardId),
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["boards"]);
-
-        toast.success("Delete the board sucessfully!");
-      },
-      onError: () => {
-        toast.error("Error to delete the board");
-      },
-    }
+  const boardId = useMemo(
+    () => boardIdParams ?? taskManager[0].boards[0]?.id ?? "",
+    [boardIdParams, taskManager]
   );
+  const currentBoardName = useMemo(
+    () =>
+      IdtoBoarName(boardId, taskManager[0].boards) ||
+      t("deleteBoard.unknownBoard"),
+    [boardId, taskManager, t]
+  );
+
+  const mutation = useMutation({
+    mutationFn: (id: string) => boardApiServices.deleteBoard(id),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["boards"] });
+      toast.success(t("deleteBoard.successMessage"));
+      navigate("/");
+    },
+    onError: () => {
+      toast.error(t("deleteBoard.errorMessage"));
+    },
+  });
 
   return (
-    <div
-      className={styles.DeleteThisBoardWrapper}
-      style={{ display: props.DeleteBlock ? "flex" : "none" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          props.setDeleteBlock(false);
+    <ReusableAlertDialog
+      open={DeleteBlock}
+      onOpenChange={setDeleteBlock}
+      variant="destructive"
+      title={t("deleteBoard.title") as string}
+      description={
+        t("deleteBoard.confirmMessage", {
+          boardName: currentBoardName,
+        }) as string
+      }
+      confirmLabel={t("deleteBoard.deleteButton") as string}
+      cancelLabel={t("deleteBoard.cancelButton") as string}
+      trigger={null}
+      onConfirm={async () => {
+        if (!boardId) return;
+        try {
+          deleteBoard(boardId); // optimistic local removal
+          await mutation.mutateAsync(boardId);
+        } catch (err) {
+          console.error("Delete board failed", err);
         }
       }}
-    >
-      <div
-        className={`${styles.DeletethisBoardDiv} ${
-          theme === "light" ? styles.light : styles.dark
-        }`}
-      >
-        <h1 className={styles.DeleteThisBoardTitle}>Delete this board?</h1>
-        <p className={styles.DeleteThisBoardText}>
-          Are you sure you want to delete the ‘
-          <a>{/* { taskManager[0].boards[currentBoardIndex].name } */}</a>’
-          board? This action will remove all columns and tasks and cannot be
-          reversed.
-        </p>
-        <div className={styles.DeleteThisBoardButtons}>
-          <button
-            onClick={async () => {
-              try {
-                delBoard(taskManager[0].boards[currentBoardIndex]?.id);
-                await mutation.mutateAsync(
-                  taskManager[0].boards[currentBoardIndex]?.id
-                );
-                if (taskManager) {
-                  setCurrentBoardIndex(0);
-                }
-              } catch (error) {
-                console.error("Error while deleting the board:", error);
-              }
-              props.setDeleteBlock(false);
-            }}
-            className={styles.DeleteButton}
-          >
-            Delete
-          </button>
-          <button
-            className={styles.CancelButton}
-            onClick={() => props.setDeleteBlock(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+    />
   );
 };
-
-export default DeleteThisBoard;

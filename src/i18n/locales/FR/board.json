@@ -1,0 +1,37 @@
+{
+  "empty": {
+    "withBoards": {
+      "title": "Ce tableau est vide. Créez une nouvelle colonne pour commencer.",
+      "button": "+ Ajouter Nouvelle Colonne"
+    },
+    "noBoards": {
+      "title": "Vous n'avez aucun tableau, vous devriez en créer un pour commencer.",
+      "button": "+ Ajouter un tableau"
+    }
+  },
+  "addBoard": {
+    "title": "Ajouter un Tableau",
+    "boardName": "Nom du Tableau",
+    "boardNamePlaceholder": "ex Design Web",
+    "boardNameError": "Veuillez saisir un nom de tableau.",
+    "boardColumns": "Colonnes du Tableau",
+    "addColumn": "+ Ajouter une Colonne",
+    "createBoard": "Créer le Tableau",
+    "successMessage": "Tableau ajouté avec succès",
+    "errorMessage": "Erreur lors de l'ajout du tableau !"
+  },
+  "deleteBoard": {
+    "title": "Supprimer ce tableau ?",
+    "confirmMessage": "Êtes-vous sûr de vouloir supprimer le tableau '{{boardName}}' ? Cette action supprimera toutes les colonnes et tâches et ne peut pas être annulée.",
+    "deleteButton": "Supprimer",
+    "cancelButton": "Annuler",
+    "successMessage": "Tableau supprimé avec succès !",
+    "errorMessage": "Erreur lors de la suppression du tableau",
+    "unknownBoard": "Tableau sans nom"
+  },
+  "column": {
+    "placeholder": "ex Nom de Colonne",
+    "errorEmpty": "Ne peut pas être vide",
+    "removeAlt": "Supprimer la colonne"
+  }
+}

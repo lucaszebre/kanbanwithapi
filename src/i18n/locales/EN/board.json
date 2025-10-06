@@ -1,0 +1,37 @@
+{
+  "empty": {
+    "withBoards": {
+      "title": "This board is empty. Create a new column to get started.",
+      "button": "+ Add New Column"
+    },
+    "noBoards": {
+      "title": "You have no boards you should create one boards to start.",
+      "button": "+ Add a boards"
+    }
+  },
+  "addBoard": {
+    "title": "Add Board",
+    "boardName": "Board Name",
+    "boardNamePlaceholder": "eg Web design",
+    "boardNameError": "Please enter a board name.",
+    "boardColumns": "Board Columns",
+    "addColumn": "+ Add Column",
+    "createBoard": "Create Board",
+    "successMessage": "Board added successfully",
+    "errorMessage": "Error adding the board!"
+  },
+  "deleteBoard": {
+    "title": "Delete this board?",
+    "confirmMessage": "Are you sure you want to delete the '{{boardName}}' board? This action will remove all columns and tasks and cannot be reversed.",
+    "deleteButton": "Delete",
+    "cancelButton": "Cancel",
+    "successMessage": "Delete the board successfully!",
+    "errorMessage": "Error to delete the board",
+    "unknownBoard": "Untitled Board"
+  },
+  "column": {
+    "placeholder": "eg Column Name",
+    "errorEmpty": "Can not be empty",
+    "removeAlt": "Remove column"
+  }
+}
