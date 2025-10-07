@@ -1,6 +1,5 @@
 import { authApiServices } from "@/api/auth.service";
 import { boardApiServices } from "@/api/board.service";
-import { useSidebarStore } from "@/state/sidebarcontext";
 import { useTaskManagerStore } from "@/state/taskManager";
 import { getInitials } from "@/utils/getInitialName";
 import { Icon } from "@iconify/react";
@@ -25,11 +24,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useSidebar } from "../ui/sidebar";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { t } = useTranslation("header");
-  const { isSidebarMobile, setIsSidebarMobile } = useSidebarStore();
+  const { isMobile, setOpenMobile } = useSidebar();
   const { theme } = useTheme();
   const { boardId } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
@@ -61,7 +61,7 @@ export const Header = () => {
     }
   };
 
-  const desktopWrapper = `hidden md:flex border-l-0 flex-row justify-between items-center w-full h-16 px-8 rounded-none`;
+  const desktopWrapper = `hidden md:flex border-l-0 flex-row justify-between items-center w-full h-16 px-8 rounded-none z-30`;
   const mobileWrapper = `flex md:hidden flex-row justify-between items-center w-full p-4 bg-white dark:bg-[#2B2C37] z-25`;
   const addTaskButton = `flex items-center justify-center bg-[#635FC7] text-white rounded-full px-5 py-2.5 text-sm font-medium cursor-pointer hover:brightness-110 transition-colors`;
   const logoutButton = `text-white dark:bg-transparent bg-[#2B2C37] dark:text-white border border-white rounded-md px-2.5 py-1.5 text-sm font-medium cursor-pointer ml-2 mr-4 transition-colors hover:bg-white hover:text-[#635FC7]`;
@@ -143,7 +143,7 @@ export const Header = () => {
         <div
           className="flex flex-row items-center justify-center"
           onClick={() => {
-            setIsSidebarMobile(!isSidebarMobile);
+            setOpenMobile(!isMobile);
           }}
         >
           <img
