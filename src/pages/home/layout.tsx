@@ -14,7 +14,7 @@ export const HomeLayout = () => {
         <AppSidebar boards />
         <SidebarInset>
           <div className="min-w-full min-h-full">
-            <div className="fixed right-0 top-0 w-full">
+            <div className="fixed right-0 top-0 w-full z-10">
               <Header />
             </div>
             <Outlet />
