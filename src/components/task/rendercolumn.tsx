@@ -14,7 +14,7 @@ export const ColumnsRenderer = ({
   columnErrors,
 }: ColumnsRendererProps) => {
   return (
-    <>
+    <div className="flex flex-col gap-4 py-4 w-full">
       {columnNames.map((text, index) => (
         <BoardColumn
           key={index}
@@ -26,6 +26,6 @@ export const ColumnsRenderer = ({
           error={columnErrors[index] || false}
         />
       ))}
-    </>
+    </div>
   );
 };

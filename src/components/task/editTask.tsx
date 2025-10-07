@@ -1,25 +1,29 @@
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
-import type { Subtask } from "@/types/Zodtype";
-import { RenderSubTask } from "@/utils/renderSubTask";
 import { useTheme } from "next-themes";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
 
-import { useChangeColumnMutation } from "@/api/mutations/useChangeColumnMutation";
 import { taskApiServices } from "@/api/task.service";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useTaskManagerStore } from "@/state/taskManager";
-import type { TaskType } from "@/types";
+import type { Subtask, Task } from "@/types/global";
+import { EditTaskSchema } from "@/types/TaskSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import { DoorClosed } from "lucide-react";
+import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { v4 as uuid } from "uuid";
+import type { z } from "zod";
+import { Icons } from "../common/icons";
 import ReusableSelect from "../reusable/reusable-select";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -30,82 +34,56 @@ export const EditTask = ({
   open,
   setOpen,
 }: {
-  task: TaskType;
+  task: Task;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { boardIdParms } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const updateTaskLocal = useTaskManagerStore((state) => state.updateTask);
+  const changeCol = useTaskManagerStore((state) => state.changeCol);
 
   const { t } = useTranslation("task");
-  const [taskName, setTaskName] = useState<string>(task?.title);
-  const [taskDescription, setTaskDescription] = useState<string>(
-    task?.description
-  );
-  const [subTask, setSubTask] = useState<Subtask[]>(task?.subtasks);
 
-  const [save, setSave] = useState<boolean>(false);
-  const [selectedColumnId, setSelectedColumnId] = useState(task?.columnId);
-  const [columnErrors, setColumnErrors] = useState<boolean[]>([]);
-  const [inputError, setInputError] = useState<boolean>(false);
   const { theme } = useTheme();
   const boardId = useMemo(
-    () => boardIdParms ?? taskManager[0].boards[0].id,
+    () => boardIdParms ?? taskManager?.boards?.[0]?.id,
     [boardIdParms, taskManager]
   );
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);
 
-  // Set the selected column ID whenever the prop changes
+  const form = useForm<z.infer<typeof EditTaskSchema>>({
+    resolver: zodResolver(EditTaskSchema),
+    defaultValues: {
+      title: task.title,
+      description: task.description,
+      subtasks: task.subtasks,
+      columnId: task.columnId,
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "subtasks",
+  });
+
   useEffect(() => {
-    setSelectedColumnId(task?.columnId);
-  }, [task?.columnId]);
-
-  // Set initial column errors based on subtasks
-
-  useEffect(() => {
-    const initialColumnErrors = subTask?.map(
-      (column) => column.title.trim() === ""
-    );
-    setColumnErrors(initialColumnErrors);
-  }, [subTask]);
-
-  // Update task states when EditTask or openedTask changes
-
-  // Function to add a new subtask
-  const handleAddSubtask = () => {
-    const id = uuid();
-    const newSubtask = {
-      id, // empty id marks a new subtask
-      title: "",
-      isCompleted: false,
-    };
-    setSubTask([...subTask, newSubtask]);
-  };
-
-  // Function to edit/update a subtask
-  const handleEditSubtask = (index: number, newTitle: string) => {
-    // If 'add' is true, add the subtask to the 'subTasksToAdd' state
-
-    // Update the subtask title
-    const updatedSubTasks = [...subTask];
-    updatedSubTasks[index].title = newTitle;
-    setSubTask(updatedSubTasks);
-  };
-
-  // Function to delete a subtask
-  const handleDeleteSubtask = (id: string) => {
-    setSubTask((prev) => prev.filter((subtask) => subtask.id !== id));
-  };
+    form.reset({
+      title: task.title,
+      description: task.description,
+      subtasks: task.subtasks,
+      columnId: task.columnId,
+    });
+  }, [task, form]);
 
   const queryClient = useQueryClient();
-  const updateTask = useMutation({
+  const updateTaskMutation = useMutation({
     mutationFn: (data: {
       id: string;
       title: string;
@@ -116,173 +94,199 @@ export const EditTask = ({
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
       toast.success(t("edit.toast.success"));
+      setOpen(false);
     },
     onError: () => {
       toast.error(t("edit.toast.error"));
     },
   });
-  const column = useChangeColumnMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (values: z.infer<typeof EditTaskSchema>) => {
+    if (values.columnId && values.columnId !== task.columnId) {
+      changeCol({
+        boardId,
+        columnId: task.columnId,
+        newColumnId: values.columnId,
+        taskId: task.id,
+      });
+    }
+
     if (taskManager && boardId && boardId.length > 0) {
       const updatedTask = {
         id: task.id,
-        title: taskName,
-        description: taskDescription,
-        columnId: task.columnId,
-        subtasks: subTask,
+        title: values.title,
+        description: values.description || "",
+        columnId: values.columnId,
+        subtasks: values.subtasks,
+        index: task.index,
       };
 
       updateTaskLocal({
         boardId,
         ...updatedTask,
       });
-      updateTask.mutate(updatedTask);
+      updateTaskMutation.mutate(updatedTask);
     }
-    if (selectedColumnId && selectedColumnId !== task.columnId) {
-      column.mutate({
-        newColumnId: selectedColumnId,
-        columnId: task.columnId,
-        taskId: task.id,
-      });
-    }
-    queryClient.refetchQueries({ queryKey: ["boards"] });
   };
 
-  // Render the EditTask component
   return (
     <ReusableDialog
       open={open}
-      onOpenChange={(open) => {
-        if (!open) setOpen(open);
-      }}
+      onOpenChange={setOpen}
       title={t("edit.modalTitle")}
       hideActions
       size="lg"
       className="w-[480px] max-h-[90%] overflow-y-auto p-8"
     >
-      <form
-        className="flex flex-col gap-4 w-full h-full items-start justify-between"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const newColumnErrors = subTask.map((sub) => sub.title.trim() === "");
-          setColumnErrors(newColumnErrors);
-          if (taskName.trim() === "") {
-            console.log("herz 1st");
-            setInputError(true);
-          } else if (newColumnErrors.some((error) => error)) {
-            console.log("herz 2st");
-
-            return;
-          } else {
-            console.log("3st");
-            handleSubmit(e);
-            setSave(!save);
-            setOpen(false);
-          }
-        }}
-      >
-        <Label
-          className={`text-xs font-semibold ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}
-          htmlFor="boardName"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4 w-full h-full items-start justify-between"
         >
-          {t("edit.form.titleLabel")}
-        </Label>
-        <Input
-          type="text"
-          placeholder={t("edit.form.titlePlaceholder")}
-          className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 ${
-            theme === "light" ? "text-black" : "text-white"
-          } ${inputError ? "border-red-500" : ""}`}
-          value={taskName}
-          onChange={(e) => {
-            setTaskName(e.target.value);
-            setInputError(false);
-          }}
-        />
-        {inputError && (
-          <div className="text-red-500 text-[12px] mt-1 mb-2">
-            {t("edit.validation.titleRequired")}
-          </div>
-        )}
-        {subTask?.length > 0 && (
-          <Label
-            className={`text-xs font-semibold ${
-              theme === "light" ? "text-black" : "text-white"
-            }`}
-            htmlFor="boardName"
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel
+                  className={`text-xs font-semibold ${
+                    theme === "light" ? "text-black" : "text-white"
+                  }`}
+                >
+                  {t("edit.form.titleLabel")}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t("edit.form.titlePlaceholder")}
+                    {...field}
+                    className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      theme === "light" ? "text-black" : "text-white"
+                    }`}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel
+                  className={`text-xs font-semibold ${
+                    theme === "light" ? "text-black" : "text-white"
+                  }`}
+                >
+                  {t("edit.form.descriptionLabel")}
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className={`w-full h-32 border border-gray-400 rounded-md bg-transparent cursor-pointer p-2 resize-none outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      theme === "light" ? "text-black" : "text-white"
+                    }`}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {fields.length > 0 && (
+            <Label
+              className={`text-xs font-semibold ${
+                theme === "light" ? "text-black" : "text-white"
+              }`}
+            >
+              {t("edit.form.subtasksLabel")}
+            </Label>
+          )}
+
+          {fields.map((field, index) => (
+            <FormField
+              control={form.control}
+              key={field.id}
+              name={`subtasks.${index}.title`}
+              render={({ field: subtaskField }) => (
+                <FormItem className="flex items-center gap-2 w-full">
+                  <FormControl>
+                    <Input {...subtaskField} className="flex-grow" />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => remove(index)}
+                  >
+                    <DoorClosed className="h-4 w-4" />
+                  </Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+
+          <Button
+            className="w-full h-10 rounded-md bg-[rgb(188,211,232)] text-[#635FC7] text-lg font-semibold cursor-pointer"
+            type="button"
+            onClick={() =>
+              append({
+                id: uuid(),
+                title: "",
+                isCompleted: false,
+                index: fields.length,
+              })
+            }
           >
-            {t("edit.form.descriptionLabel")}
-          </Label>
-        )}
+            {t("edit.form.addSubtaskButton")}
+          </Button>
 
-        <Textarea
-          className={`w-full h-32 border border-gray-400 rounded-md bg-transparent cursor-pointer p-2 resize-none outline-none focus:ring-2 focus:ring-indigo-500 ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}
-          value={taskDescription}
-          onChange={(e) => setTaskDescription(e.target.value)}
-        ></Textarea>
+          <FormField
+            control={form.control}
+            name="columnId"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel
+                  className={`text-xs font-semibold ${
+                    theme === "light" ? "text-black" : "text-white"
+                  }`}
+                >
+                  {t("edit.form.statusLabel")}
+                </FormLabel>
+                <FormControl>
+                  <ReusableSelect
+                    label={null}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder={t("view.selectColumnPlaceholder", {
+                      defaultValue: "Select column",
+                    })}
+                    items={(currentBoard?.columns || []).map((col) => ({
+                      value: col.id,
+                      label: col.name,
+                    }))}
+                    triggerClassName="w-full h-12"
+                    className="mt-1 w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {subTask?.length > 0 && (
-          <Label
-            className={`text-xs font-semibold ${
-              theme === "light" ? "text-black" : "text-white"
-            }`}
-            htmlFor="boardName"
+          <Button
+            className="w-full h-10 rounded-md bg-[#635FC7] text-white text-lg font-semibold cursor-pointer"
+            type="submit"
+            disabled={updateTaskMutation.isPending}
           >
-            {t("edit.form.subtasksLabel")}
-          </Label>
-        )}
-
-        <RenderSubTask
-          subTasks={subTask}
-          handleDeleteSubtask={handleDeleteSubtask}
-          handleEditSubTask={handleEditSubtask}
-          columnErrors={columnErrors}
-        />
-
-        <Button
-          className="w-full h-10 rounded-md bg-[rgb(188,211,232)] text-[#635FC7] text-lg font-semibold cursor-pointer"
-          type="button"
-          onClick={handleAddSubtask}
-        >
-          {t("edit.form.addSubtaskButton")}
-        </Button>
-        <Label
-          className={`text-xs font-semibold ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}
-          htmlFor=""
-        >
-          {t("edit.form.statusLabel")}
-        </Label>
-
-        <ReusableSelect
-          label={null}
-          value={selectedColumnId}
-          onValueChange={(val) => setSelectedColumnId(val)}
-          placeholder={t("view.selectColumnPlaceholder", {
-            defaultValue: "Select column",
-          })}
-          items={(currentBoard?.columns || []).map((col) => ({
-            value: col.id,
-            label: col.name,
-          }))}
-          triggerClassName="w-full h-12"
-          className="mt-1 w-full"
-        />
-
-        <Button
-          className="w-full h-10 rounded-md bg-[#635FC7] text-white text-lg font-semibold cursor-pointer"
-          type="submit"
-        >
-          {t("edit.form.saveButton")}
-        </Button>
-      </form>
+            {updateTaskMutation.isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {t("edit.form.saveButton")}
+          </Button>
+        </form>
+      </Form>
     </ReusableDialog>
   );
 };

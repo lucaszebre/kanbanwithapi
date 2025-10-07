@@ -1,15 +1,18 @@
-import type { ColumnData } from "@/types";
-import type { Task, TaskManager } from "@/types/global";
-import type { Subtask } from "@/types/Zodtype";
-import Cookies from "js-cookie";
+import type { Column, Subtask, Task, TaskManager } from "@/types/global";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 
 type State = {
   taskManager: TaskManager;
   addBoard: (boardName: string, column: string[]) => void;
-  updateBoard: (data: {}) => void;
+  updateBoard: (data: { id: string; name: string; columns: Column[] }) => void;
   deleteBoard: (boardId: string) => void;
+
+  updateColumn: (data: {
+    boardId: string;
+    columnId: string;
+    name: string;
+  }) => void;
 
   addTask: (data: {
     boardId: string;
@@ -18,6 +21,7 @@ type State = {
     description: string;
     columnId: string;
     subtasks: Subtask[];
+    index: number;
   }) => void;
   updateTask: (data: {
     boardId: string;
@@ -29,71 +33,68 @@ type State = {
   }) => void;
   deleteTask: (data: { boardId: string; columnId: string; id: string }) => void;
 
-  toggleSubtask: (
-    boardId: string,
-    columnId: string,
-    taskId: string,
-    subtaskId: string,
-    isCompleted: boolean
-  ) => void;
+  toggleSubtask: (data: {
+    boardId: string;
+    columnId: string;
+    taskId: string;
+    subtaskId: string;
+    isCompleted: boolean;
+  }) => void;
   setTaskManagerData: (data: TaskManager) => void;
-  changeCol: (newColumnId: string, columnId: string, taskId: string) => void;
+  changeCol: (data: {
+    newColumnId: string;
+    boardId: string;
+    columnId: string;
+    taskId: string;
+  }) => void;
 };
 
 export const useTaskManagerStore = create<State>((set) => ({
-  taskManager: [
-    {
-      id: uuidv4(),
-      name: "",
-      email: "",
-      boards: [],
-    },
-  ],
+  taskManager: {
+    id: uuidv4(),
+    name: "",
+    email: "",
+    boards: [],
+  },
   setTaskManagerData: (data: TaskManager) => set({ taskManager: data }),
 
   addBoard: (boardName, columnNames) =>
     set((state) => {
-      const columns = columnNames.map((name) => ({
+      const columns = columnNames.map((name, index) => ({
         id: uuidv4(),
         name,
+        index,
         tasks: [],
       }));
 
       // Assuming the first user for simplicity
-      const user = state.taskManager[0];
+      const user = state.taskManager;
 
       return {
         ...state,
-        taskManager: [
-          {
-            ...user,
-            boards: [
-              ...user.boards,
-              { id: uuidv4(), name: boardName, columns },
-            ],
-          },
-        ],
+        taskManager: {
+          ...user,
+          boards: [...user.boards, { id: uuidv4(), name: boardName, columns }],
+        },
       };
     }),
 
-  updateBoard: (data: {
-    id: string;
-    name: string;
-    userId: string;
-    columns: ColumnData[];
-  }) =>
+  updateBoard: (data: { id: string; name: string; columns: Column[] }) =>
     set((state) => {
-      const updatedBoards = state.taskManager[0].boards.map((board) => {
+      const updatedBoards = state.taskManager.boards.map((board) => {
         if (board.id !== data.id) return board;
 
         let updatedColumns = board.columns;
 
-        const recordColumns = data.columns.reduce((prev, c) => {
-          return {
-            ...prev,
-            [c.id]: c.name,
-          };
-        }, {});
+        const recordColumns = data.columns.reduce<Record<string, string>>(
+          (prev, c) => {
+            return {
+              ...prev,
+              [c.id]: c.name,
+            };
+          },
+          {}
+        );
 
         // Delete columns
         updatedColumns = updatedColumns
@@ -124,9 +125,45 @@ export const useTaskManagerStore = create<State>((set) => ({
 
   deleteBoard: (boardId) =>
     set((state) => {
-      const boards = state.taskManager[0].boards.filter(
-        (b) => b.id !== boardId
+      const boards = state.taskManager.boards.filter((b) => b.id !== boardId);
+      return {
+        ...state,
+        taskManager: {
+          ...state.taskManager,
+          boards,
+        },
+      };
+    }),
+  // column
+  updateColumn: ({
+    boardId,
+    columnId,
+    name,
+  }: {
+    boardId: string;
+    columnId: string;
+    name: string;
+  }) =>
+    set((state) => {
+      const board = state.taskManager.boards.find(
+        (board) => board.id === boardId
       );
+
+      const columns = board?.columns.map((c) => {
+        if (c.id === columnId) {
+          return { ...c, name };
+        }
+        return c;
+      });
+
+      const boards = state.taskManager.boards.map((b) => {
+        if (b.id === board?.id) {
+          return {
+            ...b,
+            columns,
+          };
+        }
+      });
       return {
         ...state,
         taskManager: {
@@ -145,6 +182,7 @@ export const useTaskManagerStore = create<State>((set) => ({
     description,
     columnId,
     subtasks,
+    index,
   }: {
     boardId: string;
     id: string;
@@ -152,17 +190,20 @@ export const useTaskManagerStore = create<State>((set) => ({
     description: string;
     columnId: string;
     subtasks: Subtask[];
+    index: number;
   }) =>
     set((state) => {
       const newTask: Task = {
         id, // Use a function or library to generate unique IDs
         title,
+        columnId,
+        index,
         description,
         status: "to do", // Assuming Task type has a description property
         subtasks,
       };
 
-      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      const board = state.taskManager.boards.find((b) => b.id === boardId);
       const column = board?.columns.find((c) => c.id === columnId);
       if (column) {
         column.tasks.push(newTask);
@@ -180,16 +221,9 @@ export const useTaskManagerStore = create<State>((set) => ({
     subtasks: Subtask[];
   }) =>
     set((state) => {
-      const {
-        boardId,
-        id,
-        title,
-        description,
-        columnId,
-        subtasks: subTasks,
-      } = data;
+      const { boardId, id, title, description, columnId, subtasks } = data;
       // Find the board and column
-      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      const board = state.taskManager.boards.find((b) => b.id === boardId);
       if (!board) return state;
       const column = board?.columns.find((c) => c.id === columnId);
 
@@ -209,7 +243,7 @@ export const useTaskManagerStore = create<State>((set) => ({
         ...originalTask,
         title,
         description,
-        subtasks: subTasks,
+        subtasks,
       };
 
       // Replace the task in the array
@@ -224,7 +258,7 @@ export const useTaskManagerStore = create<State>((set) => ({
         ...state,
         taskManager: {
           ...state.taskManager,
-          boards: state.taskManager[0].boards.map((b) =>
+          boards: state.taskManager.boards.map((b) =>
             b.id === boardId ? { ...b, columns: updatedColumns } : b
           ),
         },
@@ -234,7 +268,7 @@ export const useTaskManagerStore = create<State>((set) => ({
   deleteTask: ({ boardId, columnId, id }) =>
     set((state) => {
       // Defensive: if no users or boards just return state
-      const user = state.taskManager[0];
+      const user = state.taskManager;
       if (!user) return state;
 
       const updatedBoards = user.boards.map((b) => {
@@ -261,25 +295,24 @@ export const useTaskManagerStore = create<State>((set) => ({
 
       return {
         ...state,
-        taskManager: [
-          {
-            ...user,
-            boards: updatedBoards,
-          },
-        ],
+        taskManager: {
+          ...user,
+          boards: updatedBoards,
+        },
       };
     }),
 
   // Subtask CRUD
-  toggleSubtask: (
-    boardId: string,
-    columnId: string,
-    taskId: string,
-    subtaskId: string,
-    isCompleted: boolean
-  ) =>
+  toggleSubtask: (data: {
+    boardId: string;
+    columnId: string;
+    taskId: string;
+    subtaskId: string;
+    isCompleted: boolean;
+  }) =>
     set((state) => {
-      const board = state.taskManager[0].boards.find((b) => b.id === boardId);
+      const { boardId, columnId, taskId, subtaskId, isCompleted } = data;
+      const board = state.taskManager.boards.find((b) => b.id === boardId);
       const column = board?.columns.find((c) => c.id === columnId);
       const task = column?.tasks.find((t) => t.id === taskId);
       const subtask = task?.subtasks.find((s) => s.id === subtaskId);
@@ -290,15 +323,19 @@ export const useTaskManagerStore = create<State>((set) => ({
 
       return { ...state };
     }),
-  changeCol: (newColumnId, columnId, taskId) => {
+  changeCol: (data: {
+    newColumnId: string;
+    boardId: string;
+    columnId: string;
+    taskId: string;
+  }) => {
     set((state) => {
-      const boardIndex = parseInt(Cookies.get("currentBoardIndex") || "0");
-      const sourceColumn = state.taskManager[0].boards[boardIndex].columns.find(
-        (col) => col.id === columnId
+      const { newColumnId, boardId, columnId, taskId } = data;
+      const board = state?.taskManager?.boards?.find((b) => b.id === boardId);
+      const sourceColumn = board?.columns?.find((col) => col.id === columnId);
+      const destinationColumn = board?.columns.find(
+        (col) => col.id === newColumnId
       );
-      const destinationColumn = state.taskManager[0].boards[
-        boardIndex
-      ].columns.find((col) => col.id === newColumnId);
 
       if (!sourceColumn || !destinationColumn) {
         console.error("Either source or destination column not found");

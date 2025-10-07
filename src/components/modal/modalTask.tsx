@@ -1,16 +1,17 @@
-import { columnApiServices } from "@/api/column.service";
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
 import ReusableSelect from "@/components/reusable/reusable-select";
 import { useTaskManagerStore } from "@/state/taskManager";
-import RenderSubTask from "@/utils/renderSubTaskModal";
+import { RenderSubTask } from "@/utils/renderSubTaskModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteThisTask } from "../delete/DeletethisTask";
 import { EditTask } from "../task/editTask";
 // Removed ModalAboutTask dropdown; inline action icons instead
-import type { TaskType } from "@/types";
+import { taskApiServices } from "@/api/task.service";
+import type { Subtask, Task } from "@/types/global";
 import { Pencil, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useParams } from "react-router";
 import { Button } from "../ui/button";
 
@@ -19,40 +20,47 @@ export const ModalTask = ({
   open,
   setOpen,
 }: {
-  task: TaskType;
+  task: Task;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { boardId } = useParams();
+  const { boardId: boardIdParams } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const changeCol = useTaskManagerStore((state) => state.changeCol);
   const [selectedColumnId, setSelectedColumnId] = useState(task.columnId);
   // no about modal anymore
   const [openEditTask, setOpenEditTask] = useState(false);
   const [openDeleteTask, setOpenDeleteTask] = useState(false);
+
+  const boardId = useMemo(
+    () => boardIdParams ?? taskManager?.boards?.[0]?.id ?? "",
+    [boardIdParams, taskManager]
+  );
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);
 
   const queryClient = useQueryClient();
   const { t } = useTranslation("task");
-  const column = useMutation({
-    mutationFn: (formData: {
-      newColumnId: string;
+
+  const updateTask = useMutation({
+    mutationFn: (data: {
+      id: string;
+      title: string;
+      description: string;
       columnId: string;
-      taskId: string;
-    }) =>
-      columnApiServices.changeColumn(
-        formData.newColumnId,
-        formData.columnId,
-        formData.taskId
-      ),
+      subtasks: Subtask[];
+    }) => taskApiServices.editTask(data),
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["boards"] });
+      queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+      toast.success(t("edit.toast.success"));
+    },
+    onError: () => {
+      toast.error(t("edit.toast.error"));
     },
   });
 
@@ -78,20 +86,25 @@ export const ModalTask = ({
         onOpenChange={async (open) => {
           setOpen(open);
           if (!open) {
+            console.log(selectedColumnId, task.columnId);
+
             // closing logic replicates previous click-away behavior
             if (selectedColumnId && selectedColumnId !== task.columnId) {
-              changeCol(selectedColumnId, task.columnId, task.id);
-              column.mutate({
-                newColumnId: selectedColumnId,
+              changeCol({
+                boardId,
                 columnId: task.columnId,
+                newColumnId: selectedColumnId,
                 taskId: task.id,
               });
-              queryClient.refetchQueries({ queryKey: ["boards"] });
+              updateTask.mutate({
+                ...task,
+                columnId: selectedColumnId,
+              });
+
+              // queryClient.refetchQueries({ queryKey: ["boards"] });
             }
           }
         }}
-        title={null}
-        description={null}
         hideActions
         size="lg"
         className="max-h-[90%] w-[480px] overflow-y-auto"
@@ -135,6 +148,7 @@ export const ModalTask = ({
         <RenderSubTask
           boardId={currentBoard?.id}
           columnId={selectedColumnId}
+          taskId={task.id}
           subtasks={task.subtasks}
         />
         <h2 className={h2Classes}>{t("view.currentStatusHeading")}</h2>

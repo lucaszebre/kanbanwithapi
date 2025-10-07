@@ -1,13 +1,7 @@
 {
   "empty": {
-    "withBoards": {
-      "title": "This board is empty. Create a new column to get started.",
-      "button": "+ Add New Column"
-    },
-    "noBoards": {
-      "title": "You have no boards you should create one boards to start.",
-      "button": "+ Add a boards"
-    }
+    "title": "This board is empty. Create a new column to get started.",
+    "button": "+ Add New Column"
   },
   "addBoard": {
     "title": "Add Board",
@@ -19,6 +13,19 @@
     "createBoard": "Create Board",
     "successMessage": "Board added successfully",
     "errorMessage": "Error adding the board!"
+  },
+  "editBoard": {
+    "title": "Edit Board",
+    "successMessage": "Edit board successfully",
+    "errorMessage": "Error to edit the board",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "boardName": "Board Name",
+    "boardColumns": "Board Columns",
+    "addColumn": "+ Add New Column",
+    "emptyInput": "some input are empty",
+    "boardNameError": "Please enter a board name."
   },
   "deleteBoard": {
     "title": "Delete this board?",
@@ -33,5 +40,7 @@
     "placeholder": "eg Column Name",
     "errorEmpty": "Can not be empty",
     "removeAlt": "Remove column"
-  }
+  },
+  "noBoardsMessage": "There are no boards. Create a board to get started.",
+  "addBoardButton": "+ Add New Board"
 }

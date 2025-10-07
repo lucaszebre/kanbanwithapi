@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useTaskManagerStore } from "@/state/taskManager";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { AddBoard } from "../board/addBoard";
@@ -23,7 +23,7 @@ import { ThemeToggle } from "../theme-toggle";
 import { Card } from "../ui/card";
 
 export const AppSidebar = (props: { boards: boolean }) => {
-  const { boardId } = useParams();
+  const { boardId: boardIdParams } = useParams();
   const [addBoard, setAddBoard] = useState(false);
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const { t, i18n } = useTranslation("sidebar");
@@ -32,6 +32,11 @@ export const AppSidebar = (props: { boards: boolean }) => {
   const handleBoardClick = (boardId: string) => {
     navigate(`/boards/${boardId}`);
   };
+
+  const boardId = useMemo(
+    () => boardIdParams ?? taskManager?.boards?.[0]?.id ?? "",
+    [boardIdParams, taskManager]
+  );
 
   return (
     <>
@@ -77,13 +82,13 @@ export const AppSidebar = (props: { boards: boolean }) => {
           <SidebarGroup>
             {props.boards && (
               <SidebarGroupLabel className="text-[#828FA3] text-[12px] tracking-[2.4px] leading-[15px] font-bold uppercase">
-                {t("allBoards")} ({taskManager[0].boards.length})
+                {t("allBoards")} ({taskManager?.boards?.length})
               </SidebarGroupLabel>
             )}
             <SidebarGroupContent>
               <ScrollArea className="h-full w-full">
                 <SidebarMenu className="space-y-1">
-                  {taskManager[0].boards.map(
+                  {taskManager?.boards.map(
                     (board: { name: string; id: string }) => (
                       <SidebarMenuItem key={board.id}>
                         <SidebarMenuButton

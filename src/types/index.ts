@@ -1,5 +1,6 @@
 import z from "zod";
 import type { Board } from "./Zodtype";
+import type { Task } from "./global";
 
 export type BoardData = {
   boards: Board[];
@@ -87,6 +88,7 @@ export type ColumnAddType = {
 export type ColumnType = {
   id: string;
   name: string;
+  index: number;
   tasks: TaskType[];
   add?: boolean; // Make sure it's 'tasks' instead of 'task'
 };
@@ -121,7 +123,7 @@ export type SubtaskedType = {
 };
 
 export type ListTaskPropsType = {
-  tasks: TaskType[];
+  tasks: Task[];
   title: string;
   NbList: number;
   columnId: string;
@@ -142,11 +144,11 @@ export type FormDataRegisterType = {
 export const schemaProfile = z.object({
   firstname: z.string().min(1, { message: "cant be empty" }),
   lastname: z.string().min(1, { message: "cant be empty" }),
-  email: z.string().email({ message: "Invalid email format" }),
+  email: z.email({ message: "Invalid email format" }),
 });
 
 export const SchemaRegister = z.object({
-  email: z.string().email().min(1, { message: "need a email" }),
+  email: z.email().min(1, { message: "need a email" }),
   name: z.string().min(1, { message: "need a first name" }),
   password: z.string().min(1, { message: "at least 1 characters long" }),
 });

@@ -17,7 +17,7 @@ export const DeleteThisBoard = ({
   DeleteBlock: boolean;
   setDeleteBlock: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { boardIdParams } = useParams();
+  const { boardId: boardIdParams } = useParams();
   const { t } = useTranslation("board");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -25,12 +25,12 @@ export const DeleteThisBoard = ({
   const deleteBoard = useTaskManagerStore((s) => s.deleteBoard);
 
   const boardId = useMemo(
-    () => boardIdParams ?? taskManager[0].boards[0]?.id ?? "",
+    () => boardIdParams ?? taskManager?.boards?.[0]?.id ?? "",
     [boardIdParams, taskManager]
   );
   const currentBoardName = useMemo(
     () =>
-      IdtoBoarName(boardId, taskManager[0].boards) ||
+      IdtoBoarName(boardId, taskManager?.boards) ||
       t("deleteBoard.unknownBoard"),
     [boardId, taskManager, t]
   );

@@ -1,36 +1,30 @@
-import { Subtask } from "@/components/task/subTask";
-import type { SubtaskType } from "@/types";
-import React from "react";
-interface RenderSubTaskProps {
-  subtasks: SubtaskType[];
+import { Subtask as Subtasked } from "@/components/task/subTask";
+import type { Subtask } from "@/types/global";
+type RenderSubTaskProps = {
+  subtasks: Subtask[];
+  taskId: string;
   boardId: string;
   columnId: string;
-}
+};
 
-const RenderSubTask: React.FC<RenderSubTaskProps> = ({
+export const RenderSubTask = ({
   subtasks,
   boardId,
   columnId,
-}) => {
-  if (subtasks) {
-    return (
-      <>
-        {subtasks.map((sub, index) => (
-          <Subtask
-            key={index}
-            title={sub.title}
-            checked={sub.isCompleted}
-            subtaskId={sub.id}
-            taskId={sub.taskId}
-            columnId={columnId}
-            boardId={boardId}
-          />
-        ))}
-      </>
-    );
-  } else {
-    return null;
-  }
+  taskId,
+}: RenderSubTaskProps) => {
+  if (!subtasks.length) return null;
+  return (
+    <>
+      {subtasks.map((sub, index) => (
+        <Subtasked
+          key={index}
+          taskId={taskId}
+          columnId={columnId}
+          boardId={boardId}
+          subtask={sub}
+        />
+      ))}
+    </>
+  );
 };
-
-export default RenderSubTask;

@@ -1,13 +1,8 @@
 import { authApiServices } from "@/api/auth.service";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { boardApiServices } from "@/api/board.service";
 import { useSidebarStore } from "@/state/sidebarcontext";
 import { useTaskManagerStore } from "@/state/taskManager";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,11 +11,20 @@ import { AddBoard } from "../board/addBoard";
 import { EditBoard } from "../board/editBoard";
 import { DeleteThisBoard } from "../delete/DeletethisBoard";
 // Removed ModalAbout in favor of ReusablePopover inline actions
+import { Icon } from "@iconify/react";
+import { EditableText } from "../reusable/EditableText";
 import ReusablePopover from "../reusable/reusable-popover";
 import { AddTask } from "../task/addTask";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -33,14 +37,33 @@ export const Header = () => {
   const { theme } = useTheme();
   const { boardId } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
+  const updateBoard = useTaskManagerStore((state) => state.updateBoard);
+  const queryClient = useQueryClient();
+
+  const { mutate: updateBoardName } = useMutation({
+    mutationFn: boardApiServices.updateBoard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    },
+  });
 
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);
+
+  const handleNameUpdate = async (newName: string) => {
+    if (currentBoard) {
+      updateBoard({ ...currentBoard, name: newName });
+      updateBoardName({
+        id: currentBoard.id,
+        name: newName,
+      });
+    }
+  };
 
   const desktopWrapper = `hidden md:flex border-l-0 flex-row justify-between items-center w-full h-16 px-8 rounded-none`;
   const mobileWrapper = `flex md:hidden flex-row justify-between items-center w-full p-4 bg-white dark:bg-[#2B2C37] z-25`;
@@ -72,7 +95,11 @@ export const Header = () => {
         setDeleteBlock={setDeleteBlock}
       />
       <AddTask addTask={addTask} setAddTask={setAddTask} />
-      <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
+      <EditBoard
+        editBoard={editBoard}
+        setEditBoard={setEditBoard}
+        board={currentBoard}
+      />
       <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
 
       {/* Desktop */}
@@ -92,19 +119,43 @@ export const Header = () => {
         </div>
 
         <div className="flex flex-row items-center justify-between text-center w-full p-4">
-          <h1 className="text-2xl font-bold ">
-            {currentBoard ? currentBoard.name : ""}
-          </h1>
+          <div className="flex flex-row gap-4 ">
+            <EditableText
+              initialValue={currentBoard ? currentBoard.name : ""}
+              onSave={handleNameUpdate}
+              textClassName="text-2xl font-bold cursor-pointer"
+              inputClassName="text-2xl font-bold bg-transparent border-b-2 border-gray-400 focus:outline-none"
+            />
+
+            {currentBoard?.id && (
+              <Button onClick={() => setEditBoard(true)} variant={"outline"}>
+                <Icon icon={"pixel:edit-solid"} height={16} width={16} />
+              </Button>
+            )}
+          </div>
+
           <div className="flex flex-row items-center justify-around">
             {currentBoard?.id && (
-              <Button
-                onClick={() => {
-                  setAddTask(true);
-                }}
-                className={addTaskButton}
-              >
-                {t("addNewTask")}
-              </Button>
+              <div className="flex gap-4 items-center">
+                <Button
+                  onClick={() => {
+                    setAddTask(true);
+                  }}
+                  className={addTaskButton}
+                >
+                  {t("addNewTask")}
+                </Button>
+
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setDeleteBlock(true);
+                  }}
+                  variant={"outline"}
+                >
+                  <Icon width={16} height={16} icon="mdi:trash-outline" />
+                </Button>
+              </div>
             )}
             <Button
               onClick={async () => {
@@ -116,41 +167,12 @@ export const Header = () => {
               {t("logout")}
             </Button>
             {currentBoard?.id && (
-              <ReusablePopover
-                trigger={
-                  <Avatar className="cursor-pointer">
-                    <AvatarImage src="" />
-                    <AvatarFallback>
-                      {getInitials(taskManager[0]?.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                }
-                align="end"
-                side="bottom"
-                size="sm"
-                contentClassName="p-4"
-              >
-                <div className="flex flex-col gap-3 w-40">
-                  <button
-                    type="button"
-                    className="text-left text-sm text-gray-500 hover:text-gray-400 dark:text-gray-300 dark:hover:text-gray-200"
-                    onClick={() => {
-                      setEditBoard(true);
-                    }}
-                  >
-                    {t("editBoard")}
-                  </button>
-                  <button
-                    type="button"
-                    className="text-left text-sm text-[#ea5555] hover:text-[#ff8d8d]"
-                    onClick={() => {
-                      setDeleteBlock(true);
-                    }}
-                  >
-                    {t("deleteBoard")}
-                  </button>
-                </div>
-              </ReusablePopover>
+              <Avatar>
+                <AvatarImage src="" />
+                <AvatarFallback>
+                  {getInitials(taskManager?.name)}
+                </AvatarFallback>
+              </Avatar>
             )}
           </div>
         </div>
@@ -185,10 +207,10 @@ export const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mt-4 w-56">
               <DropdownMenuLabel className="cursor-pointer">
-                {t("allBoards")}({taskManager[0].boards.length})
+                {t("allBoards")}({taskManager?.boards?.length})
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {taskManager[0].boards.map(
+              {taskManager?.boards.map(
                 (board: { name: string; id: string }) => (
                   <DropdownMenuLabel
                     key={board.id}

@@ -1,19 +1,24 @@
 import { taskApiServices } from "@/api/task.service";
 import { useTaskManagerStore } from "@/state/taskManager";
+import type { Subtask as SubTaskType } from "@/types/global";
 import { useMutation } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import React from "react";
+import { useState } from "react";
+import { Input } from "../ui/input";
 
-export const Subtask = (props: {
-  title: string;
-  checked: boolean;
-  subtaskId: string;
+export const Subtask = ({
+  subtask,
+  taskId,
+  columnId,
+  boardId,
+}: {
+  subtask: SubTaskType;
   taskId: string;
   columnId: string;
   boardId: string;
 }) => {
   const { theme } = useTheme();
-  const [isChecked, setIsChecked] = React.useState<boolean>(props.checked);
+  const [isChecked, setIsChecked] = useState<boolean>(subtask.isCompleted);
   const toggle = useTaskManagerStore((state) => state.toggleSubtask);
 
   const mutation = useMutation({
@@ -27,15 +32,15 @@ export const Subtask = (props: {
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
 
-    toggle(
-      props.boardId,
-      props.columnId,
-      props.taskId,
-      props.subtaskId,
-      !isChecked
-    );
+    toggle({
+      boardId,
+      columnId,
+      taskId,
+      isCompleted: !isChecked,
+      subtaskId: subtask.id,
+    });
 
-    mutation.mutate({ isCompleted: !isChecked, subtaskId: props.subtaskId });
+    mutation.mutate({ isCompleted: !isChecked, subtaskId: subtask.id });
   };
 
   const baseClasses =
@@ -52,13 +57,13 @@ export const Subtask = (props: {
       className={`${baseClasses} ${themeBg}`}
       style={{ height: isChecked ? "40px" : "auto" }}
     >
-      <input
+      <Input
         type="checkbox"
         checked={isChecked}
         onChange={handleCheckboxChange}
         className="cursor-pointer accent-[#635FC7]"
       />
-      <p className={`text-sm font-medium ${textClasses}`}>{props.title}</p>
+      <p className={`text-sm font-medium ${textClasses}`}>{subtask.title}</p>
     </div>
   );
 };

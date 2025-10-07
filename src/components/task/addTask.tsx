@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useTaskManagerStore } from "@/state/taskManager";
-import type { Subtask } from "@/types/Zodtype";
+import type { Subtask } from "@/types/global";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -34,13 +34,13 @@ export const AddTask = (props: {
   const [taskTitleError, setTaskTitleError] = useState(false); // state to handle if the task title is empty
   const [columnId, setColumnId] = useState(""); // state to know which column is selected
   const boardId = useMemo(
-    () => (boardIdParams ? boardIdParams : taskManager[0]?.boards?.[0]?.id),
+    () => (boardIdParams ? boardIdParams : taskManager?.boards?.[0]?.id),
     [boardIdParams, taskManager]
   );
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board?.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);
@@ -67,7 +67,10 @@ export const AddTask = (props: {
     },
   });
   function addSubTask() {
-    setSubTasks([...subtasks, { id: uuidv4(), title: "", isCompleted: false }]);
+    setSubTasks([
+      ...subtasks,
+      { id: uuidv4(), title: "", isCompleted: false, index: subtasks.length },
+    ]);
   }
   const handleColumnTitleChange = (index: number, updatedTitle: string) => {
     const updatedColumns = [...subtasks];
@@ -85,10 +88,13 @@ export const AddTask = (props: {
       addTask({
         id: uuidv4(),
         boardId,
-        title: title,
-        description: description,
-        columnId: columnId,
+        title,
+        description,
+        columnId,
         subtasks,
+        index:
+          currentBoard.columns.find((c) => c.id === columnId)?.tasks.length ||
+          1,
       });
       addTaskMutation.mutate({
         title: title,
@@ -181,7 +187,7 @@ export const AddTask = (props: {
             columnErrors={subTasksError}
           />
           <Button
-            className="mb-6 w-full h-12 rounded-md bg-indigo-600 px-4 font-semibold text-white transition-colors hover:bg-indigo-700"
+            className="mb-6 w-full  rounded-md bg-indigo-600 px-4 font-semibold text-white transition-colors hover:bg-indigo-700"
             style={{ marginBottom: "25px" }}
             onClick={(e) => {
               e.preventDefault();
@@ -205,10 +211,7 @@ export const AddTask = (props: {
             triggerClassName="w-full h-12"
             className="mt-1 w-full pb-4"
           />
-          <Button
-            className="h-12 w-full rounded-md pt-4 font-semibold "
-            type="submit"
-          >
+          <Button className=" w-full rounded-md  font-semibold " type="submit">
             {t("add.form.createButton")}
           </Button>
         </form>

@@ -1,6 +1,6 @@
 import { boardApiServices } from "@/api/board.service";
 import { useTaskManagerStore } from "@/state/taskManager";
-import type { ColumnType } from "@/types";
+import type { Column } from "@/types/global";
 import { getInitialWindowWidth } from "@/utils/GetInitialWidth";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import { ListTaskNoDnd } from "../task/listTask";
 import { EditBoard } from "./editBoard";
 import { EmptyBoard } from "./emptyBoard";
+import { NoBoards } from "./noBoards";
 
 export const Board = () => {
   const { boardId } = useParams();
@@ -33,8 +34,8 @@ export const Board = () => {
   // });
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);
@@ -141,18 +142,11 @@ export const Board = () => {
     if (currentBoard?.columns && currentBoard?.columns?.length > 0) {
       return (
         <div className="flex gap-4">
-          {currentBoard?.columns.map(
-            (column: ColumnType, columnIndex: number) => (
-              <ListTaskNoDnd
-                key={columnIndex}
-                title={column.name}
-                tasks={column.tasks}
-                columnId={column.id}
-                columnIndex={columnIndex}
-                NbList={columnIndex}
-              />
-            )
-          )}
+          {currentBoard?.columns
+            .sort((a, b) => a.index - b.index)
+            .map((column: Column) => (
+              <ListTaskNoDnd key={column.id} {...column} />
+            ))}
         </div>
       );
     } else {
@@ -163,16 +157,16 @@ export const Board = () => {
   if (taskManager && currentBoard) {
     return (
       <>
-        <EditBoard editBoard={editBoard} setEditBoard={setEditBoard} />
+        <EditBoard
+          board={currentBoard}
+          editBoard={editBoard}
+          setEditBoard={setEditBoard}
+        />
 
         {renderListTaskNoDnd()}
       </>
     );
   } else {
-    return (
-      <>
-        <EmptyBoard />
-      </>
-    );
+    return <NoBoards />;
   }
 };

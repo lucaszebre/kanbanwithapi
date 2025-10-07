@@ -26,8 +26,8 @@ export const DeleteThisTask = ({
   const deleteTask = useTaskManagerStore((state) => state.deleteTask);
   const currentBoard = useMemo(() => {
     return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
+      taskManager?.boards?.find((board) => board.id === boardId) ??
+      taskManager?.boards?.[0] ??
       null
     );
   }, [boardId, taskManager]);

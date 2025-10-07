@@ -1,18 +1,12 @@
 import { useStore } from "@/state/contextopen";
-import type { TaskType } from "@/types";
+import type { Task } from "@/types/global";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalTask } from "../modal/modalTask";
 import { Card } from "../ui/card";
 
-export const TaskCard = ({
-  task,
-  onClick,
-}: {
-  task: TaskType;
-  onClick: () => void;
-}) => {
+export const TaskCard = (task: Task) => {
   const { theme } = useTheme();
   const { setCompleted } = useStore();
   const [open, setOpen] = useState(false);
@@ -51,7 +45,6 @@ export const TaskCard = ({
         className={`${containerBase} ${themeStyles}`}
         onClick={() => {
           setOpen(true);
-          onClick();
         }}
       >
         <h1 className={titleClasses}>{task.title}</h1>

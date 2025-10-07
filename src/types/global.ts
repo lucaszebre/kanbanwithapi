@@ -1,12 +1,14 @@
-type Subtask = {
+export type Subtask = {
   id: string;
+  index: number;
   title: string;
   isCompleted: boolean;
 };
 
-type Column = {
+export type Column = {
   id: string;
   name: string;
+  index: number;
   tasks: Task[];
 };
 
@@ -24,9 +26,11 @@ export type User = {
 };
 export type Task = {
   id: string;
+  index: number;
+  columnId: string;
   title: string;
   description: string;
   status: string;
   subtasks: Subtask[];
 };
-export type TaskManager = User[]; // An array of User objects
+export type TaskManager = User; // An array of User objects
