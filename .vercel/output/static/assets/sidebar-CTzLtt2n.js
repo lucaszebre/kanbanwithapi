@@ -1,1 +1,0 @@
-const o="All boards",e="+ Create New Board",a="Toggle Theme",l={logo:"logo",plus:"plus",board:"board"},s={allBoards:o,createNewBoard:e,toggleTheme:a,alt:l};export{o as allBoards,l as alt,e as createNewBoard,s as default,a as toggleTheme};

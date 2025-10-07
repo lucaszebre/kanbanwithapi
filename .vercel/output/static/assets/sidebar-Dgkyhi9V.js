@@ -1,1 +1,0 @@
-const e="Tous les tableaux",a="+ Créer un nouveau tableau",o="Basculer le thème",l={logo:"logo",plus:"plus",board:"tableau"},t={allBoards:e,createNewBoard:a,toggleTheme:o,alt:l};export{e as allBoards,l as alt,a as createNewBoard,t as default,o as toggleTheme};
