@@ -1,4 +1,4 @@
-import { Subtask } from "@/types/Zodtype";
+import type { Subtask } from "@/types/Zodtype";
 import { handleSessionExpiration } from "./common/handleSessionexpiration";
 import { axiosInstance } from "./common/instance";
 
@@ -63,7 +63,7 @@ const changeColumn = async (
   return null;
 };
 
-const changeColumnName = async (columnId: string, newName: string) => {
+const updateColumn = async (columnId: string, newName: string) => {
   try {
     const response = await axiosInstance.patch(`/${COLUMN_ROUTE}/${columnId}`, {
       name: newName,
@@ -139,7 +139,7 @@ const getColumn = async (columnId: string) => {
 export const columnApiServices = {
   addColumn,
   changeColumn,
-  changeColumnName,
+  updateColumn,
   deleteColumn,
   fetchColumns,
   getColumn,
