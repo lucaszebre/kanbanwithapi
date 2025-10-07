@@ -27,8 +27,9 @@ export const ModalTask = ({
   const { boardId: boardIdParams } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const changeCol = useTaskManagerStore((state) => state.changeCol);
+  const updateTaskLocal = useTaskManagerStore((state) => state.updateTask);
+
   const [selectedColumnId, setSelectedColumnId] = useState(task.columnId);
-  // no about modal anymore
   const [openEditTask, setOpenEditTask] = useState(false);
   const [openDeleteTask, setOpenDeleteTask] = useState(false);
 
@@ -85,24 +86,23 @@ export const ModalTask = ({
         open={open}
         onOpenChange={async (open) => {
           setOpen(open);
-          if (!open) {
-            console.log(selectedColumnId, task.columnId);
 
-            // closing logic replicates previous click-away behavior
-            if (selectedColumnId && selectedColumnId !== task.columnId) {
-              changeCol({
-                boardId,
-                columnId: task.columnId,
-                newColumnId: selectedColumnId,
-                taskId: task.id,
-              });
-              updateTask.mutate({
-                ...task,
-                columnId: selectedColumnId,
-              });
-
-              // queryClient.refetchQueries({ queryKey: ["boards"] });
-            }
+          if (selectedColumnId && selectedColumnId !== task.columnId) {
+            changeCol({
+              boardId,
+              columnId: task.columnId,
+              newColumnId: selectedColumnId,
+              taskId: task.id,
+            });
+            updateTaskLocal({
+              boardId,
+              ...task,
+              columnId: selectedColumnId,
+            });
+            updateTask.mutate({
+              ...task,
+              columnId: selectedColumnId,
+            });
           }
         }}
         hideActions
