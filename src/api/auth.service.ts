@@ -15,20 +15,16 @@ const login = async (email: string, password: string) => {
       // Authentication successful
 
       return response.data;
-    } else {
-      // Authentication failed
-      console.error("auth failed");
-      return null;
     }
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      // Authentication failed
+
+    if (response.status === 401) {
       throw Error("Invalid credentials. Please try again.");
-    } else {
-      // Other error occurred
-      throw Error("An error occurred. Please try again later.");
     }
+    // Authentication failed
     return null;
+  } catch (error) {
+    console.error(error);
+    throw Error("An error occurred. Please try again later.");
   }
 };
 
@@ -40,20 +36,15 @@ const refreshToken = async () => {
       Cookies.set("accessToken", response.data.accessToken);
 
       return response.data;
-    } else {
-      // Authentication failed
-      console.error("auth failed");
-      return null;
     }
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      // Authentication failed
+
+    if (response.status === 401) {
       throw Error("Invalid refresh token");
-    } else {
-      // Other error occurred
-      console.error("An error occurred:", error);
-      throw Error("An error occurred. Please try again later.");
     }
+    return null;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    throw Error("An error occurred. Please try again later.");
   }
 };
 
