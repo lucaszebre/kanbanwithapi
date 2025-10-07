@@ -5,18 +5,12 @@ import { ReusableAlertDialog } from "@/components/reusable/reusable-alert-dialog
 import { useTaskManagerStore } from "@/state/taskManager";
 import { IdtoBoarName } from "@/utils/IdtoBoarName";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
-export const DeleteThisBoard = ({
-  DeleteBlock,
-  setDeleteBlock,
-}: {
-  DeleteBlock: boolean;
-  setDeleteBlock: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const DeleteThisBoard = ({ children }: { children: ReactNode }) => {
   const { boardId: boardIdParams } = useParams();
   const { t } = useTranslation("board");
   const navigate = useNavigate();
@@ -49,8 +43,6 @@ export const DeleteThisBoard = ({
 
   return (
     <ReusableAlertDialog
-      open={DeleteBlock}
-      onOpenChange={setDeleteBlock}
       variant="destructive"
       title={t("deleteBoard.title") as string}
       description={
@@ -60,7 +52,7 @@ export const DeleteThisBoard = ({
       }
       confirmLabel={t("deleteBoard.deleteButton") as string}
       cancelLabel={t("deleteBoard.cancelButton") as string}
-      trigger={null}
+      trigger={children}
       onConfirm={async () => {
         if (!boardId) return;
         try {
