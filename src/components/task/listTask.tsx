@@ -130,7 +130,7 @@ export const ListTaskNoDnd = ({ tasks, id, name }: Column) => {
   const RenderTaskNoDnd = () => {
     return tasks.map((task) => (
       <div key={task.id}>
-        <TaskCard key={task.id} {...task} />
+        <TaskCard key={task.id} {...task} columnId={id} />
       </div>
     ));
   };

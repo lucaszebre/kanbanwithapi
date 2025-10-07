@@ -57,7 +57,8 @@ export const ModalTask = ({
       subtasks: Subtask[];
     }) => taskApiServices.editTask(data),
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
+      queryClient.invalidateQueries({ queryKey: ["boards", "Task"] });
+
       toast.success(t("edit.toast.success"));
     },
     onError: () => {
