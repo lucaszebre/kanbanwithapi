@@ -76,7 +76,7 @@ const changeBoardName = async (boardId: string, newName: string) => {
 const updateBoard = async (data: {
   id: string;
   name: string;
-  columns: ColumnData[];
+  columns?: ColumnData[];
 }) => {
   try {
     const response = await axiosInstance.patch(
@@ -103,5 +103,5 @@ export const boardApiServices = {
   fetchBoards,
   deleteBoard,
   changeBoardName,
-  editBoardSubmit: updateBoard,
+  updateBoard,
 };
