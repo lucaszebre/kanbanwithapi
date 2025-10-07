@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useTaskManagerStore } from "@/state/taskManager";
 import { Icon } from "@iconify/react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { AddBoard } from "../board/addBoard";
@@ -24,7 +24,6 @@ import { Card } from "../ui/card";
 
 export const AppSidebar = (props: { boards: boolean }) => {
   const { boardId: boardIdParams } = useParams();
-  const [addBoard, setAddBoard] = useState(false);
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const { t, i18n } = useTranslation("sidebar");
   const { state, toggleSidebar } = useSidebar();
@@ -40,7 +39,6 @@ export const AppSidebar = (props: { boards: boolean }) => {
 
   return (
     <>
-      <AddBoard addBoard={addBoard} setAddBoard={setAddBoard} />
       <Card
         className={`fixed bottom-3 z-10 flex gap-0 flex-row items-center  p-2 left-3 cursor-pointer 
           
@@ -62,19 +60,17 @@ export const AppSidebar = (props: { boards: boolean }) => {
         className="w-[250px] pt-16 flex flex-col h-full border-t-0"
       >
         <SidebarHeader className="flex flex-col items-center gap-2">
-          <SidebarMenuButton
-            onClick={() => setAddBoard(true)}
-            className="w-full justify-start flex items-center cursor-pointer gap-2 text-[#635FC7] hover:bg-white hover:text-[#635FC7] dark:hover:bg-white"
-          >
-            <img
-              src="/assets/icon-board2.svg"
-              alt={t("alt.plus")}
-              width={16}
-              height={16}
-            />
-            <span>{t("createNewBoard")}</span>
-          </SidebarMenuButton>
-
+          <AddBoard>
+            <SidebarMenuButton className="w-full justify-start flex items-center cursor-pointer gap-2 text-[#635FC7] hover:bg-white hover:text-[#635FC7] dark:hover:bg-white">
+              <img
+                src="/assets/icon-board2.svg"
+                alt={t("alt.plus")}
+                width={16}
+                height={16}
+              />
+              <span>{t("createNewBoard")}</span>
+            </SidebarMenuButton>
+          </AddBoard>
           <SidebarSeparator />
         </SidebarHeader>
 
