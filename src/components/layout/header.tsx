@@ -139,7 +139,7 @@ export const Header = () => {
         </div>
       </Card>
       {/* Mobile */}
-      <div className={mobileWrapper}>
+      <Card className={mobileWrapper}>
         <div
           className="flex flex-row items-center justify-center"
           onClick={() => {
@@ -153,7 +153,7 @@ export const Header = () => {
             width={24}
             height={24}
           />
-          <h1 className="text-xl mr-2 text-black dark:text-white">
+          <h1 className="text-xl mr-2 ">
             {currentBoard ? currentBoard.name : ""}
           </h1>
           <DropdownMenu>
@@ -238,7 +238,7 @@ export const Header = () => {
             </ReusablePopover>
           )}
         </div>
-      </div>
+      </Card>
     </>
   );
 };
