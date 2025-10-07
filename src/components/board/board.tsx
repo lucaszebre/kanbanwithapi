@@ -1,19 +1,15 @@
 import { boardApiServices } from "@/api/board.service";
 import { useTaskManagerStore } from "@/state/taskManager";
 import type { Column } from "@/types/global";
-import { getInitialWindowWidth } from "@/utils/GetInitialWidth";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { ListTaskNoDnd } from "../task/listTask";
-import { EditBoard } from "./editBoard";
 import { EmptyBoard } from "./emptyBoard";
 import { NoBoards } from "./noBoards";
 
 export const Board = () => {
   const { boardId } = useParams();
-  const [windowWidth, setWindowWidth] = useState(getInitialWindowWidth());
-  const [editBoard, setEditBoard] = useState(false);
   const taskManager = useTaskManagerStore((state) => state.taskManager);
 
   const currentBoard = useMemo(() => {
@@ -23,24 +19,6 @@ export const Board = () => {
       null
     );
   }, [boardId, taskManager]);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleResize = () => {
-        setWindowWidth(window.innerWidth);
-      };
-
-      window.addEventListener("resize", handleResize);
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }
-  }, []);
-
-  // useEffect(() => {
-  //   if (windowWidth <= 767) {
-  //     setIsSidebarOpen(false);
-  //   }
-  // }, [windowWidth, setIsSidebarOpen]);
 
   const { data, isStale } = useQuery({
     queryKey: ["boards"],
@@ -139,17 +117,7 @@ export const Board = () => {
   }
 
   if (taskManager && currentBoard) {
-    return (
-      <>
-        <EditBoard
-          board={currentBoard}
-          editBoard={editBoard}
-          setEditBoard={setEditBoard}
-        />
-
-        {renderListTaskNoDnd()}
-      </>
-    );
+    return <>{renderListTaskNoDnd()}</>;
   } else {
     return <NoBoards />;
   }
