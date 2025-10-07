@@ -16,22 +16,6 @@ export const Board = () => {
   const [editBoard, setEditBoard] = useState(false);
   const taskManager = useTaskManagerStore((state) => state.taskManager);
 
-  // const queryClient = useQueryClient();
-  // const column = useMutation({
-  //   mutationFn: (formData: {
-  //     newColumnId: string;
-  //     columnId: string;
-  //     taskId: string;
-  //   }) =>
-  //     columnApiServices.changeColumn(
-  //       formData.newColumnId,
-  //       formData.columnId,
-  //       formData.taskId
-  //     ),
-  //   onSuccess: () => {
-  //     queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
-  //   },
-  // });
   const currentBoard = useMemo(() => {
     return (
       taskManager?.boards?.find((board) => board.id === boardId) ??
