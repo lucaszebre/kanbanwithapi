@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -28,17 +28,15 @@ import { Label } from "../ui/label";
 
 export const EditBoard = ({
   board,
-  editBoard,
-  setEditBoard,
+  children,
 }: {
   board: Board;
-  editBoard: boolean;
-  setEditBoard: Dispatch<SetStateAction<boolean>>;
+  children: ReactNode;
 }) => {
   const { t } = useTranslation("board");
   const { theme } = useTheme();
   const updateBoardLocal = useTaskManagerStore((state) => state.updateBoard);
-
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof EditBoardSchema>>({
     resolver: zodResolver(EditBoardSchema),
     defaultValues: {
@@ -66,7 +64,7 @@ export const EditBoard = ({
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["boards"] });
       toast.success(t("editBoard.successMessage"));
-      setEditBoard(false);
+      setOpen(false);
     },
     onError: () => {
       toast.error(t("editBoard.errorMessage"));
@@ -87,13 +85,14 @@ export const EditBoard = ({
 
   return (
     <ReusableDialog
-      open={editBoard}
-      onOpenChange={setEditBoard}
+      open={open}
+      onOpenChange={setOpen}
       title={
         <span className="text-black dark:text-white">
           {t("editBoard.title")}
         </span>
       }
+      trigger={children}
       hideActions
       size="lg"
       className="w-[480px] max-h-[90%] overflow-y-auto p-8"
