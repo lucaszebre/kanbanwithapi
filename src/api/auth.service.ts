@@ -1,5 +1,4 @@
 import Cookies from "js-cookie";
-import toast from "react-hot-toast";
 import { axiosInstance } from "./common/instance";
 
 const login = async (email: string, password: string) => {
@@ -24,11 +23,10 @@ const login = async (email: string, password: string) => {
   } catch (error) {
     if (error.response && error.response.status === 401) {
       // Authentication failed
-      toast.error("Invalid credentials. Please try again.");
+      throw Error("Invalid credentials. Please try again.");
     } else {
       // Other error occurred
-      console.error("An error occurred:", error);
-      toast.error("An error occurred. Please try again later.");
+      throw Error("An error occurred. Please try again later.");
     }
     return null;
   }
@@ -50,13 +48,12 @@ const refreshToken = async () => {
   } catch (error) {
     if (error.response && error.response.status === 401) {
       // Authentication failed
-      toast.error("Invalid refresh token");
+      throw Error("Invalid refresh token");
     } else {
       // Other error occurred
       console.error("An error occurred:", error);
-      toast.error("An error occurred. Please try again later.");
+      throw Error("An error occurred. Please try again later.");
     }
-    return null;
   }
 };
 
@@ -71,13 +68,13 @@ const register = async (email: string, password: string, name: string) => {
     if (response && response.data && response.data.accessToken) {
       // Authentication successful
       return response.data;
-    } else {
-      // Authentication failed
-      return null;
     }
-  } catch (error) {
-    console.error(error);
-    return null;
+
+    if (response.status === 404) {
+      return { status: response.status };
+    }
+  } catch {
+    return { status: 500 };
   }
 };
 
