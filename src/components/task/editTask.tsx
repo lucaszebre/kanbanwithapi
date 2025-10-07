@@ -15,8 +15,8 @@ import { useTaskManagerStore } from "@/state/taskManager";
 import type { Subtask, Task } from "@/types/global";
 import { EditTaskSchema } from "@/types/TaskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DoorClosed } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -217,10 +217,12 @@ export const EditTask = ({
                   <Button
                     type="button"
                     variant="ghost"
+                    className="cursor-pointer"
                     onClick={() => remove(index)}
                   >
-                    <DoorClosed className="h-4 w-4" />
+                    <Icon icon={"mdi:trash-outline"} className="h-4 w-4" />
                   </Button>
+
                   <FormMessage />
                 </FormItem>
               )}
