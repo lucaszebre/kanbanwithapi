@@ -1,204 +1,140 @@
+import { boardApiServices } from "@/api/board.service";
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
 import { Button } from "@/components/ui/button";
 import { useTaskManagerStore } from "@/state/taskManager";
-import type { ColumnData, ColumnType } from "@/types";
+import type { Board, Column } from "@/types/global";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router";
+import { useTranslation } from "react-i18next";
+import { v4 as uuidV4 } from "uuid";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { BoardColumn } from "./boardColumn";
-import { handleSaveChanges } from "./handleSave";
-
-export const EditBoard = (props: {
+export const EditBoard = ({
+  board,
+  editBoard,
+  setEditBoard,
+}: {
+  board: Board;
   editBoard: boolean;
-  setEditBoard: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditBoard: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { boardId } = useParams();
-  const [copyBoardColumns, setCopyBoardColumns] = useState<ColumnType[]>([]); // state to know the current present in the database
-  const [Save, SetSave] = useState<boolean>(false); // state to toggle the disabled thhe button save
-  const [header, setHeader] = useState("");
+  const { t } = useTranslation("board");
+  const [name, setName] = useState(board?.name);
+  const [columns, setColumns] = useState(board?.columns);
   const [columnErrors, setColumnErrors] = useState<boolean[]>([]); // state to handle if one input is empty
-  const [inputError, setInputError] = useState<boolean>(false); // state to handle if the boardname is empty
-  const [columnstoAdd, setColumnstoAdd] = useState<ColumnType[]>([]); // state to know the column to add in the database
-  const [columnsToDelete, setColumnsToDelete] = useState<string[]>([]); // state to know the column to delete in the database
-  const [columnsToRename, setColumnsToRename] = useState<ColumnData[]>([]); // state to know the column to rename in the database
+  const [inputError, setInputError] = useState<boolean>(false);
   const { theme } = useTheme();
 
-  const taskManager = useTaskManagerStore((state) => state.taskManager);
-  const updateBoard = useTaskManagerStore((state) => state.updateBoard);
-  const currentBoard = useMemo(() => {
-    return (
-      taskManager[0].boards.find((board) => board.id === boardId) ??
-      taskManager[0].boards[0] ??
-      null
-    );
-  }, [boardId, taskManager]);
-  useEffect(() => {
-    setColumnstoAdd([]);
-    setColumnsToRename([]);
-    setColumnsToDelete([]);
-  }, [Save]);
+  const updateBoardLocal = useTaskManagerStore((state) => state.updateBoard);
 
-  useEffect(() => {
-    if (taskManager && currentBoard && currentBoard?.columns) {
-      setCopyBoardColumns(currentBoard?.columns);
-      const initialColumnErrors = currentBoard?.columns.map(
-        (column: { name: string }) => column.name.trim() === ""
-      );
-      setColumnErrors(initialColumnErrors);
-
-      setHeader(currentBoard.name);
-    }
-  }, [currentBoard, taskManager]); // every some thing is moving in the data we get the new headertiltle and columns of the currentboard
-
-  const handleAddColumn = () => {
-    // function to add column
-    const newColumn = {
-      id: "",
+  const addColumn = () => {
+    const newColumn: Column = {
+      id: uuidV4(),
       name: "",
       tasks: [],
-      add: true,
+      index: columns?.length,
     };
-    setCopyBoardColumns([...copyBoardColumns, newColumn]);
-    setColumnstoAdd([...columnstoAdd, newColumn]);
+    setColumns([...columns, newColumn]);
   };
 
-  function handleDeleteColumn(index: number, columnId: string) {
-    // function to delete column
-    const updatedColumns = [...copyBoardColumns];
-    updatedColumns.splice(index, 1);
-    setCopyBoardColumns(updatedColumns);
-    setColumnsToDelete([...columnsToDelete, columnId]);
+  useEffect(() => {
+    setName(board?.name);
+    setColumns(board?.columns);
+  }, [board]);
 
-    // Filter out the deleted column from columnsToRename
-    const updatedColumnsToRename = columnsToRename.filter(
-      (column) => column.id !== columnId
-    );
-    setColumnsToRename(updatedColumnsToRename);
+  function deleteColumn(columnId: string) {
+    const updatedColumns = columns.filter((c) => c.id !== columnId);
 
-    // Update columnErrors state by removing the corresponding error
-    const updatedColumnErrors = [...columnErrors];
-    updatedColumnErrors.splice(index, 1);
-    setColumnErrors(updatedColumnErrors);
+    setColumns([...updatedColumns]);
   }
 
-  const handleEditColumn = (
-    index: number,
-    columnName: string,
-    add?: boolean
-  ) => {
-    const updatedColumns = [...copyBoardColumns];
-    updatedColumns[index] = { ...updatedColumns[index], name: columnName };
-    setCopyBoardColumns(updatedColumns);
-
-    const updatedColumnErrors = [...columnErrors];
-    updatedColumnErrors[index] = columnName.trim() === "";
-    setColumnErrors(updatedColumnErrors);
-
-    if (add) {
-      const existingColumnIndex = columnstoAdd.findIndex(
-        (c) => c.id === updatedColumns[index].id
-      );
-      if (existingColumnIndex !== -1) {
-        const updatedColumnsToAdd = [...columnstoAdd];
-        updatedColumnsToAdd[existingColumnIndex] = updatedColumns[index];
-        setColumnstoAdd(updatedColumnsToAdd);
-      }
-    } else {
-      const existingColumnIndex = columnsToRename.findIndex(
-        (c) => c.id === updatedColumns[index].id
-      );
-      if (existingColumnIndex === -1) {
-        setColumnsToRename([...columnsToRename, updatedColumns[index]]);
-      } else {
-        const updatedColumnsToRename = [...columnsToRename];
-        updatedColumnsToRename[existingColumnIndex] = updatedColumns[index];
-        setColumnsToRename(updatedColumnsToRename);
-      }
-    }
+  const handleEditColumn = (index: number, columnName: string) => {
+    const updatedColumns = [...columns];
+    updatedColumns[index] = {
+      ...updatedColumns[index],
+      name: columnName,
+      index,
+    };
+    setColumns(updatedColumns);
   };
 
   function renderColumns() {
-    return copyBoardColumns.map((column, index) => (
-      <BoardColumn
-        key={index}
-        title={column.name}
-        onChange={(updatedTitle: string) =>
-          handleEditColumn(index, updatedTitle, column.add)
-        }
-        Remove={() => handleDeleteColumn(index, column.id)}
-        error={columnErrors[index] || false}
-      />
-    ));
+    return (
+      <div className="flex flex-col gap-4 w-full ">
+        {columns?.map((column, index) => (
+          <BoardColumn
+            key={index}
+            title={column.name}
+            onChange={(updatedTitle: string) =>
+              handleEditColumn(index, updatedTitle)
+            }
+            Remove={() => deleteColumn(column.id)}
+            error={columnErrors[index] || false}
+          />
+        ))}
+      </div>
+    );
   }
 
   const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (formData: {
-      columnsToDelete: string[];
-      columnsToRename: ColumnData[];
-      columnstoAdd: ColumnType[];
-      currentBoardId: string;
-      Header: string;
-      headerTitle: string;
-    }) =>
-      handleSaveChanges(
-        formData.columnsToDelete,
-        formData.columnsToRename,
-        formData.columnstoAdd,
-        formData.currentBoardId,
-        formData.Header,
-        formData.headerTitle
-      ),
+  const updateBoard = useMutation({
+    mutationFn: (formData: { id: string; name: string; columns: Column[] }) => {
+      console.log(formData, "formData");
+      return boardApiServices.updateBoard(formData);
+    },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["boards"] });
-      toast.success("Edit board  sucessfully");
+      toast.success(t("editBoard.successMessage"));
     },
     onError: () => {
-      toast.error("Error to edit the board");
+      toast.error(t("editBoard.errorMessage"));
     },
   });
 
   return (
     <ReusableDialog
-      open={props.editBoard}
+      open={editBoard}
       onOpenChange={(o) => {
         if (!o) {
           queryClient.refetchQueries({ queryKey: ["boards"] });
-          props.setEditBoard(false);
+          setEditBoard(false);
         } else {
-          props.setEditBoard(true);
+          setEditBoard(true);
         }
       }}
-      title={<span className="text-black dark:text-white">Edit Board</span>}
+      title={
+        <span className="text-black dark:text-white">
+          {t("editBoard.title")}
+        </span>
+      }
       description={null}
-      confirmLabel="Save Changes"
-      cancelLabel="Cancel"
+      confirmLabel={t("editBoard.saveChanges")}
+      cancelLabel={t("editBoard.cancel")}
       withForm
       formId="edit-board-form"
       onConfirm={async () => {
-        const newColumnErrors = copyBoardColumns.map(
+        const newColumnErrors = columns.map(
           (column) => column.name.trim() === ""
         );
         setColumnErrors(newColumnErrors);
-        if (currentBoard?.name.trim() === "") {
+        if (board?.name.trim() === "") {
           setInputError(true);
-          throw new Error("Header missing");
         }
         if (newColumnErrors.some((error) => error)) {
-          throw new Error("Column errors");
+          toast.error(t("editBoard.emptyInput"));
+          return;
         }
-        updateBoard({});
-        await mutation.mutateAsync({
-          columnsToDelete,
-          columnsToRename,
-          columnstoAdd: columnstoAdd,
-          currentBoardId: currentBoard?.id,
-          Header: header,
-          headerTitle: currentBoard?.name,
+
+        updateBoardLocal({ columns, id: board.id, name });
+        updateBoard.mutate({
+          id: board.id,
+          columns,
+          name,
         });
-        SetSave(!Save);
+
         queryClient.refetchQueries({ queryKey: ["boards"] });
       }}
       renderActions={({ loading, confirm, close }) => (
@@ -212,7 +148,7 @@ export const EditBoard = (props: {
               void confirm();
             }}
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? t("editBoard.saving") : t("editBoard.saveChanges")}
           </Button>
           <Button
             type="button"
@@ -220,63 +156,63 @@ export const EditBoard = (props: {
             disabled={loading}
             onClick={() => close()}
           >
-            Cancel
+            {t("editBoard.cancel")}
           </Button>
         </>
       )}
     >
       <form
         id="edit-board-form"
-        className="w-full max-h-[70vh] overflow-auto flex flex-col items-start"
+        className="w-full max-h-[70vh] overflow-auto gap-2 flex flex-col items-start"
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <label
-          className={`mb-2 text-xs font-semibold ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}
-          htmlFor="boardName"
-        >
-          Board Name
-        </label>
-        <input
+        <Label className={`mb-2 text-xs font-semibold `} htmlFor="boardName">
+          {t("editBoard.boardName")}
+        </Label>
+        <Input
           type="text"
           name="boardName"
-          placeholder="Board Name"
+          placeholder={t("editBoard.boardName")}
           className={`w-[93%] h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 mb-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 ${
             theme === "light" ? "text-black" : "text-white"
-          } ${inputError ? "border-red-500" : ""}`}
-          value={header}
+          } 
+          
+          
+          `}
+          value={name}
           onChange={(e) => {
-            setInputError(false);
-            setHeader(e.target.value);
+            setName(e.target.value);
           }}
         />
         {inputError && (
           <div className="text-red-500 text-[12px] mt-1 mb-2">
-            Please enter a board name.
+            {t("editBoard.boardNameError")}
           </div>
         )}
-        <label
-          className={`mb-2 text-xs font-semibold ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}
-          htmlFor="boardDescription"
-        >
-          Board Columns
-        </label>
+
+        {columns?.length > 0 && (
+          <Label
+            className={`mb-2 text-xs font-semibold ${
+              theme === "light" ? "text-black" : "text-white"
+            }`}
+            htmlFor="boardDescription"
+          >
+            {t("editBoard.boardColumns")}
+          </Label>
+        )}
         {renderColumns()}
         <Button
           variant="outline"
           className="w-full h-10 mb-2"
           onClick={(e) => {
             e.preventDefault();
-            handleAddColumn();
+            addColumn();
           }}
           type="button"
         >
-          + Add Column
+          {t("editBoard.addColumn")}
         </Button>
       </form>
     </ReusableDialog>
