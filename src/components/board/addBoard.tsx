@@ -11,6 +11,8 @@ import React, {
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { ColumnsRenderer } from "../task/rendercolumn"; // get the render columns
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 
 export const AddBoard = (props: {
   addBoard: boolean;
@@ -156,21 +158,23 @@ export const AddBoard = (props: {
               {t("addBoard.boardNameError")}
             </div>
           )}
-          <label
-            className={`text-sm font-semibold mb-2 ${
-              theme === "light" ? "text-black" : "text-white"
-            }`}
-            htmlFor="boardColumns"
-          >
-            {t("addBoard.boardColumns")}
-          </label>
+          {columnNames.length > 0 && (
+            <Label
+              className={`text-sm font-semibold mb-2 ${
+                theme === "light" ? "text-black" : "text-white"
+              }`}
+              htmlFor="boardColumns"
+            >
+              {t("addBoard.boardColumns")}
+            </Label>
+          )}
           <ColumnsRenderer
             columnNames={columnNames}
             handleColumnTitleChange={handleColumnTitleChange}
             removeColumn={removeColumn}
             columnErrors={columnErrors}
           />
-          <button
+          <Button
             disabled={inputError}
             type="button"
             className={`w-full h-10 border-none rounded-lg text-xl font-semibold cursor-pointer mb-2 ${
@@ -181,13 +185,13 @@ export const AddBoard = (props: {
             onClick={addColumn}
           >
             {t("addBoard.addColumn")}
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full h-10 border-none rounded-lg bg-[#635FC7] text-white text-xl font-semibold cursor-pointer mb-2"
             type="submit"
           >
             {t("addBoard.createBoard")}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
