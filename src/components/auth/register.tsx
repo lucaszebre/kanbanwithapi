@@ -31,6 +31,8 @@ export const Register = () => {
     resolver: zodResolver(SchemaRegister),
     defaultValues: {
       email: "",
+      password: "",
+      name: "",
     },
   });
 
@@ -45,8 +47,9 @@ export const Register = () => {
         password,
         fullname
       );
+
       if (response) {
-        if (response?.status === 404) {
+        if (response.data.status === 404) {
           toast.error(t("register.alreadyUsedEmailError"));
           return;
         }
@@ -56,15 +59,18 @@ export const Register = () => {
       } else {
         throw new Error(t("register.registrationFailed"));
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error(t("register.alreadyUsedEmailError"));
     }
   };
 
   async function onSubmit(values: z.infer<typeof SchemaRegister>) {
     setIsLoading(true);
     await handleRegister(values.email, values.password, values.name);
-
+    form.reset(
+      { email: "", password: "", name: "" },
+      { keepDirtyValues: false }
+    );
     setIsLoading(false);
   }
   return (
@@ -138,7 +144,6 @@ export const Register = () => {
             )}
           />
           <Button className="w-full cursor-pointer">
-            {" "}
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
