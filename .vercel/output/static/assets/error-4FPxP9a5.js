@@ -1,0 +1,1 @@
+const e={title:"Session Expirée",message:"Votre session a expiré. Veuillez actualiser la page et vous reconnecter.",goToHome:"Aller à l'accueil"},s="Identifiants invalides",i={sessionExpired:e,invalidCredentials:s};export{i as default,s as invalidCredentials,e as sessionExpired};
