@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useState, type ReactNode } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -24,14 +24,11 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export const AddBoard = (props: {
-  addBoard: boolean;
-  setAddBoard: Dispatch<SetStateAction<boolean>>;
-}) => {
+export const AddBoard = ({ children }: { children: ReactNode }) => {
   const { theme } = useTheme();
   const { t } = useTranslation("board");
-  const addBoardToStore = useTaskManagerStore((state) => state.addBoard);
-
+  const addBoardLocal = useTaskManagerStore((state) => state.addBoard);
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof AddBoardSchema>>({
     resolver: zodResolver(AddBoardSchema),
     defaultValues: {
@@ -45,15 +42,6 @@ export const AddBoard = (props: {
     name: "columns",
   });
 
-  useEffect(() => {
-    if (props.addBoard) {
-      form.reset({
-        name: "",
-        columns: [{ name: "" }, { name: "" }],
-      });
-    }
-  }, [props.addBoard, form]);
-
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (formData: { boardName: string; columns: string[] }) =>
@@ -61,7 +49,7 @@ export const AddBoard = (props: {
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["boards"] });
       toast.success(t("addBoard.successMessage"));
-      props.setAddBoard(false);
+      setOpen(false);
     },
     onError: () => {
       toast.error(t("addBoard.errorMessage"));
@@ -70,18 +58,19 @@ export const AddBoard = (props: {
 
   const onSubmit = (values: z.infer<typeof AddBoardSchema>) => {
     const columnNames = values.columns.map((col) => col.name);
-    addBoardToStore(values.name, columnNames);
+    addBoardLocal(values.name, columnNames);
     mutation.mutate({ boardName: values.name, columns: columnNames });
   };
 
   return (
     <ReusableDialog
-      open={props.addBoard}
-      onOpenChange={props.setAddBoard}
+      open={open}
+      onOpenChange={setOpen}
       title={t("addBoard.title")}
       hideActions
       size="lg"
       className="w-[480px] max-h-[90%] overflow-y-auto p-8"
+      trigger={children}
     >
       <Form {...form}>
         <form
