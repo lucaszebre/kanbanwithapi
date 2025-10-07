@@ -1,4 +1,4 @@
-import type { Subtask } from "@/types/Zodtype";
+import type { Subtask } from "@/types/global";
 import { BoardColumn } from "../board/boardColumn";
 
 type SubTaskProps = {

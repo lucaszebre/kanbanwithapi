@@ -16,7 +16,7 @@ export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return user?.id ? (
+  return user ? (
     children
   ) : (
     <Navigate to="/auth" replace state={{ path: pathname }} />

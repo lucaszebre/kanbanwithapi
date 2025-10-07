@@ -160,9 +160,10 @@ export const useTaskManagerStore = create<State>((set) => ({
         if (b.id === board?.id) {
           return {
             ...b,
-            columns,
+            columns: columns ?? [],
           };
         }
+        return b;
       });
       return {
         ...state,
