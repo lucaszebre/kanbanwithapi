@@ -1,14 +1,12 @@
-import { useStore } from "@/state/contextopen";
 import type { Task } from "@/types/global";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalTask } from "../modal/modalTask";
 import { Card } from "../ui/card";
 
 export const TaskCard = (task: Task) => {
   const { theme } = useTheme();
-  const { setCompleted } = useStore();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("task");
   function Iscompleted() {
@@ -20,11 +18,6 @@ export const TaskCard = (task: Task) => {
     }
     return i;
   }
-
-  useEffect(() => {
-    setCompleted(Iscompleted());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const containerBase =
     "cursor-pointer rounded-lg px-4 py-2 w-[280px] text-left mb-4 shadow-sm hover:shadow-md transition-shadow";
