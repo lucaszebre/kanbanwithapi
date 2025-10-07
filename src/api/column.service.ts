@@ -1,4 +1,3 @@
-import type { Subtask } from "@/types/Zodtype";
 import { handleSessionExpiration } from "./common/handleSessionexpiration";
 import { axiosInstance } from "./common/instance";
 
@@ -6,16 +5,7 @@ import { axiosInstance } from "./common/instance";
 const COLUMN_ROUTE = "api/columns";
 const BOARD_ROUTE = "api/boards";
 
-// Task interface for column operations
-export interface Task {
-  id: string;
-  title: string;
-  status: string;
-  description: string;
-  subtasks: Subtask[];
-}
-
-const addColumn = async (boardId: string, columnName: string): Promise<any> => {
+const addColumn = async (boardId: string, columnName: string) => {
   try {
     const response = await axiosInstance.post(
       `/${BOARD_ROUTE}/${boardId}/columns`,

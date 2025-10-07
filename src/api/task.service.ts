@@ -1,24 +1,8 @@
-import type { Subtask } from "@/types/Zodtype";
+import type { Subtask } from "@/types/global";
 import { handleSessionExpiration } from "./common/handleSessionexpiration";
 import { axiosInstance } from "./common/instance";
 
-// Task route constants
 const TASK_ROUTE = "api/tasks";
-
-// Helper function for creating subtask array
-// const createSubTaskArray = (SubTaskCurrent: string[]) => {
-//   const SubtaskArray = [];
-
-//   for (const columnName of SubTaskCurrent) {
-//     const subtask = {
-//       title: columnName,
-//       isCompleted: false,
-//     };
-//     SubtaskArray.push(subtask);
-//   }
-
-//   return SubtaskArray;
-// };
 
 const createTask = async ({
   columnId,
