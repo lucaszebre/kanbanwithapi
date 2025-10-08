@@ -102,7 +102,7 @@ export const Header = () => {
             )}
           </div>
 
-          <div className="flex flex-row items-center justify-around">
+          <div className="flex flex-row gap-2 items-center justify-around">
             {currentBoard?.id && (
               <div className="flex gap-4 items-center">
                 {currentBoard.columns?.length > 0 && (

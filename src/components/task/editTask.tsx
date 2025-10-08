@@ -1,5 +1,4 @@
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
-import { useTheme } from "next-themes";
 import { useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
 
 import { taskApiServices } from "@/api/task.service";
@@ -45,7 +44,6 @@ export const EditTask = ({
 
   const { t } = useTranslation("task");
 
-  const { theme } = useTheme();
   const boardId = useMemo(
     () => boardIdParms ?? taskManager?.boards?.[0]?.id,
     [boardIdParms, taskManager]
@@ -148,20 +146,15 @@ export const EditTask = ({
             name="title"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel
-                  className={`text-xs font-semibold ${
-                    theme === "light" ? "text-black" : "text-white"
-                  }`}
-                >
+                <FormLabel className={`text-xs font-semibold `}>
                   {t("edit.form.titleLabel")}
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder={t("edit.form.titlePlaceholder")}
                     {...field}
-                    className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 ${
-                      theme === "light" ? "text-black" : "text-white"
-                    }`}
+                    className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 
+                   `}
                   />
                 </FormControl>
                 <FormMessage />
@@ -174,18 +167,13 @@ export const EditTask = ({
             name="description"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel
-                  className={`text-xs font-semibold ${
-                    theme === "light" ? "text-black" : "text-white"
-                  }`}
-                >
+                <FormLabel className={`text-xs font-semibold `}>
                   {t("edit.form.descriptionLabel")}
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    className={`w-full h-32 border border-gray-400 rounded-md bg-transparent cursor-pointer p-2 resize-none outline-none focus:ring-2 focus:ring-indigo-500 ${
-                      theme === "light" ? "text-black" : "text-white"
-                    }`}
+                    className={`w-full h-32 border border-gray-400 rounded-md bg-transparent cursor-pointer p-2 resize-none outline-none focus:ring-2 focus:ring-indigo-500 
+                    `}
                     {...field}
                   />
                 </FormControl>
@@ -195,11 +183,7 @@ export const EditTask = ({
           />
 
           {fields.length > 0 && (
-            <Label
-              className={`text-xs font-semibold ${
-                theme === "light" ? "text-black" : "text-white"
-              }`}
-            >
+            <Label className={`text-xs font-semibold `}>
               {t("edit.form.subtasksLabel")}
             </Label>
           )}
@@ -249,11 +233,7 @@ export const EditTask = ({
             name="columnId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel
-                  className={`text-xs font-semibold ${
-                    theme === "light" ? "text-black" : "text-white"
-                  }`}
-                >
+                <FormLabel className={`text-xs font-semibold `}>
                   {t("edit.form.statusLabel")}
                 </FormLabel>
                 <FormControl>

@@ -15,7 +15,6 @@ import type { Board, Column } from "@/types/global";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "next-themes";
 import { useEffect, useState, type ReactNode } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -34,7 +33,6 @@ export const EditBoard = ({
   children: ReactNode;
 }) => {
   const { t } = useTranslation("board");
-  const { theme } = useTheme();
   const updateBoardLocal = useTaskManagerStore((state) => state.updateBoard);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof EditBoardSchema>>({
@@ -107,20 +105,15 @@ export const EditBoard = ({
             name="name"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel
-                  className={`mb-2 text-xs font-semibold ${
-                    theme === "light" ? "text-black" : "text-white"
-                  }`}
-                >
+                <FormLabel className={`mb-2 text-xs font-semibold `}>
                   {t("editBoard.boardName")}
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder={t("editBoard.boardName")}
                     {...field}
-                    className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 ${
-                      theme === "light" ? "text-black" : "text-white"
-                    }`}
+                    className={`w-full h-10 border border-gray-400 rounded-md bg-transparent text-lg font-semibold px-4 cursor-pointer outline-none focus:ring-2 focus:ring-indigo-500 
+                    `}
                   />
                 </FormControl>
                 <FormMessage />
@@ -129,11 +122,7 @@ export const EditBoard = ({
           />
 
           {fields.length > 0 && (
-            <Label
-              className={`mb-2 text-xs font-semibold ${
-                theme === "light" ? "text-black" : "text-white"
-              }`}
-            >
+            <Label className={`mb-2 text-xs font-semibold `}>
               {t("editBoard.boardColumns")}
             </Label>
           )}

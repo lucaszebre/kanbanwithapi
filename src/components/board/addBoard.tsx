@@ -13,7 +13,6 @@ import { AddBoardSchema } from "@/types/AddBoardSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "next-themes";
 import { useState, type ReactNode } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -25,7 +24,6 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 export const AddBoard = ({ children }: { children: ReactNode }) => {
-  const { theme } = useTheme();
   const { t } = useTranslation("board");
   const addBoardLocal = useTaskManagerStore((state) => state.addBoard);
   const [open, setOpen] = useState(false);
@@ -82,11 +80,7 @@ export const AddBoard = ({ children }: { children: ReactNode }) => {
             name="name"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel
-                  className={`text-sm font-semibold mb-2 ${
-                    theme === "light" ? "text-black" : "text-white"
-                  }`}
-                >
+                <FormLabel className={`text-sm font-semibold mb-2 `}>
                   {t("addBoard.boardName")}
                 </FormLabel>
                 <FormControl>
@@ -104,11 +98,7 @@ export const AddBoard = ({ children }: { children: ReactNode }) => {
           />
 
           {fields.length > 0 && (
-            <Label
-              className={`text-sm font-semibold mb-2 ${
-                theme === "light" ? "text-black" : "text-white"
-              }`}
-            >
+            <Label className={`text-sm font-semibold mb-2 `}>
               {t("addBoard.boardColumns")}
             </Label>
           )}
@@ -140,11 +130,8 @@ export const AddBoard = ({ children }: { children: ReactNode }) => {
 
           <Button
             type="button"
-            className={`w-full h-10 border-none rounded-lg text-xl font-semibold cursor-pointer mb-2 ${
-              theme === "light"
-                ? "bg-blue-50 text-[#635FC7]"
-                : "bg-white text-[#635FC7]"
-            }`}
+            className={`w-full h-10 border-none rounded-lg text-xl font-semibold cursor-pointer mb-2 
+            `}
             onClick={() => append({ name: "" })}
           >
             {t("addBoard.addColumn")}

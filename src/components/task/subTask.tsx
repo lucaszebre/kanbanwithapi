@@ -2,7 +2,6 @@ import { taskApiServices } from "@/api/task.service";
 import { useTaskManagerStore } from "@/state/taskManager";
 import type { Subtask as SubTaskType } from "@/types/global";
 import { useMutation } from "@tanstack/react-query";
-import { useTheme } from "next-themes";
 import { useState } from "react";
 import { Input } from "../ui/input";
 
@@ -17,7 +16,6 @@ export const Subtask = ({
   columnId: string;
   boardId: string;
 }) => {
-  const { theme } = useTheme();
   const [isChecked, setIsChecked] = useState<boolean>(subtask.isCompleted);
   const toggle = useTaskManagerStore((state) => state.toggleSubtask);
 
@@ -45,16 +43,11 @@ export const Subtask = ({
 
   const baseClasses =
     "w-full flex flex-row items-center justify-start gap-4 mb-4 rounded-md p-4 transition-colors";
-  const themeBg = theme === "light" ? "bg-[rgb(222,237,249)]" : "bg-[#20212C]";
-  const textClasses = isChecked
-    ? "line-through text-[#BDBDBD]"
-    : theme === "light"
-    ? "text-black"
-    : "text-white";
+  const textClasses = isChecked ? "line-through text-[#BDBDBD]" : "";
 
   return (
     <div
-      className={`${baseClasses} ${themeBg}`}
+      className={`${baseClasses} `}
       style={{ height: isChecked ? "40px" : "auto" }}
     >
       <Input

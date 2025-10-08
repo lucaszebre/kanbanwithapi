@@ -1,12 +1,10 @@
 import type { Task } from "@/types/global";
-import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalTask } from "../modal/modalTask";
 import { Card } from "../ui/card";
 
 export const TaskCard = (task: Task) => {
-  const { theme } = useTheme();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("task");
   function Iscompleted() {
@@ -21,13 +19,9 @@ export const TaskCard = (task: Task) => {
 
   const containerBase =
     "cursor-pointer rounded-lg px-4 py-2 w-[280px] text-left mb-4 shadow-sm hover:shadow-md transition-shadow";
-  const themeStyles =
-    theme === "light"
-      ? "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.2)]"
-      : "bg-[#2B2C37] shadow-[0_0_10px_0_rgba(0,0,0,0.2)]";
+
   const titleClasses =
-    "text-lg font-semibold mb-4 hover:text-[#3F51B5] transition-colors " +
-    (theme === "light" ? "text-black" : "text-white");
+    "text-lg font-semibold mb-4 hover:text-[#3F51B5] transition-colors ";
   const subTextClasses = "text-gray-500 text-sm font-semibold mb-4";
 
   return (
@@ -35,7 +29,7 @@ export const TaskCard = (task: Task) => {
       <ModalTask task={task} open={open} setOpen={setOpen} />
 
       <Card
-        className={`${containerBase} ${themeStyles}`}
+        className={`${containerBase}`}
         onClick={() => {
           setOpen(true);
         }}
