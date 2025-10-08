@@ -13,15 +13,17 @@ export const useAuth = () => {
     try {
       setIsLoading(true);
       const data = await authApiServices.login(email, password);
-      setIsLoading(false);
-      if (data) {
+      if (data?.status === 200) {
+        setIsLoading(false);
         navigate("/auth/complete");
       }
     } catch (error) {
       setIsLoading(false);
       setIsError(true);
       toast.error(t("error:invalidCredentials"));
-      console.error("could authentificated", error);
+      console.error("could not authentificated", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

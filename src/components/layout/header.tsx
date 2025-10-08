@@ -64,7 +64,6 @@ export const Header = () => {
   const desktopWrapper = `hidden md:flex border-l-0 flex-row justify-between items-center w-full h-16 px-8 rounded-none`;
   const mobileWrapper = `flex md:hidden flex-row justify-between items-center w-full p-4`;
   const addTaskButton = `flex items-center justify-center bg-[#635FC7] text-white rounded-full px-5 py-2.5 text-sm font-medium cursor-pointer hover:brightness-110 transition-colors`;
-  const logoutButton = `text-white dark:bg-transparent bg-[#2B2C37] dark:text-white border border-white rounded-md px-2.5 py-1.5 text-sm font-medium cursor-pointer ml-2 mr-4 transition-colors hover:bg-white hover:text-[#635FC7]`;
   const mobileAddButton = `flex items-center justify-center bg-[#635FC7] text-white rounded-full px-4 py-2 text-lg font-semibold cursor-pointer`;
 
   return (
@@ -123,7 +122,7 @@ export const Header = () => {
                 await authApiServices.logout();
                 navigate("/auth");
               }}
-              className={logoutButton}
+              className="cursor-pointer"
             >
               {t("logout")}
             </Button>
@@ -171,7 +170,7 @@ export const Header = () => {
                 {t("allBoards")}({taskManager?.boards?.length})
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {taskManager?.boards.map(
+              {taskManager?.boards?.map(
                 (board: { name: string; id: string }) => (
                   <DropdownMenuLabel
                     key={board.id}

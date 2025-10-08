@@ -84,7 +84,7 @@ export const AppSidebar = (props: { boards: boolean }) => {
             <SidebarGroupContent>
               <ScrollArea className="h-full w-full">
                 <SidebarMenu className="space-y-1">
-                  {taskManager?.boards.map(
+                  {taskManager?.boards?.map(
                     (board: { name: string; id: string }) => (
                       <SidebarMenuItem key={board.id}>
                         <SidebarMenuButton

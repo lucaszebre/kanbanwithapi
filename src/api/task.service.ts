@@ -11,6 +11,7 @@ const createTask = async ({
   title: string;
   description: string;
   columnId: string;
+  index: number;
   subtasks?: Subtask[];
 }) => {
   try {

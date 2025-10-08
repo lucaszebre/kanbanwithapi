@@ -49,7 +49,7 @@ export const Register = () => {
       );
 
       if (response) {
-        if (response.data.status === 404) {
+        if (response.status === 401) {
           toast.error(t("register.alreadyUsedEmailError"));
           return;
         }

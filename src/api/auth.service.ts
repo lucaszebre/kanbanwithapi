@@ -9,19 +9,16 @@ const login = async (email: string, password: string) => {
     });
 
     if (response && response.data && response.data.accessToken) {
-      console.log(response.data);
       Cookies.set("accessToken", response.data.accessToken);
       Cookies.set("refreshToken", response.data.refreshToken);
       // Authentication successful
-
-      return response.data;
     }
 
     if (response.status === 401) {
       throw Error("Invalid credentials. Please try again.");
     }
     // Authentication failed
-    return null;
+    return response;
   } catch (error) {
     console.error(error);
     throw Error("An error occurred. Please try again later.");
@@ -56,16 +53,9 @@ const register = async (email: string, password: string, name: string) => {
       name,
     });
 
-    if (response && response.data && response.data.accessToken) {
-      // Authentication successful
-      return response.data;
-    }
-
-    if (response.status === 404) {
-      return { status: response.status };
-    }
+    return response;
   } catch {
-    return { status: 500 };
+    throw Error("An error occurred. Please try again later.");
   }
 };
 

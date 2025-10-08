@@ -72,6 +72,7 @@ export const AddTask = ({ children }: { children: ReactNode }) => {
     mutationFn: (
       formData: z.infer<typeof AddTaskSchema> & {
         description: string;
+        index: number;
       }
     ) => taskApiServices.createTask(formData),
     onSuccess: () => {
@@ -87,15 +88,16 @@ export const AddTask = ({ children }: { children: ReactNode }) => {
 
   const onSubmit = (values: z.infer<typeof AddTaskSchema>) => {
     if (boardId) {
+      const index =
+        currentBoard.columns.find((c) => c.id === values.columnId)?.tasks
+          .length || 0;
       addTask({
         id: uuidv4(),
         boardId,
         ...values,
-        index:
-          currentBoard.columns.find((c) => c.id === values.columnId)?.tasks
-            .length || 0,
+        index,
       });
-      addTaskMutation.mutate(values);
+      addTaskMutation.mutate({ ...values, index });
     } else {
       console.error(t("add.console.submitError"));
     }
