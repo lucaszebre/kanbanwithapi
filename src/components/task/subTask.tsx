@@ -3,7 +3,6 @@ import { useTaskManagerStore } from "@/state/taskManager";
 import type { Subtask as SubTaskType } from "@/types/global";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { Input } from "../ui/input";
 
 export const Subtask = ({
   subtask,
@@ -42,15 +41,12 @@ export const Subtask = ({
   };
 
   const baseClasses =
-    "w-full flex flex-row items-center justify-start gap-4 mb-4 rounded-md p-4 transition-colors";
+    "w-full flex flex-row items-center justify-start gap-4 mb-4 rounded-md  transition-colors";
   const textClasses = isChecked ? "line-through text-[#BDBDBD]" : "";
 
   return (
-    <div
-      className={`${baseClasses} `}
-      style={{ height: isChecked ? "40px" : "auto" }}
-    >
-      <Input
+    <div className={`${baseClasses} `}>
+      <input
         type="checkbox"
         checked={isChecked}
         onChange={handleCheckboxChange}
