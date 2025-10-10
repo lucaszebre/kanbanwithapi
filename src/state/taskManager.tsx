@@ -440,7 +440,6 @@ export const useTaskManagerStore = create<State>((set) => ({
         columns: [...board.columns],
       };
 
-      console.log(newBoards, "boards");
       return {
         taskManager: {
           ...state.taskManager,
@@ -491,8 +490,6 @@ export const useTaskManagerStore = create<State>((set) => ({
         ...board.columns[columnIndex],
         tasks: [...tasks.map((t, index) => ({ ...t, index }))],
       };
-
-      console.log(newColumn, "que passa bien ?");
 
       const newColumns = board.columns.map((c, index) => {
         if (index === columnIndex) {

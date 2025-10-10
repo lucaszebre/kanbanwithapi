@@ -6,6 +6,7 @@ import { move } from "@dnd-kit/helpers";
 import { DragDropProvider } from "@dnd-kit/react";
 
 import { columnApiServices } from "@/api/column.service";
+import { isSortable } from "@dnd-kit/react/sortable";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
@@ -87,6 +88,10 @@ export const Board = () => {
             }
 
             if (source?.type === "item") {
+              if (!target || !isSortable(target)) {
+                // Not a sortable droppable/target; nothing to do
+                return;
+              }
               const targetColumnId = target?.sortable?.group;
               // const targetIndex = target?.sortable?.index;
               const initialColumnId = target?.sortable?.initialGroup;
