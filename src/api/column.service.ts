@@ -1,3 +1,4 @@
+import type { Column, Task } from "@/types/global";
 import { handleSessionExpiration } from "./common/handleSessionexpiration";
 import { axiosInstance } from "./common/instance";
 
@@ -53,10 +54,40 @@ const changeColumn = async (
   return null;
 };
 
-const updateColumn = async (columnId: string, newName: string) => {
+const updateColumns = async (data: { boardId: string; columns: Column[] }) => {
   try {
-    const response = await axiosInstance.patch(`/${COLUMN_ROUTE}/${columnId}`, {
-      name: newName,
+    const response = await axiosInstance.patch(
+      `/${BOARD_ROUTE}/${data.boardId}/columns`,
+      {
+        columns: data.columns,
+      }
+    );
+
+    if (response.data) {
+      return response.data;
+    } else {
+      handleSessionExpiration();
+      console.error("Error changing column name");
+      return null;
+    }
+  } catch (error) {
+    handleSessionExpiration();
+    console.error("Error changing column name:", error);
+    return null;
+  }
+};
+
+const updateColumn = async (data: {
+  id: string;
+  name: string;
+  index: number;
+  tasks?: Task[];
+}) => {
+  try {
+    const response = await axiosInstance.patch(`/${COLUMN_ROUTE}/${data.id}`, {
+      name: data.name,
+      index: data.index,
+      tasks: data.tasks,
     });
 
     if (response.data) {
@@ -133,4 +164,5 @@ export const columnApiServices = {
   deleteColumn,
   fetchColumns,
   getColumn,
+  updateColumns,
 };

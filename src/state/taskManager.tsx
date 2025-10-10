@@ -10,8 +10,9 @@ type State = {
 
   updateColumn: (data: {
     boardId: string;
-    columnId: string;
+    id: string;
     name: string;
+    tasks?: Task[];
   }) => void;
 
   addTask: (data: {
@@ -30,6 +31,7 @@ type State = {
     description: string;
     columnId: string;
     subtasks: Subtask[];
+    index: number;
   }) => void;
   deleteTask: (data: { boardId: string; columnId: string; id: string }) => void;
 
@@ -46,6 +48,19 @@ type State = {
     boardId: string;
     columnId: string;
     taskId: string;
+  }) => void;
+  insertTaskAtColumn: (data: {
+    boardId: string;
+    targetColumnId: string;
+    sourceColumnId: string;
+    initialIndex: number;
+    targetIndex: number;
+  }) => void;
+  updateColumns: (data: { boardId: string; columns: Column[] }) => void;
+  updateTasks: (data: {
+    boardId: string;
+    columnId: string;
+    tasks: Task[];
   }) => void;
 };
 
@@ -137,12 +152,14 @@ export const useTaskManagerStore = create<State>((set) => ({
   // column
   updateColumn: ({
     boardId,
-    columnId,
+    id,
     name,
+    tasks,
   }: {
     boardId: string;
-    columnId: string;
+    id: string;
     name: string;
+    tasks?: Task[];
   }) =>
     set((state) => {
       const board = state.taskManager.boards.find(
@@ -150,8 +167,8 @@ export const useTaskManagerStore = create<State>((set) => ({
       );
 
       const columns = board?.columns.map((c) => {
-        if (c.id === columnId) {
-          return { ...c, name };
+        if (c.id === id) {
+          return { ...c, name, tasks: tasks ?? [] };
         }
         return c;
       });
@@ -220,6 +237,7 @@ export const useTaskManagerStore = create<State>((set) => ({
     description: string;
     columnId: string;
     subtasks: Subtask[];
+    index: number;
   }) =>
     set((state) => {
       const { boardId, id, title, description, columnId, subtasks } = data;
@@ -358,6 +376,143 @@ export const useTaskManagerStore = create<State>((set) => ({
       destinationColumn.tasks.push(taskToMove);
 
       return { ...state };
+    });
+  },
+  insertTaskAtColumn: (data: {
+    boardId: string;
+    targetColumnId: string;
+    sourceColumnId: string;
+    initialIndex: number;
+    targetIndex: number;
+  }) => {
+    set((state) => {
+      const {
+        boardId,
+        targetColumnId,
+        sourceColumnId,
+        initialIndex,
+        targetIndex,
+      } = data;
+
+      const boardIndex = state.taskManager.boards.findIndex(
+        (b) => b.id === boardId
+      );
+      if (boardIndex === -1) return state;
+
+      const board = state.taskManager.boards[boardIndex];
+
+      const sourceColumnIndex = board.columns.findIndex(
+        (col) => col.id === sourceColumnId
+      );
+      const targetColumnIndex = board.columns.findIndex(
+        (col) => col.id === targetColumnId
+      );
+
+      if (sourceColumnIndex === -1 || targetColumnIndex === -1) {
+        return state;
+      }
+
+      const sourceColumn = board.columns[sourceColumnIndex];
+      const targetColumn = board.columns[targetColumnIndex];
+
+      // Validate that the initial index is within bounds
+      if (initialIndex < 0 || initialIndex >= sourceColumn.tasks.length) {
+        return state;
+      }
+
+      // Remove the task from the source column at the initial index
+      const [taskToMove] = sourceColumn.tasks.splice(initialIndex, 1);
+
+      // Update the task's column ID and index
+      taskToMove.columnId = targetColumnId;
+      taskToMove.index = targetIndex;
+
+      // Insert the task into the target column at the target index
+      targetColumn.tasks.splice(targetIndex, 0, taskToMove);
+
+      // Re-index tasks in both columns
+      sourceColumn.tasks.forEach((task, i) => (task.index = i));
+      targetColumn.tasks.forEach((task, i) => (task.index = i));
+
+      const newBoards = [...state.taskManager.boards];
+      newBoards[boardIndex] = {
+        ...board,
+        columns: [...board.columns],
+      };
+
+      console.log(newBoards, "boards");
+      return {
+        taskManager: {
+          ...state.taskManager,
+          boards: newBoards,
+        },
+      };
+    });
+  },
+  updateColumns: (data: { boardId: string; columns: Column[] }) => {
+    set((state) => {
+      const { boardId, columns } = data;
+
+      const boardIndex = state.taskManager.boards.findIndex(
+        (b) => b.id === boardId
+      );
+      if (boardIndex === -1) return state;
+
+      const board = state.taskManager.boards[boardIndex];
+
+      const newBoards = [...state.taskManager.boards];
+      newBoards[boardIndex] = {
+        ...board,
+        columns,
+      };
+
+      return {
+        taskManager: {
+          ...state.taskManager,
+          boards: newBoards,
+        },
+      };
+    });
+  },
+  updateTasks: (data: { boardId: string; columnId: string; tasks: Task[] }) => {
+    set((state) => {
+      const { boardId, columnId, tasks } = data;
+
+      const boardIndex = state.taskManager.boards.findIndex(
+        (b) => b.id === boardId
+      );
+      if (boardIndex === -1) return state;
+
+      const board = state.taskManager.boards[boardIndex];
+
+      const columnIndex = board.columns.findIndex((c) => c.id === columnId);
+
+      const newColumn = {
+        ...board.columns[columnIndex],
+        tasks: [...tasks.map((t, index) => ({ ...t, index }))],
+      };
+
+      console.log(newColumn, "que passa bien ?");
+
+      const newColumns = board.columns.map((c, index) => {
+        if (index === columnIndex) {
+          return newColumn;
+        }
+        return c;
+      });
+
+      const newBoards = [...state.taskManager.boards];
+      newBoards[boardIndex] = {
+        ...board,
+        columns: newColumns,
+      };
+
+      return {
+        taskManager: {
+          ...state.taskManager,
+          boards: newBoards,
+        },
+      };
     });
   },
 }));

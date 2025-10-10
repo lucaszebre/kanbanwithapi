@@ -1,15 +1,21 @@
 import { boardApiServices } from "@/api/board.service";
 import { useTaskManagerStore } from "@/state/taskManager";
-import type { Column } from "@/types/global";
-import { useQuery } from "@tanstack/react-query";
+import type { Column, Task } from "@/types/global";
+import { move } from "@dnd-kit/helpers";
+
+import { DragDropProvider } from "@dnd-kit/react";
+
+import { columnApiServices } from "@/api/column.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
-import { ListTaskNoDnd } from "../task/listTask";
+import { ListTask } from "../task/listTask";
 import { EmptyBoard } from "./emptyBoard";
 import { NoBoards } from "./noBoards";
 
 export const Board = () => {
   const { boardId } = useParams();
+
   const taskManager = useTaskManagerStore((state) => state.taskManager);
 
   const currentBoard = useMemo(() => {
@@ -35,81 +41,152 @@ export const Board = () => {
     }
   }, [data, isStale, setTaskManagerData]);
 
-  // const changeCol = useTaskManagerStore((state) => state.changeCol);
+  const updateColumns = useTaskManagerStore((state) => state.updateColumns);
 
-  // Define the onDragEnd function
-  // const onDragEnd = (result: Data) => {
-  //   // Check if the task was dropped into a different column
-  //   if (!result.destination) {
-  //     return;
-  //   }
+  const updateTasks = useTaskManagerStore((state) => state.updateTasks);
 
-  //   // Find the source column based on the source droppableId
-  //   const sourceColumnId = result.source.droppableId;
-  //   const sourceColumn = taskManager[0].boards[currentBoardIndex].columns.find(
-  //     (column: { id: string }) => column.id === sourceColumnId
-  //   );
+  const { mutate: updateColumnMutate } = useMutation({
+    mutationFn: ({
+      id,
+      name,
+      index,
+      tasks,
+    }: {
+      id: string;
+      name: string;
+      index: number;
+      tasks?: Task[];
+    }) => columnApiServices.updateColumn({ id, name, index, tasks }),
+  });
 
-  //   // Check if the source column was found
-  //   if (!sourceColumn) {
-  //     return;
-  //   }
+  const { mutate: updateColumnsMutate } = useMutation({
+    mutationFn: ({
+      boardId,
+      columns,
+    }: {
+      boardId: string;
+      columns: Column[];
+    }) => columnApiServices.updateColumns({ boardId, columns }),
+  });
 
-  //   // Find the task that was dragged based on its index in the source column
-  //   const draggedTask = sourceColumn.tasks[result.source.index].id;
-
-  //   // Find the destination column's ID
-  //   const destinationColumnId = result.destination.droppableId;
-
-  //   // Call the changeColumn mutation to update the task's column
-  //   changeCol(destinationColumnId, sourceColumnId, draggedTask);
-  //   column.mutate({
-  //     newColumnId: destinationColumnId,
-  //     columnId: sourceColumnId,
-  //     taskId: draggedTask,
-  //   });
-
-  //   // Invalidate queries to trigger a refetch
-  //   queryClient.refetchQueries({ queryKey: ["boards", "Task"] });
-  // };
-  // function to render data
-  // function renderListTask() {
-  //   if (
-  //     taskManager?.[0]?.boards?.[currentBoardIndex]?.columns &&
-  //     taskManager?.[0]?.boards?.[currentBoardIndex]?.columns?.length > 0
-  //   ) {
-  //     return (
-  //       <DndContext onDragEnd={onDragEnd}>
-  //         {taskManager[0].boards[currentBoardIndex].columns.map(
-  //           (column: ColumnType, columnIndex: number) => (
-  //             <ListTask
-  //               key={columnIndex}
-  //               title={column.name}
-  //               tasks={column.tasks}
-  //               columnId={column.id}
-  //               columnIndex={columnIndex}
-  //               NbList={columnIndex}
-  //             />
-  //           )
-  //         )}
-  //       </DndContext>
-  //     );
-  //   } else {
-  //     return <EmptyBoard  />;
-  //   }
-  // }
-
-  // function to render data without drag and drop
-  function renderListTaskNoDnd() {
+  function renderColumns() {
     if (currentBoard?.columns && currentBoard?.columns?.length > 0) {
       return (
-        <div className="flex gap-4">
-          {currentBoard?.columns
-            .sort((a, b) => a.index - b.index)
-            .map((column: Column) => (
-              <ListTaskNoDnd key={column.id} {...column} />
-            ))}
-        </div>
+        <DragDropProvider
+          onDragEnd={(event) => {
+            const { source, target } = event.operation;
+
+            if (source?.type === "column") {
+              const columns = move(currentBoard.columns, event).map(
+                (c, index) => ({ ...c, index })
+              );
+              updateColumns({ boardId: currentBoard.id, columns });
+
+              updateColumnsMutate({ boardId: currentBoard.id, columns });
+              return;
+            }
+
+            if (source?.type === "item") {
+              const targetColumnId = target?.sortable?.group;
+              // const targetIndex = target?.sortable?.index;
+              const initialColumnId = target?.sortable?.initialGroup;
+              const initialIndex = target?.sortable?.initialIndex;
+
+              const sourceColumn = currentBoard.columns.find(
+                (c) => c.id === initialColumnId
+              );
+              const targetColumn = currentBoard.columns.find(
+                (c) => c.id === targetColumnId
+              );
+
+              if (!sourceColumn || !targetColumn) {
+                console.error("Source or target column not found");
+                return;
+              }
+
+              // Moving within the same column
+              if (targetColumnId === initialColumnId) {
+                const newTasks = move(sourceColumn.tasks, event);
+
+                updateTasks({
+                  tasks: newTasks,
+                  boardId: currentBoard.id,
+                  columnId: sourceColumn.id,
+                });
+
+                updateColumnMutate({
+                  id: sourceColumn.id,
+                  index: sourceColumn.index,
+                  name: sourceColumn.name,
+                  tasks: newTasks,
+                });
+                return;
+              }
+
+              // Moving between different columns
+              const taskToMove = sourceColumn.tasks[initialIndex];
+              if (!taskToMove) {
+                console.error("Task to move not found");
+                return;
+              }
+
+              // // Remove task from source column
+              // const newSourceTasks = sourceColumn.tasks
+              //   .filter((_, index) => index !== initialIndex)
+              //   .map((task, index) => ({ ...task, index }));
+
+              // // Add task to target column
+              // const newTargetTasks = [
+              //   ...targetColumn.tasks.slice(0, targetIndex),
+              //   { ...taskToMove, columnId: targetColumnId },
+              //   ...targetColumn.tasks.slice(targetIndex),
+              // ].map((task, index) => ({ ...task, index }));
+
+              // console.log(newSourceTasks, "newSourceTasks");
+              // console.log(newTargetTasks, "newTargetTasks");
+
+              // // Update both columns
+
+              // updateTasks({
+              //   tasks: newTargetTasks,
+              //   boardId: currentBoard.id,
+              //   columnId: targetColumn.id,
+              // });
+
+              // updateTasks({
+              //   tasks: newSourceTasks,
+              //   boardId: currentBoard.id,
+              //   columnId: sourceColumn.id,
+              // });
+
+              // // Update backend
+              // updateColumnMutate({
+              //   id: sourceColumn.id,
+              //   index: sourceColumn.index,
+              //   name: sourceColumn.name,
+              //   tasks: newSourceTasks,
+              // });
+
+              // updateColumnMutate({
+              //   id: targetColumn.id,
+              //   index: targetColumn.index,
+              //   name: targetColumn.name,
+              //   tasks: newTargetTasks,
+              // });
+            }
+          }}
+        >
+          <div className="flex gap-4">
+            {currentBoard?.columns
+              .sort((a, b) => a.index - b.index)
+              .map((column: Column, index) => (
+                <ListTask key={column.id} {...column} index={index} />
+              ))}
+          </div>
+          {/* <DragOverlay>
+            {(source) => <div>Dragging {source.id}</div>}
+          </DragOverlay> */}
+        </DragDropProvider>
       );
     } else {
       return <EmptyBoard />;
@@ -117,7 +194,7 @@ export const Board = () => {
   }
 
   if (taskManager && currentBoard) {
-    return <>{renderListTaskNoDnd()}</>;
+    return <>{renderColumns()}</>;
   } else {
     return <NoBoards />;
   }

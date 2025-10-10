@@ -1,4 +1,5 @@
 import type { Task } from "@/types/global";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalTask } from "../modal/modalTask";
@@ -7,6 +8,15 @@ import { Card } from "../ui/card";
 export const TaskCard = (task: Task) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("task");
+
+  const { ref, isDragging } = useSortable({
+    id: task.id,
+    index: task.index,
+    type: "item",
+    accept: "item",
+    group: task.columnId,
+  });
+
   function Iscompleted() {
     let i = 0;
     if (task.subtasks) {
@@ -27,8 +37,9 @@ export const TaskCard = (task: Task) => {
   return (
     <>
       <ModalTask task={task} open={open} setOpen={setOpen} />
-
       <Card
+        ref={ref}
+        data-dragging={isDragging}
         className={`${containerBase}`}
         onClick={() => {
           setOpen(true);
