@@ -95,7 +95,7 @@ export const Header = () => {
 
             {currentBoard?.id && (
               <EditBoard board={currentBoard}>
-                <Button variant={"outline"}>
+                <Button className="cursor-pointer" variant={"outline"}>
                   <Icon icon={"pixel:edit-solid"} height={16} width={16} />
                 </Button>
               </EditBoard>
