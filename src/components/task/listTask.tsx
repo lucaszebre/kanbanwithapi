@@ -1,8 +1,8 @@
 import { columnApiServices } from "@/api/column.service";
 import { useTaskManagerStore } from "@/state/taskManager";
 import type { Column, Task } from "@/types/global";
-import { useSortable } from "@dnd-kit/react/sortable";
 
+import { useSortable } from "@dnd-kit/react/sortable";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useParams } from "react-router";
@@ -35,8 +35,15 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
     id,
     index,
     type: "column",
-    // collisionPriority: CollisionPriority.Low,
-    accept: ["column"],
+    accept: ["item"],
+    data: {
+      column: {
+        id,
+        name,
+        index,
+        tasks,
+      },
+    },
   });
 
   const boardId = useMemo(
@@ -51,18 +58,18 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
 
   const RenderTask = ({ tasks }: { tasks: Task[] }) => {
     return (
-      <>
+      <div className={"min-h-[400px] w-[280px]"} ref={ref}>
         {tasks
           .sort((a, b) => a.index - b.index)
           .map((task, index) => (
             <TaskCard key={task.id} {...task} index={index} columnId={id} />
           ))}
-      </>
+      </div>
     );
   };
 
   return (
-    <div ref={ref} className={styles.ListTaskDiv}>
+    <div className={styles.ListTaskDiv}>
       <div className={"flex flex-row gap-3 items-start"}>
         <EditableText
           initialValue={`${name}`}
@@ -72,9 +79,7 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
         />
         <span className={styles.ListTaskTitle}>({tasks.length})</span>
       </div>
-      <div className={"min-h-[400px] w-[280px]"}>
-        <RenderTask tasks={tasks} />
-      </div>
+      <RenderTask tasks={tasks} />
     </div>
   );
 };
