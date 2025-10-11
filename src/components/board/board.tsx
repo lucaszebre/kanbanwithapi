@@ -10,6 +10,7 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
+import { Icons } from "../common/icons";
 import { ListTask } from "../task/listTask";
 import { ListTaskOverlay } from "../task/listTaskOverlay";
 import { TaskCardOverlay } from "../task/taskCardOverlay";
@@ -29,7 +30,7 @@ export const Board = () => {
     );
   }, [boardId, taskManager]);
 
-  const { data, isStale } = useQuery({
+  const { data, isStale, isLoading } = useQuery({
     queryKey: ["boards"],
     queryFn: () => boardApiServices.fetchBoards(),
   });
@@ -297,6 +298,14 @@ export const Board = () => {
     } else {
       return <EmptyBoard />;
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+      </div>
+    );
   }
 
   if (taskManager && currentBoard) {
