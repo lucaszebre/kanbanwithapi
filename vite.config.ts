@@ -14,4 +14,7 @@ export default defineConfig({
   server: {
     port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 3000,
   },
+  preview: {
+    port: process.env.VITE_PORT ? Number(process.env.VITE_PORT) : 3000,
+  },
 });
