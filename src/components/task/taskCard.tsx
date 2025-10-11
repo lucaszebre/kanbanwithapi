@@ -35,13 +35,12 @@ export const TaskCard = (task: Task) => {
   const subTextClasses = "text-gray-500 text-sm font-semibold mb-4";
 
   return (
-    <>
+    <div ref={ref} data-dragging={isDragging}>
       <ModalTask task={task} open={open} setOpen={setOpen} />
       <Card
-        ref={ref}
-        data-dragging={isDragging}
         className={`${containerBase}`}
         onClick={() => {
+          if (isDragging) return;
           setOpen(true);
         }}
       >
@@ -53,6 +52,6 @@ export const TaskCard = (task: Task) => {
           })}
         </p>
       </Card>
-    </>
+    </div>
   );
 };

@@ -1,7 +1,6 @@
 import { columnApiServices } from "@/api/column.service";
 import { useTaskManagerStore } from "@/state/taskManager";
 import type { Column, Task } from "@/types/global";
-import { CollisionPriority } from "@dnd-kit/abstract";
 import { useSortable } from "@dnd-kit/react/sortable";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -36,8 +35,8 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
     id,
     index,
     type: "column",
-    collisionPriority: CollisionPriority.Low,
-    accept: ["item", "column"],
+    // collisionPriority: CollisionPriority.Low,
+    accept: ["column"],
   });
 
   const boardId = useMemo(
@@ -73,7 +72,7 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
         />
         <span className={styles.ListTaskTitle}>({tasks.length})</span>
       </div>
-      <div className={styles.ListTaskCols}>
+      <div className={"min-h-[400px] w-[280px]"}>
         <RenderTask tasks={tasks} />
       </div>
     </div>

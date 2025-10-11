@@ -74,8 +74,144 @@ export const Board = () => {
     if (currentBoard?.columns && currentBoard?.columns?.length > 0) {
       return (
         <DragDropProvider
+          // onDragOver={(event) => {
+          //   const { source, target } = event.operation;
+
+          //   console.log(target, " target  drag over");
+          //   console.log(source, "source drag over");
+
+          //   if (source?.type === "column") return;
+
+          //   if (source?.type === "item") {
+          //     if (!target || !isSortable(target) || !source.isDragging) {
+          //       // Not a sortable droppable/target; nothing to do
+          //       return;
+          //     }
+
+          //     if (target.sortable.group === "column") {
+          //       const targetColumnId = target?.sortable?.group as string;
+          //       const initialColumnId = target?.sortable?.initialGroup;
+          //       const initialIndex = target?.sortable?.initialIndex;
+
+          //       console.log(
+          //         targetColumnId,
+          //         initialIndex,
+          //         initialColumnId,
+          //         initialIndex,
+          //         "check when empty "
+          //       );
+          //       const sourceColumn = currentBoard.columns.find(
+          //         (c) => c.id === initialColumnId
+          //       );
+          //       const targetColumn =
+          //         currentBoard.columns[target.sortable.index];
+          //       if (!sourceColumn || !targetColumn) {
+          //         console.error("Source or target column not found");
+          //         return;
+          //       }
+          //       // Remove task from source column
+          //       const newSourceTasks = sourceColumn.tasks
+          //         .filter((_, index) => index !== initialIndex)
+          //         .map((task, index) => ({ ...task, index }));
+          //       const taskToMove = sourceColumn.tasks[initialIndex];
+          //       if (!taskToMove) {
+          //         console.error("Task to move not found");
+          //         return;
+          //       }
+          //       // Add task to target column
+          //       const newTargetTasks = [{ ...taskToMove, index: 0 }];
+          //       // Update both columns
+          //       updateTasks({
+          //         tasks: newSourceTasks,
+          //         boardId: currentBoard.id,
+          //         columnId: sourceColumn.id,
+          //       });
+          //       updateTasks({
+          //         tasks: newTargetTasks,
+          //         boardId: currentBoard.id,
+          //         columnId: targetColumn.id,
+          //       });
+          //       // Update backend
+          //       updateColumnMutate({
+          //         id: sourceColumn.id,
+          //         index: sourceColumn.index,
+          //         name: sourceColumn.name,
+          //         tasks: newSourceTasks,
+          //       });
+          //       updateColumnMutate({
+          //         id: targetColumn.id,
+          //         index: targetColumn.index,
+          //         name: targetColumn.name,
+          //         tasks: newTargetTasks,
+          //       });
+          //     }
+          //     const targetColumnId = target?.sortable?.group as string;
+          //     const targetIndex = target?.sortable?.index;
+          //     const initialColumnId = target?.sortable?.initialGroup;
+          //     const initialIndex = target?.sortable?.initialIndex;
+
+          //     if (
+          //       targetColumnId !== initialColumnId &&
+          //       source.id &&
+          //       target.id
+          //     ) {
+          //       const sourceColumn = currentBoard.columns.find(
+          //         (c) => c.id === initialColumnId
+          //       );
+          //       const targetColumn = currentBoard.columns.find(
+          //         (c) => c.id === targetColumnId
+          //       );
+          //       if (!sourceColumn || !targetColumn) {
+          //         console.error("Source or target column not found");
+          //         return;
+          //       }
+          //       // Remove task from source column
+          //       const newSourceTasks = sourceColumn.tasks
+          //         .filter((_, index) => index !== initialIndex)
+          //         .map((task, index) => ({ ...task, index }));
+          //       const taskToMove = sourceColumn.tasks[initialIndex];
+          //       if (!taskToMove) {
+          //         console.error("Task to move not found");
+          //         return;
+          //       }
+          //       // Add task to target column
+          //       const newTargetTasks = [
+          //         ...targetColumn.tasks.slice(0, targetIndex),
+          //         { ...taskToMove, columnId: targetColumnId },
+          //         ...targetColumn.tasks.slice(targetIndex),
+          //       ].map((task, index) => ({ ...task, index }));
+          //       // Update both columns
+          //       updateTasks({
+          //         tasks: newSourceTasks,
+          //         boardId: currentBoard.id,
+          //         columnId: sourceColumn.id,
+          //       });
+          //       updateTasks({
+          //         tasks: newTargetTasks,
+          //         boardId: currentBoard.id,
+          //         columnId: targetColumn.id,
+          //       });
+          //       // Update backend
+          //       updateColumnMutate({
+          //         id: sourceColumn.id,
+          //         index: sourceColumn.index,
+          //         name: sourceColumn.name,
+          //         tasks: newSourceTasks,
+          //       });
+          //       updateColumnMutate({
+          //         id: targetColumn.id,
+          //         index: targetColumn.index,
+          //         name: targetColumn.name,
+          //         tasks: newTargetTasks,
+          //       });
+          //     }
+          //   }
+          // }}
           onDragEnd={(event) => {
             const { source, target } = event.operation;
+
+            console.log(target, " target  drag end");
+            console.log(source, "source drag end");
 
             if (source?.type === "column") {
               const columns = move(currentBoard.columns, event).map(
@@ -92,10 +228,8 @@ export const Board = () => {
                 // Not a sortable droppable/target; nothing to do
                 return;
               }
-              const targetColumnId = target?.sortable?.group;
-              // const targetIndex = target?.sortable?.index;
+              const targetColumnId = target?.sortable?.group as string;
               const initialColumnId = target?.sortable?.initialGroup;
-              const initialIndex = target?.sortable?.initialIndex;
 
               const sourceColumn = currentBoard.columns.find(
                 (c) => c.id === initialColumnId
@@ -129,55 +263,6 @@ export const Board = () => {
               }
 
               // Moving between different columns
-              const taskToMove = sourceColumn.tasks[initialIndex];
-              if (!taskToMove) {
-                console.error("Task to move not found");
-                return;
-              }
-
-              // // Remove task from source column
-              // const newSourceTasks = sourceColumn.tasks
-              //   .filter((_, index) => index !== initialIndex)
-              //   .map((task, index) => ({ ...task, index }));
-
-              // // Add task to target column
-              // const newTargetTasks = [
-              //   ...targetColumn.tasks.slice(0, targetIndex),
-              //   { ...taskToMove, columnId: targetColumnId },
-              //   ...targetColumn.tasks.slice(targetIndex),
-              // ].map((task, index) => ({ ...task, index }));
-
-              // console.log(newSourceTasks, "newSourceTasks");
-              // console.log(newTargetTasks, "newTargetTasks");
-
-              // // Update both columns
-
-              // updateTasks({
-              //   tasks: newTargetTasks,
-              //   boardId: currentBoard.id,
-              //   columnId: targetColumn.id,
-              // });
-
-              // updateTasks({
-              //   tasks: newSourceTasks,
-              //   boardId: currentBoard.id,
-              //   columnId: sourceColumn.id,
-              // });
-
-              // // Update backend
-              // updateColumnMutate({
-              //   id: sourceColumn.id,
-              //   index: sourceColumn.index,
-              //   name: sourceColumn.name,
-              //   tasks: newSourceTasks,
-              // });
-
-              // updateColumnMutate({
-              //   id: targetColumn.id,
-              //   index: targetColumn.index,
-              //   name: targetColumn.name,
-              //   tasks: newTargetTasks,
-              // });
             }
           }}
         >
@@ -188,9 +273,6 @@ export const Board = () => {
                 <ListTask key={column.id} {...column} index={index} />
               ))}
           </div>
-          {/* <DragOverlay>
-            {(source) => <div>Dragging {source.id}</div>}
-          </DragOverlay> */}
         </DragDropProvider>
       );
     } else {

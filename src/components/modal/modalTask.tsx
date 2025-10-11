@@ -30,8 +30,6 @@ export const ModalTask = ({
   const updateTaskLocal = useTaskManagerStore((state) => state.updateTask);
 
   const [selectedColumnId, setSelectedColumnId] = useState(task.columnId);
-  const [openEditTask, setOpenEditTask] = useState(false);
-  const [openDeleteTask, setOpenDeleteTask] = useState(false);
 
   const boardId = useMemo(
     () => boardIdParams ?? taskManager?.boards?.[0]?.id ?? "",
@@ -75,14 +73,6 @@ export const ModalTask = ({
 
   return (
     <>
-      <EditTask task={task} open={openEditTask} setOpen={setOpenEditTask} />
-      <DeleteThisTask
-        id={task.id}
-        columnId={task.columnId}
-        title={task.title}
-        open={openDeleteTask}
-        setOpen={setOpenDeleteTask}
-      />
       <ReusableDialog
         open={open}
         onOpenChange={async (open) => {
@@ -113,31 +103,30 @@ export const ModalTask = ({
         <div className={headerClasses}>
           <h1 className={titleClasses}>{task.title}</h1>
           <div className="flex items-center gap-3">
-            <Button
-              variant={"outline"}
-              type="button"
-              onClick={() => {
-                // mimic previous edit path
-                setOpenEditTask(true);
-                setOpen(false);
-              }}
-              aria-label={t("actions.editAria")}
-              className="p-2 rounded-md cursor-pointer"
+            <EditTask task={task}>
+              <Button
+                variant={"outline"}
+                type="button"
+                aria-label={t("actions.editAria")}
+                className="p-2 rounded-md cursor-pointer"
+              >
+                <Pencil className="size-4" />
+              </Button>
+            </EditTask>
+            <DeleteThisTask
+              id={task.id}
+              columnId={task.columnId}
+              title={task.title}
             >
-              <Pencil className="size-4" />
-            </Button>
-            <Button
-              type="button"
-              variant={"outline"}
-              onClick={() => {
-                setOpenDeleteTask(true);
-                setOpen(false);
-              }}
-              aria-label={t("actions.deleteAria")}
-              className="p-2 rounded-md cursor-pointer  text-[#ea5555] transition-colors"
-            >
-              <Trash2 className="size-4" />
-            </Button>
+              <Button
+                type="button"
+                variant={"outline"}
+                aria-label={t("actions.deleteAria")}
+                className="p-2 rounded-md cursor-pointer  text-[#ea5555] transition-colors"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </DeleteThisTask>
           </div>
         </div>
         <p className={descClasses}>

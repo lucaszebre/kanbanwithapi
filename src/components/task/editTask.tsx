@@ -1,5 +1,5 @@
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
-import { useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { taskApiServices } from "@/api/task.service";
 import {
@@ -30,18 +30,16 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 export const EditTask = ({
   task,
-  open,
-  setOpen,
+  children,
 }: {
   task: Task;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  children: ReactNode;
 }) => {
   const { boardIdParms } = useParams();
   const taskManager = useTaskManagerStore((state) => state.taskManager);
   const updateTaskLocal = useTaskManagerStore((state) => state.updateTask);
   const changeCol = useTaskManagerStore((state) => state.changeCol);
-
+  const [open, setOpen] = useState(false);
   const { t } = useTranslation("task");
 
   const boardId = useMemo(
@@ -131,6 +129,7 @@ export const EditTask = ({
     <ReusableDialog
       open={open}
       onOpenChange={setOpen}
+      trigger={children}
       title={t("edit.modalTitle")}
       hideActions
       size="lg"

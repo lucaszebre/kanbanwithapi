@@ -2,7 +2,7 @@ import { taskApiServices } from "@/api/task.service";
 import { ReusableDialog } from "@/components/reusable/reusable-dialog";
 import { useTaskManagerStore } from "@/state/taskManager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo, type Dispatch, type SetStateAction } from "react";
+import { useMemo, type ReactNode } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
@@ -11,14 +11,12 @@ export const DeleteThisTask = ({
   title,
   id,
   columnId,
-  open,
-  setOpen,
+  children,
 }: {
   title: string;
   id: string;
   columnId: string;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  children: ReactNode;
 }) => {
   const { t } = useTranslation("task");
   const { boardId } = useParams();
@@ -49,10 +47,7 @@ export const DeleteThisTask = ({
   });
   return (
     <ReusableDialog
-      open={open}
-      onOpenChange={(open) => {
-        if (!open) setOpen(false);
-      }}
+      trigger={children}
       title={t("delete.modalTitle")}
       description={
         <span className="text-left block">
