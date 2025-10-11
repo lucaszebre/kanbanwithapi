@@ -11,6 +11,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { ListTask } from "../task/listTask";
+import { ListTaskOverlay } from "../task/listTaskOverlay";
 import { TaskCardOverlay } from "../task/taskCardOverlay";
 import { EmptyBoard } from "./emptyBoard";
 import { NoBoards } from "./noBoards";
@@ -215,11 +216,11 @@ export const Board = () => {
             console.log(source, "source");
             console.log(target, "target");
             if (
-              source?.type === "column-container" &&
-              target?.type === "column-container" &&
+              source?.type === "column" &&
+              target?.type === "column" &&
               isSortable(source) &&
               isSortable(target) &&
-              source.sortable.index !== target.sortable.index
+              target.sortable.index !== target.sortable.initialIndex
             ) {
               const columns = move(currentBoard.columns, event).map(
                 (c, index) => ({ ...c, index })
@@ -287,7 +288,13 @@ export const Board = () => {
               ))}
           </div>
           <DragOverlay>
-            {(source) => <TaskCardOverlay {...source.data.task} />}
+            {(source) => {
+              return source.type === "column" ? (
+                <ListTaskOverlay {...source.data.column} />
+              ) : (
+                <TaskCardOverlay {...source.data.task} />
+              );
+            }}
           </DragOverlay>
         </DragDropProvider>
       );

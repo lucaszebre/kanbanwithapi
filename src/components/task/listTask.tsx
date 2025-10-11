@@ -2,6 +2,7 @@ import { columnApiServices } from "@/api/column.service";
 import { useTaskManagerStore } from "@/state/taskManager";
 import type { Column, Task } from "@/types/global";
 
+import { CollisionPriority } from "@dnd-kit/abstract";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -35,7 +36,8 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
     id,
     index,
     type: "column",
-    accept: ["item"],
+    collisionPriority: CollisionPriority.Lowest,
+    accept: ["item", "column"],
     data: {
       column: {
         id,
@@ -58,7 +60,7 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
 
   const RenderTask = ({ tasks }: { tasks: Task[] }) => {
     return (
-      <div className={"min-h-[400px] w-[280px]"} ref={ref}>
+      <div className={"min-h-[400px] w-[280px]"}>
         {tasks
           .sort((a, b) => a.index - b.index)
           .map((task, index) => (
@@ -69,7 +71,7 @@ export const ListTask = ({ tasks, id, name, index }: Column) => {
   };
 
   return (
-    <div className={styles.ListTaskDiv}>
+    <div ref={ref} className={styles.ListTaskDiv}>
       <div className={"flex flex-row gap-3 items-start"}>
         <EditableText
           initialValue={`${name}`}
