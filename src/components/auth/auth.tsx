@@ -9,6 +9,7 @@ export const Auth = () => {
   const { t } = useTranslation("auth");
   return (
     <div className=" relative bg-white w-full h-screen flex col content-center items-center justify-center ">
+      <title>Kanban - Auth</title>
       <Toaster />
       <div className="relative w-full   h-full flex-col bg-muted p-10 text-white dark:border-r  ">
         <div className="relative z-20 hidden items-center text-lg font-medium md:flex">
