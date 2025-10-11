@@ -72,8 +72,6 @@ export const Board = () => {
     }) => columnApiServices.updateColumns({ boardId, columns }),
   });
 
-  console.log(currentBoard?.columns, "columns mamamiya");
-
   function renderColumns() {
     if (currentBoard?.columns && currentBoard?.columns?.length > 0) {
       return (
@@ -213,8 +211,7 @@ export const Board = () => {
           }}
           onDragEnd={(event) => {
             const { source, target } = event.operation;
-            console.log(source, "source");
-            console.log(target, "target");
+
             if (
               source?.type === "column" &&
               target?.type === "column" &&
@@ -226,7 +223,6 @@ export const Board = () => {
                 (c, index) => ({ ...c, index })
               );
 
-              console.log(columns, "columns");
               updateColumns({ boardId: currentBoard.id, columns });
 
               updateColumnsMutate({ boardId: currentBoard.id, columns });

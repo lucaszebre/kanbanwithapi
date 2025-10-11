@@ -38,7 +38,6 @@ const deleteTask = async (taskId: string) => {
   try {
     const response = await axiosInstance.delete(`/${TASK_ROUTE}/${taskId}`);
     if (response) {
-      console.log(response.status);
       return response.data;
     } else {
       handleSessionExpiration();
