@@ -29,7 +29,7 @@ Live demo: https://kanbanwithapi-pi.vercel.app/
 
 ## Run locally
 
-Prerequisites: Node 20+ and npm. You also need the API running; see [KanbanExpressAPi](https://github.com/lucaszebre/KanbanExpressAPi) for its own setup.
+Prerequisites: Node 20.19+ or 22.12+ (Vite 7 requirement) and npm. You also need the API running; see [KanbanExpressAPi](https://github.com/lucaszebre/KanbanExpressAPi) for its own setup.
 
 ```bash
 git clone https://github.com/lucaszebre/kanbanwithapi.git
@@ -39,12 +39,12 @@ cp .env.example .env   # then edit the values
 npm run dev            # http://localhost:3000
 ```
 
-Environment variables (see `.env.example`):
+Environment variables:
 
-| Variable            | Purpose                                                                 |
-| ------------------- | ----------------------------------------------------------------------- |
-| `VITE_BASE_URL_API` | Base URL of the KanbanExpressAPi instance the front end calls           |
-| `VITE_PORT`         | Optional dev/preview server port (defaults to 3000 in `vite.config.ts`) |
+| Variable            | Where it is read                 | Purpose                                                                 |
+| ------------------- | -------------------------------- | ----------------------------------------------------------------------- |
+| `VITE_BASE_URL_API` | `.env` (see `.env.example`)      | Base URL of the KanbanExpressAPi instance the front end calls           |
+| `VITE_PORT`         | shell env only, e.g. `VITE_PORT=4000 npm run dev` | Optional dev/preview port; `vite.config.ts` defaults to 3000 |
 
 The app sends cookies cross-origin (`withCredentials: true`), so the API must allow the front end's origin in its CORS configuration.
 
