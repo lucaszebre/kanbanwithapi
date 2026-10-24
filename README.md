@@ -1,95 +1,61 @@
-# React + TypeScript + Vite
+# Kanban
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Kanban task manager front end: boards, columns, tasks and subtasks with drag-and-drop, built with React 19, Vite and TanStack Query. It talks to the companion Express + Prisma API, [KanbanExpressAPi](https://github.com/lucaszebre/KanbanExpressAPi).
 
-Currently, two official plugins are available:
+Live demo: https://kanbanwithapi-pi.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What it does
 
-## React Compiler
+- Email/password sign-up and login, cookie-based session with silent refresh-token renewal
+- Create, rename and delete boards; each board has its own columns
+- Add, edit, move and delete tasks; tick off subtasks
+- Drag-and-drop tasks between columns and reorder columns (dnd-kit)
+- Optimistic UI: local Zustand store updated immediately, synced to the API with TanStack Query mutations
+- English / French interface (i18next, browser language detection)
+- Light and dark theme (next-themes)
+- Responsive layout with a collapsible sidebar
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## Stack
 
-## Expanding the ESLint configuration
+- React 19, TypeScript 5.8, Vite 7 (SWC plugin)
+- React Router 7 (lazy-loaded routes)
+- TanStack Query 5 for server state, Zustand 5 for local board state
+- dnd-kit (`@dnd-kit/react`, `@dnd-kit/sortable`) for drag-and-drop
+- Tailwind CSS 4, Radix UI primitives / shadcn-style components, lucide-react icons
+- react-hook-form + zod for forms and validation
+- axios (`withCredentials`) for API calls
+- i18next + react-i18next for translations
+- ESLint 9 with typescript-eslint, react-hooks and react-refresh plugins
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Run locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Prerequisites: Node 20+ and npm. You also need the API running; see [KanbanExpressAPi](https://github.com/lucaszebre/KanbanExpressAPi) for its own setup.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/lucaszebre/kanbanwithapi.git
+cd kanbanwithapi
+npm ci
+cp .env.example .env   # then edit the values
+npm run dev            # http://localhost:3000
 ```
 
-## Reusable Alert Dialog
+Environment variables (see `.env.example`):
 
-This project includes a `ReusableAlertDialog` component (in `src/components/reusable/reusable-alert-dialog.tsx`) built on top of shadcn/ui primitives. It replaces the old `DeleteThisBoard` overlay.
+| Variable            | Purpose                                                                 |
+| ------------------- | ----------------------------------------------------------------------- |
+| `VITE_BASE_URL_API` | Base URL of the KanbanExpressAPi instance the front end calls           |
+| `VITE_PORT`         | Optional dev/preview server port (defaults to 3000 in `vite.config.ts`) |
 
-Basic usage example:
+The app sends cookies cross-origin (`withCredentials: true`), so the API must allow the front end's origin in its CORS configuration.
 
-```tsx
-import ReusableAlertDialog from '@/components/reusable/reusable-alert-dialog'
-import { Button } from '@/components/ui/button'
+Other scripts:
 
-<ReusableAlertDialog
-  trigger={<Button variant="destructive">Delete</Button>}
-  variant="destructive"
-  title="Delete item"
-  description="Are you sure you want to delete this item? This action cannot be undone."
-  confirmLabel="Delete"
-  cancelLabel="Cancel"
-  onConfirm={async () => { /* perform deletion */ }}
-/>;
+```bash
+npm run build     # tsc -b && vite build -> dist/
+npm run preview   # serve the production build
+npm run lint      # eslint .
 ```
 
-Controlled mode (optional): pass `open` and `onOpenChange` to manage visibility externally.
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Status
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Started in 2023 as a learning project, last active in 2025. Dependencies refreshed in October 2026; not under active feature development.
