@@ -1,3 +1,4 @@
+import type { TaskManager } from "@/types/global";
 import { handleSessionExpiration } from "./common/handleSessionexpiration";
 import { axiosInstance } from "./common/instance";
 
@@ -31,7 +32,7 @@ const createBoard = async (boardName: string, columnsName: string[]) => {
   }
 };
 
-const fetchBoards = async (): Promise<any> => {
+const fetchBoards = async (): Promise<TaskManager | null> => {
   try {
     const response = await axiosInstance.get(`/${BOARD_ROUTE}`);
     return response.data;
